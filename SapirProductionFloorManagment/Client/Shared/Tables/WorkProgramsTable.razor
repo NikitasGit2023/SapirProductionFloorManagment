@@ -1,0 +1,92 @@
+﻿@inherits TableBase
+ @using SapirProductionFloorManagment.Client.Shared
+
+
+
+
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col"> Line Number</th>
+            <th scope="col">Work Order</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Priority</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Work Duration</th>
+            <th scope="col">Start</th>
+            <th scope="col">End</th>
+            @*<th scope="col">Customer And Order</th>*@
+            <th scope="col">Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var line in filtered)
+        {
+            <tr>
+                <td>@line.LineNumber</td>
+                <td>@line.WorkOrder.Id</td>
+                <td>@line.WorkOrder.ProductName</td>
+                <td>@line.WorkOrder.Quantity</td>
+                <td>@line.WorkOrder.WorkDuration</td>
+                <td>@line.WorkOrder.StartDate</td>
+                <td>@line.WorkOrder.EndDate</td>
+                @*<td>@line.CustomerAndOrder</td>*@
+                <td>@line.WorkOrder.Comments</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+@code
+{
+    [Parameter]
+    public List<Line>? Lines { get; set; }
+
+    private List<Line> filtered = new();
+
+    private int lineNumber;
+
+    protected override Task OnInitializedAsync()
+    {
+        filtered = Lines;
+        return base.OnInitializedAsync();
+    }
+
+
+
+    private IEnumerable<int> GetLinesNumbers()
+    {
+        var distinctNums = Lines
+            .Select(line => line.LineNumber).
+             Distinct()
+            .Order()
+            .ToList();
+
+        return distinctNums;
+    }
+
+    private void ShowLinesByLineNum(int num)
+    {
+        if(num == 0)
+        {
+            filtered = Lines;
+            return;
+        }
+        else
+        {
+            filtered = Lines.Where(line => line.LineNumber == num).ToList();
+        }
+
+    }
+
+    private void RecalculateProgram()
+    {
+        
+    }
+
+}

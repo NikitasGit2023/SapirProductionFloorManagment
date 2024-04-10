@@ -1,0 +1,70 @@
+﻿@page "/dailyprogram"
+
+@inherits TableBase
+@using SapirProductionFloorManagment.Client.Shared
+@using SapirProductionFloorManagment.Client.Shared.Tables
+
+
+<h2>Work plan</h2>
+
+<WorkProgramsTable
+    Lines="lines">
+</WorkProgramsTable>
+
+
+
+
+@code 
+{
+    private List<Line> lines = new()
+    {
+        {
+            new Line
+            {
+                LineNumber = 1,
+                WorkOrder = {Id =1111, 
+                    ProductName = "כוס פלסטיק", 
+                    Quantity= 3333, 
+                    WorkDuration = 24, 
+                    StartDate = DateTime.Now, 
+                    EndDate = DateTime.Now.AddDays(1),
+                    Comments = "Hell"
+                },
+            }
+            
+        },
+           {
+            new Line
+            {
+                LineNumber = 2,
+                WorkOrder = {Id = 2222,
+                    ProductName = "כוס זכוכית",
+                    Quantity= 444,
+                    WorkDuration = 23,
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddDays(1),
+                    Comments = "Hello"
+                },
+            }
+
+        },
+          {
+            new Line
+            {
+                LineNumber = 0,
+                WorkOrder = {Id =1111,
+                    ProductName = "כוס נייר",
+                    Quantity= 3333,
+                    WorkDuration = 24,
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddDays(1),
+                    Comments = "Hello world"
+                },
+            }
+
+        },
+
+    };
+
+
+}

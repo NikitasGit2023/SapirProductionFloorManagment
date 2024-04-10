@@ -1,0 +1,482 @@
+﻿
+
+@if (!PrevShiftIsShowed)
+{
+    <div class="container" >
+        <div class="row">
+            <div class="col-sm-12 my-5">
+                <RadzenCard class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
+                    <RadzenCheckBox @bind-Value="@smooth" Name="smooth"></RadzenCheckBox>
+                    <RadzenLabel Text="Smooth" Component="smooth" Style="margin-right: 1rem;" />
+                    <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
+                    <RadzenLabel Text="Show Data Labels" Component="dataLabels" Style="margin-right: 1rem;" />
+                    <RadzenCheckBox @bind-Value="@showMarkers" Name="markers"></RadzenCheckBox>
+                    <RadzenLabel Text="Show Markers" Component="markers" />
+                    <RadzenCheckBox @bind-Value="@PrevShiftIsShowed" Name="shift"></RadzenCheckBox>
+                    <RadzenLabel Text="Show Previous Shift" Component="shift" />
+                </RadzenCard>
+                <RadzenChart>
+                    <RadzenLineSeries Smooth="@smooth" Data="@line1" CategoryProperty="Hour" Title="Line 1" LineType="LineType.Dashed" ValueProperty="Quantity">
+                        <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                    </RadzenLineSeries>
+                    <RadzenLineSeries Smooth="@smooth" Data="@line2" CategoryProperty="Hour" Title="Line 2" ValueProperty="Quantity">
+                        <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Circle" />
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                        <RadzenLineSeries Smooth="@smooth" Data="@line3" CategoryProperty="Hour" Title="Line 3" LineType="LineType.Dashed" ValueProperty="Quantity">
+                            <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                            <RadzenLineSeries Smooth="@smooth" Data="@line4" CategoryProperty="Hour" Title="Line 4" LineType="LineType.Dashed" ValueProperty="Quantity">
+                                <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                                <RadzenLineSeries Smooth="@smooth" Data="@line5" CategoryProperty="Hour" Title="Line 5" LineType="LineType.Dashed" ValueProperty="Quantity">
+                                    <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                                </RadzenLineSeries>
+                            </RadzenLineSeries>
+                        </RadzenLineSeries>
+                    </RadzenLineSeries>
+                    <RadzenCategoryAxis Padding="20" />
+                    <RadzenValueAxis>
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Production Amount" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            </div>
+        </div>
+    </div>
+
+    
+}
+
+@if(PrevShiftIsShowed)
+{
+        <div class="container">
+    <div class="row">
+            <div class="col-sm-12 my-5">
+                <RadzenCard class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
+                    <RadzenCheckBox @bind-Value="@smooth" Name="smooth"></RadzenCheckBox>
+                    <RadzenLabel Text="Smooth" Component="smooth" Style="margin-right: 1rem;" />
+                    <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
+                    <RadzenLabel Text="Show Data Labels" Component="dataLabels" Style="margin-right: 1rem;" />
+                    <RadzenCheckBox @bind-Value="@showMarkers" Name="markers"></RadzenCheckBox>
+                    <RadzenLabel Text="Show Markers" Component="markers" />
+                    <RadzenCheckBox @bind-Value="@PrevShiftIsShowed" Name="shift"></RadzenCheckBox>
+                    <RadzenLabel Text="Show Previous Shift" Component="shift" />
+                </RadzenCard>
+                <RadzenChart>
+                    <RadzenLineSeries Smooth="@smooth" Data="@line1" CategoryProperty="Hour" Title="Line 1" LineType="LineType.Dashed" ValueProperty="Quantity">
+                        <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                    </RadzenLineSeries>
+                    <RadzenLineSeries Smooth="@smooth" Data="@line2" CategoryProperty="Hour" Title="Line 2" ValueProperty="Quantity">
+                        <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Circle" />
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                        <RadzenLineSeries Smooth="@smooth" Data="@line3" CategoryProperty="Hour" Title="Line 3" LineType="LineType.Dashed" ValueProperty="Quantity">
+                            <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                            <RadzenLineSeries Smooth="@smooth" Data="@line4" CategoryProperty="Hour" Title="Line 4" LineType="LineType.Dashed" ValueProperty="Quantity">
+                                <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                                <RadzenLineSeries Smooth="@smooth" Data="@line5" CategoryProperty="Hour" Title="Line 5" LineType="LineType.Dashed" ValueProperty="Quantity">
+                                    <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                                </RadzenLineSeries>
+                            </RadzenLineSeries>
+                        </RadzenLineSeries>
+                    </RadzenLineSeries>
+                    <RadzenCategoryAxis Padding="20" />
+                    <RadzenValueAxis>
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Production Amount" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            </div>
+        </div>
+    </div>
+    
+}
+
+@code 
+{
+    class StickGraphItem
+    {
+        public string? Quarter { get; set; }
+        public double Revenue { get; set; }
+    }
+
+    StickGraphItem[] revenue = new StickGraphItem[]
+    {
+      new StickGraphItem { Quarter = "Line 1", Revenue = 13 },
+      new StickGraphItem { Quarter = "Line 2", Revenue = 26 },
+      new StickGraphItem { Quarter = "Line 3", Revenue = 39},
+      new StickGraphItem { Quarter = "Line 4", Revenue = 52},
+      new StickGraphItem { Quarter = "Line 5", Revenue = 66}
+    };
+
+    //here starts other graph
+
+    bool smooth = false;
+    bool showDataLabels = false;
+    bool showMarkers = true;
+    bool PrevShiftIsShowed = false;
+
+    class LineGraphItem
+    {
+        public string? Hour { get; set; }
+        public double Quantity { get; set; }
+    }
+
+
+    //string FormatAsUSD(object value)
+    //{
+    //    return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
+    //}
+
+    LineGraphItem[] line1 = new LineGraphItem[] {
+        new LineGraphItem
+        {
+            Hour = "6:00",
+            Quantity = 1
+        },
+        new LineGraphItem
+        {
+            Hour = "7:00",
+            Quantity = 2
+        },
+        new LineGraphItem
+        {
+            Hour = "8:00",
+            Quantity = 3
+        },
+        new LineGraphItem
+        {
+            Hour = "9:00",
+            Quantity = 4
+        },
+        new LineGraphItem
+        {
+            Hour = "10:00",
+            Quantity = 5
+        },
+        new LineGraphItem
+        {
+            Hour = "11:00",
+            Quantity = 6
+        },
+        new LineGraphItem
+        {
+            Hour = "12:00",
+            Quantity = 7
+        },
+        new LineGraphItem
+        {
+            Hour = "13:00",
+            Quantity = 8
+        },
+        new LineGraphItem
+        {
+            Hour = "14:00",
+            Quantity = 9
+        },
+        new LineGraphItem
+        {
+            Hour = "15:00",
+            Quantity = 10
+        },
+        new LineGraphItem
+        {
+            Hour = "16:00",
+            Quantity = 11
+        },
+        new LineGraphItem
+        {
+            Hour = "17:00",
+            Quantity = 12
+        },
+         new LineGraphItem
+        {
+            Hour = "18:00",
+            Quantity = 13
+        }
+    };
+
+    LineGraphItem[] line2 = new LineGraphItem[] {
+        new LineGraphItem
+        {
+            Hour = "6:00",
+            Quantity = 14
+        },
+        new LineGraphItem
+        {
+            Hour = "7:00",
+            Quantity = 15
+        },
+        new LineGraphItem
+        {
+            Hour = "8:00",
+            Quantity = 16
+        },
+        new LineGraphItem
+        {
+            Hour = "9:00",
+            Quantity = 17
+        },
+        new LineGraphItem
+        {
+            Hour = "10:00",
+            Quantity = 18
+        },
+        new LineGraphItem
+        {
+            Hour = "11:00",
+            Quantity = 19
+        },
+        new LineGraphItem
+        {
+            Hour = "12:00",
+            Quantity = 20
+        },
+        new LineGraphItem
+        {
+            Hour = "13:00",
+            Quantity = 21
+        },
+        new LineGraphItem
+        {
+            Hour = "14:00",
+            Quantity = 22
+        },
+        new LineGraphItem
+        {
+            Hour = "15:00",
+            Quantity = 23
+        },
+        new LineGraphItem
+        {
+            Hour = "16:00",
+            Quantity = 24
+        },
+        new LineGraphItem
+        {
+            Hour = "17:00",
+            Quantity = 25
+        },
+                 new LineGraphItem
+        {
+            Hour = "18:00",
+            Quantity = 26
+        }
+    };
+
+
+    LineGraphItem[] line3 = new LineGraphItem[] {
+        new LineGraphItem
+        {
+            Hour = "6:00",
+            Quantity = 27
+        },
+        new LineGraphItem
+        {
+            Hour = "7:00",
+            Quantity = 28
+        },
+        new LineGraphItem
+        {
+            Hour = "8:00",
+            Quantity = 29
+        },
+        new LineGraphItem
+        {
+            Hour = "9:00",
+            Quantity = 30
+        },
+        new LineGraphItem
+        {
+            Hour = "10:00",
+            Quantity = 31
+        },
+        new LineGraphItem
+        {
+            Hour = "11:00",
+            Quantity = 32
+        },
+        new LineGraphItem
+        {
+            Hour = "12:00",
+            Quantity = 33
+        },
+        new LineGraphItem
+        {
+            Hour = "13:00",
+            Quantity = 34
+        },
+        new LineGraphItem
+        {
+            Hour = "14:00",
+            Quantity = 35
+        },
+        new LineGraphItem
+        {
+            Hour = "15:00",
+            Quantity = 36
+        },
+        new LineGraphItem
+        {
+            Hour = "16:00",
+            Quantity = 37
+        },
+        new LineGraphItem
+        {
+            Hour = "17:00",
+            Quantity = 38
+        },
+                 new LineGraphItem
+        {
+            Hour = "18:00",
+            Quantity = 39
+        }
+    };
+
+
+    LineGraphItem[] line4 = new LineGraphItem[] {
+        new LineGraphItem
+        {
+            Hour = "6:00",
+            Quantity = 40
+        },
+        new LineGraphItem
+        {
+            Hour = "7:00",
+            Quantity = 41
+        },
+        new LineGraphItem
+        {
+            Hour = "8:00",
+            Quantity = 42
+        },
+        new LineGraphItem
+        {
+            Hour = "9:00",
+            Quantity = 44
+        },
+        new LineGraphItem
+        {
+            Hour = "10:00",
+            Quantity = 45
+        },
+        new LineGraphItem
+        {
+            Hour = "11:00",
+            Quantity = 46
+        },
+        new LineGraphItem
+        {
+            Hour = "12:00",
+            Quantity = 47
+        },
+        new LineGraphItem
+        {
+            Hour = "13:00",
+            Quantity = 48
+        },
+        new LineGraphItem
+        {
+            Hour = "14:00",
+            Quantity = 49
+        },
+        new LineGraphItem
+        {
+            Hour = "15:00",
+            Quantity = 50
+        },
+        new LineGraphItem
+        {
+            Hour = "16:00",
+            Quantity = 51
+        },
+        new LineGraphItem
+        {
+            Hour = "17:00",
+            Quantity = 52
+        },
+
+                 new LineGraphItem
+        {
+            Hour = "18:00",
+            Quantity = 53
+        }
+    };
+
+
+    LineGraphItem[] line5 = new LineGraphItem[] {
+        new LineGraphItem
+        {
+            Hour = "6:00",
+            Quantity = 54
+        },
+        new LineGraphItem
+        {
+            Hour = "7:00",
+            Quantity = 55
+        },
+        new LineGraphItem
+        {
+            Hour = "8:00",
+            Quantity = 56
+        },
+        new LineGraphItem
+        {
+            Hour = "9:00",
+            Quantity = 57
+        },
+        new LineGraphItem
+        {
+            Hour = "10:00",
+            Quantity = 58
+        },
+        new LineGraphItem
+        {
+            Hour = "11:00",
+            Quantity = 59
+        },
+        new LineGraphItem
+        {
+            Hour = "12:00",
+            Quantity = 60
+        },
+        new LineGraphItem
+        {
+            Hour = "13:00",
+            Quantity = 61
+        },
+        new LineGraphItem
+        {
+            Hour = "14:00",
+            Quantity = 62
+        },
+        new LineGraphItem
+        {
+            Hour = "15:00",
+            Quantity = 63
+        },
+        new LineGraphItem
+        {
+            Hour = "16:00",
+            Quantity = 64
+        },
+        new LineGraphItem
+        {
+            Hour = "17:00",
+            Quantity = 65
+        },
+                 new LineGraphItem
+        {
+            Hour = "18:00",
+            Quantity = 66
+        }
+    };
+
+    //Formatter="@FormatAsUSD"
+
+}

@@ -1,0 +1,35 @@
+﻿@page "/uploadinfo"
+@using SapirProductionFloorManagment.Client.Shared.Tables
+
+<h3>Upload Information</h3>
+
+<nav class="navbar bg-body-tertiary">
+    <form class="container-fluid justify-content-start">
+        <button @onclick="()=> ShowTable()" class="btn btn-sm btn-outline-secondary" type="button">Work Orders</button>
+        <button @onclick="()=> ShowTable()" class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">Lines</button>
+    </form>
+</nav>
+
+<div class="orders-table" style="width: 60%;">
+    <WorkOrdersTable IsCrudFrozen="true">
+    </WorkOrdersTable>
+</div>
+
+
+<div class="lines-table" style="width:75%">
+    <LinesTable>
+    </LinesTable>
+</div>
+
+
+
+
+@code {
+    //here can be uploaded info of machines and lines
+
+    void ShowTable()
+    {
+        // Reset visibility
+    }
+
+}

@@ -1,0 +1,27 @@
+﻿@using  SapirProductionFloorManagment.Shared
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@customers" TItem="Customer" ColumnWidth="40px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+    <Columns>
+        <RadzenDataGridColumn TItem="Customer" Property="CustomerId" Title="Customer No" Filterable="false" Frozen="true" Width="10px" TextAlign="TextAlign.Center" />
+         <RadzenDataGridColumn TItem="Customer" Property="Name" Title="Name" Filterable="false" Frozen="true" Width="10px" TextAlign="TextAlign.Center" />
+    </Columns> 
+</RadzenDataGrid>
+
+
+
+
+@code {
+
+    List<Customer> fetchedCustomers = new();
+    IEnumerable<Customer>? customers;
+    IList<Customer>? selectedCustomers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = fetchedCustomers;
+        selectedCustomers = customers.Take(1).ToList();
+        await base.OnInitializedAsync();
+    }
+
+}

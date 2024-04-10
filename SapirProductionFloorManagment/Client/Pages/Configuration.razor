@@ -1,0 +1,82 @@
+﻿@page "/config"
+@using SapirProductionFloorManagment.Client.Shared
+@using SapirProductionFloorManagment.Client.Shared.Tables
+
+<h3>Configuration</h3>
+
+<nav class="navbar bg-body-tertiary">
+    <form class="container-fluid justify-content-start">
+        <button @onclick="()=> SwitchTable(linesTable.Name)" class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">Lines</button>      
+        <button @onclick="()=> SwitchTable(usersTable.Name)" class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">Users</button>
+        <button @onclick="()=> SwitchTable(productsTable.Name)" class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">Products</button>
+    </form>
+</nav>
+
+
+<br/>
+<LinesTable IsVisible="linesVisible" @ref="linesTable" Name="Lines">
+</LinesTable>
+
+<UsersTable IsVisible="usersVisible" @ref="usersTable" Name="Users">
+</UsersTable>
+
+<ProductsTable IsVisible="productsVisible" @ref="productsTable" Name="Products">
+</ProductsTable>
+
+@*Should I add more tables?*@
+
+
+
+
+@code {
+    public LinesTable? linesTable;
+    public UsersTable? usersTable;
+    public ProductsTable? productsTable;
+    public List<TableBase>?tables;
+    private bool linesVisible = true;
+    private bool usersVisible = false;
+    private bool productsVisible = false;
+
+
+    protected override Task OnInitializedAsync()
+    {
+        linesTable = new();
+        usersTable = new();
+        productsTable = new();
+
+        tables = new List<TableBase>() {linesTable, usersTable, productsTable};
+        return base.OnInitializedAsync();
+    }
+   
+
+    void SwitchTable(string tableName)
+    {
+        //reset all to hidden
+        linesVisible = false;
+        usersVisible = false;
+        productsVisible = false;
+
+        //shows lines table
+        if(tableName == linesTable?.Name)
+        {
+            linesVisible = !linesVisible;
+        }
+
+        //show users table
+        else if(tableName == usersTable?.Name)
+        {
+            usersVisible = !usersVisible;
+        }
+        //show products table
+        else if (tableName == productsTable?.Name)
+        {
+            productsVisible = !productsVisible;
+        }
+
+    }
+
+
+
+    
+
+}
