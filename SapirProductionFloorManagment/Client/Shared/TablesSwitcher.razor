@@ -2,10 +2,10 @@
 
 <nav class="navbar bg-body-tertiary">
     <form class="container-fluid justify-content-start">
-        @for(int i=0; i<Tables.Count(); i++)
+        @foreach(var target in Switchers.Keys)
         {
-            <button @onclick="()=> SwitchToTable(Tables[i].Name)" 
-            class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">@Tables[i].Name</button>    
+            <button @onclick="()=> OnClick.InvokeAsync(SetTableName(target))" 
+            class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">@target</button>    
         }
     </form>
 </nav>
@@ -13,28 +13,35 @@
 
 @code 
 {
+
+
     [Parameter]
-    public List<TableBase> Tables { get; set;}
+    public EventCallback OnClick { get; set;}
 
-    protected override Task OnInitializedAsync()
+
+    public string outPut = "";
+
+    public string SetTableName(string target)
     {
-
-        return base.OnInitializedAsync();
+        outPut = target;
+        return target;
     }
 
-    private void SwitchToTable(string target)
+    public string GetTableName()
     {
-        Tables.ForEach(table =>
-        {
-            if (table.Name != target)
-            {
-                table.IsVisible = false;
-            }
-            else
-                table.IsVisible = true;
-        });
-
+        return outPut;
     }
 
 
+    [Parameter]
+    public Dictionary<string, bool>? Switchers { get; set; }
+
+    [Parameter]
+    public List<string>? Names { get; set; }
+
+ 
 }
+
+
+
+

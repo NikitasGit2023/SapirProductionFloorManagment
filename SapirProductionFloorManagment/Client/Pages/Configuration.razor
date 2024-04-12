@@ -4,77 +4,78 @@
 
 <h3>Configuration</h3>
 
-<nav class="navbar bg-body-tertiary">
-    <form class="container-fluid justify-content-start">
-        <button @onclick="()=> SwitchTable(linesTable.Name)" class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">Lines</button>      
-        <button @onclick="()=> SwitchTable(usersTable.Name)" class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">Users</button>
-        <button @onclick="()=> SwitchTable(productsTable.Name)" class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">Products</button>
-    </form>
-</nav>
-
+<TablesSwitcher @ref="tablesSwitcher" OnClick="()=>SwitchToTable()" Switchers="keyValuePairs"/>
 
 <br/>
-<LinesTable IsVisible="linesVisible" @ref="linesTable" Name="Lines">
+
+
+<LinesTable IsVisible="@keyValuePairs["Lines"]" Name="Lines">
 </LinesTable>
 
-<UsersTable IsVisible="usersVisible" @ref="usersTable" Name="Users">
-</UsersTable>
-
-<ProductsTable IsVisible="productsVisible" @ref="productsTable" Name="Products">
-</ProductsTable>
-
-@*Should I add more tables?*@
 
 
+<UsersTable IsVisible="@keyValuePairs["Users"]" Name="Users">
+    </UsersTable>
+    
+
+
+    <ProductsTable IsVisible="@keyValuePairs["Products"]" Name="Products">
+    </ProductsTable>
+  
+    
 
 
 @code {
-    public LinesTable? linesTable;
-    public UsersTable? usersTable;
-    public ProductsTable? productsTable;
-    public List<TableBase>?tables;
-    private bool linesVisible = true;
-    private bool usersVisible = false;
-    private bool productsVisible = false;
+
+
+    Dictionary<string, bool> keyValuePairs = new();
+    TablesSwitcher tablesSwitcher = new();
 
 
     protected override Task OnInitializedAsync()
     {
-        linesTable = new();
-        usersTable = new();
-        productsTable = new();
+        keyValuePairs.Add("Products", false);
+        keyValuePairs.Add("Users", false);
+        keyValuePairs.Add("Lines", true);
 
-        tables = new List<TableBase>() {linesTable, usersTable, productsTable};
         return base.OnInitializedAsync();
     }
-   
 
-    void SwitchTable(string tableName)
+    private void SwitchToTable()
     {
-        //reset all to hidden
-        linesVisible = false;
-        usersVisible = false;
-        productsVisible = false;
+        var outPut =  tablesSwitcher.GetTableName();
 
-        //shows lines table
-        if(tableName == linesTable?.Name)
+        foreach (var visibility in keyValuePairs?.Keys)
         {
-            linesVisible = !linesVisible;
-        }
+            keyValuePairs[visibility] = false;
 
-        //show users table
-        else if(tableName == usersTable?.Name)
-        {
-            usersVisible = !usersVisible;
         }
-        //show products table
-        else if (tableName == productsTable?.Name)
-        {
-            productsVisible = !productsVisible;
-        }
+        MakeVisible(outPut);
+        StateHasChanged();
 
     }
 
+
+
+    private void MakeVisible(string target)
+    {
+
+        foreach (KeyValuePair<string, bool> kvp in keyValuePairs)
+        {
+            if (kvp.Key == target)
+            {
+                SetValueToTrue(target);
+
+            }
+        }
+    }
+
+
+    private void SetValueToFalse(string key) => keyValuePairs[key] = false;
+    private void SetValueToTrue(string key) => keyValuePairs[key] = true;
+   
+
+   
 
 
     
