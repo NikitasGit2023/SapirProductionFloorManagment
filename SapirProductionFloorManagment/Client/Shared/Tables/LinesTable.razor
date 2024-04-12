@@ -4,12 +4,26 @@
 
 <PageTitle>Lines</PageTitle>
 
-@if (IsCrudFrozen)
-{
-    <RadzenStack Visible="IsVisible" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px" class="mt-2 mb-4">
-        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Line" Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
-    </RadzenStack>   
-}
+
+<div class="d-flex flex-row-reverse">
+    @if (!IsCrudFrozen)
+    {
+        <div class="p-2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Line" Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
+        </div>
+    }
+   @if(ImportFilesEnabled ==true)
+    {
+        <div class="p-2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
+        </div>
+        <div class="p-2">
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Export XLS" />
+        </div>   
+    }
+</div>
+
+
 
 
     <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
@@ -88,7 +102,7 @@
 @code {
 
     DataGridEditMode editMode = DataGridEditMode.Single;
-    RadzenDataGrid<Line>? linesGrid;
+    RadzenDataGrid<Line>? linesGrid = new();
     List<Line> linesToInsert = new List<Line>();
     List<Line> linesToUpdate = new List<Line>();
 
