@@ -5,13 +5,13 @@
 
 <TablesSwitcher @ref="tablesSwitcher" Switchers="keyValuePairs" OnClick="SwitchToTable"/>
 
-<WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" IsCrudFrozen="true"/>
+<WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" IsCrudFrozen="true" ImportFilesEnabled="false"/>
 
-<ProductsTable IsVisible="@keyValuePairs["Products"]" IsCrudFrozen="true"/>
+<ProductsTable IsVisible="@keyValuePairs["Products"]" IsCrudFrozen="true" ImportFilesEnabled="false" />
 
-<LinesTable IsVisible="@keyValuePairs["Lines"]"  IsCrudFrozen="true"/>
+<LinesTable IsVisible="@keyValuePairs["Lines"]" IsCrudFrozen="true" ImportFilesEnabled="false" />
 
-<CustomersTable IsVisible="@keyValuePairs["Customers"]" IsCrudFrozen="true"/>
+<CustomersTable IsVisible="@keyValuePairs["Customers"]" IsCrudFrozen="true"  ImportFilesEnabled="false"/>
 
 
 @code {

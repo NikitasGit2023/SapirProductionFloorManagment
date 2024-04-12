@@ -8,19 +8,11 @@
 
 <br/>
 
+<LinesTable IsCrudFrozen="false" ImportFilesEnabled="false" IsVisible="@keyValuePairs["Lines"]" Name="Lines"/>
 
-<LinesTable IsVisible="@keyValuePairs["Lines"]" Name="Lines">
-</LinesTable>
-
-
-
-<UsersTable IsVisible="@keyValuePairs["Users"]" Name="Users">
-    </UsersTable>
-    
-
-
-    <ProductsTable IsVisible="@keyValuePairs["Products"]" Name="Products">
-    </ProductsTable>
+<UsersTable IsVisible="@keyValuePairs["Users"]" Name="Users"/>
+ 
+<ProductsTable IsVisible="@keyValuePairs["Products"]" Name="Products"/>
   
     
 
@@ -31,6 +23,9 @@
     private Dictionary<string, bool> keyValuePairs = new();
     private TablesSwitcher tablesSwitcher = new();
 
+    private void SetValueToFalse(string key) => keyValuePairs[key] = false;
+    private void SetValueToTrue(string key) => keyValuePairs[key] = true;
+
 
     protected override Task OnInitializedAsync()
     {
@@ -40,6 +35,7 @@
 
         return base.OnInitializedAsync();
     }
+
 
     private void SwitchToTable()
     {
@@ -71,8 +67,7 @@
     }
 
 
-    private void SetValueToFalse(string key) => keyValuePairs[key] = false;
-    private void SetValueToTrue(string key) => keyValuePairs[key] = true;
+
    
 
    

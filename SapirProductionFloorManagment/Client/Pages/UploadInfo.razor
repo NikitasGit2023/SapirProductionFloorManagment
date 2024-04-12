@@ -9,18 +9,14 @@
 </TablesSwitcher>
 
 <div class="orders-table" style="width: 60%;">
-    <WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" IsCrudFrozen="true">
-    </WorkOrdersTable>
+    <WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" ImportFilesEnabled="true" IsCrudFrozen="false"/>
+ 
 </div>
 
 
 <div class="lines-table" style="width:75%">
 
-    <LinesTable IsVisible="@keyValuePairs["Lines"]" 
-        IsCrudFrozen="false"
-        ImportFilesEnabled="true">
-    </LinesTable>
-
+    <LinesTable IsVisible="@keyValuePairs["Lines"]" ImportFilesEnabled="true" IsCrudFrozen ="false" />              
 </div>
 
 

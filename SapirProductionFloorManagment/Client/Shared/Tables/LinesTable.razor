@@ -4,24 +4,25 @@
 
 <PageTitle>Lines</PageTitle>
 
-
-<div class="d-flex flex-row-reverse">
-    @if (!IsCrudFrozen)
-    {
-        <div class="p-2">
-            <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Line" Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
-        </div>
-    }
-   @if(ImportFilesEnabled ==true)
-    {
-        <div class="p-2">
-            <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
-        </div>
-        <div class="p-2">
-            <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Export XLS" />
-        </div>   
-    }
-</div>
+<RadzenHtml Visible="IsVisible">
+    <div class="d-flex flex-row-reverse">
+        @if (IsCrudFrozen == false)
+        {
+            <div class="p-2">
+                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Line" Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
+            </div>
+        }
+        @if (ImportFilesEnabled == true)
+        {
+            <div class="p-2">
+                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
+            </div>
+            <div class="p-2">
+                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Export XLS" />
+            </div>
+        }
+    </div>
+</RadzenHtml>
 
 
 

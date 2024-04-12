@@ -3,7 +3,7 @@
 
 <PageTitle>Users</PageTitle>
 
-<RadzenStack Visible="IsVisible" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px" class="mt-2 mb-4">
+<RadzenStack Visible="IsVisible" Orientation="Orientation.Horizontal" AlignItems="AlignItems.End" Gap="10px" class="mt-2 mb-4">
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add User" Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && usersToInsert.Count() > 0)" />
 </RadzenStack>
 
