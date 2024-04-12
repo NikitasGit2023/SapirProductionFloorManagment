@@ -1,23 +1,21 @@
 ﻿@page "/uploadinfo"
 @using SapirProductionFloorManagment.Client.Shared.Tables
+@using SapirProductionFloorManagment.Client.Shared
 
 <h3>Upload Information</h3>
 
-<nav class="navbar bg-body-tertiary">
-    <form class="container-fluid justify-content-start">
-        <button @onclick="()=> ShowTable()" class="btn btn-sm btn-outline-secondary" type="button">Work Orders</button>
-        <button @onclick="()=> ShowTable()" class="btn btn-sm btn-outline-secondary" type="button" style="margin-left:5px;">Lines</button>
-    </form>
-</nav>
+<TablesSwitcher @ref="tablesSwitcher" Switchers="keyValuePairs" OnClick="SwitchToTable">
+
+</TablesSwitcher>
 
 <div class="orders-table" style="width: 60%;">
-    <WorkOrdersTable IsCrudFrozen="true">
+    <WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" IsCrudFrozen="true">
     </WorkOrdersTable>
 </div>
 
 
 <div class="lines-table" style="width:75%">
-    <LinesTable>
+    <LinesTable IsVisible="@keyValuePairs["Lines"]" IsCrudFrozen=true>
     </LinesTable>
 </div>
 
@@ -25,11 +23,51 @@
 
 
 @code {
-    //here can be uploaded info of machines and lines
 
-    void ShowTable()
+    private Dictionary<string, bool> keyValuePairs = new();
+    private TablesSwitcher tablesSwitcher = new();
+  
+    protected override Task OnInitializedAsync()
     {
-        // Reset visibility
+        keyValuePairs.Add("Orders", true);
+        keyValuePairs.Add("Lines", false);
+
+        return base.OnInitializedAsync();
     }
 
+
+
+    private void SwitchToTable()
+    {
+        var outPut = tablesSwitcher.GetTableName();
+
+        foreach (var visibility in keyValuePairs?.Keys)
+        {
+            keyValuePairs[visibility] = false;
+
+        }
+        MakeVisible(outPut);
+        StateHasChanged();
+
+    }
+
+
+
+    private void MakeVisible(string target)
+    {
+
+        foreach (KeyValuePair<string, bool> kvp in keyValuePairs)
+        {
+            if (kvp.Key == target)
+            {
+                SetValueToTrue(target);
+
+            }
+        }
+    }
+
+
+    private void SetValueToFalse(string key) => keyValuePairs[key] = false;
+    private void SetValueToTrue(string key) => keyValuePairs[key] = true;
 }
+  
