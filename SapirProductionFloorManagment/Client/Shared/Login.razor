@@ -7,7 +7,7 @@
             <form class="card-form">
             <label for="username">Worker ID</label>
             <div class="card-input-container username">
-                <input @bind="User.WorkerId" type="number" placeholder="@PlaceHolder" id="id">
+                <input @bind="workerId" type="text" placeholder="@PlaceHolder" id="id">
             </div>
             <label for="password">Password</label>
             <div class="card-input-container password">
@@ -23,12 +23,15 @@
     [Parameter]
     public User? User { get; set; }
 
+
     [Parameter]
     public string? PlaceHolder { get; set; } = "Enter your worker Id";
 
+    public string workerId = string.Empty;
+
     public void ParseToInt()
     {
-        User.WorkerId = Int32.Parse(PlaceHolder);
+        User.WorkerId = Int32.Parse(workerId);
 
     }
 
