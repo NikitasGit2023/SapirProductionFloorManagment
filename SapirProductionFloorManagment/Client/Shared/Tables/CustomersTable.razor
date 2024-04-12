@@ -1,4 +1,6 @@
-﻿@using  SapirProductionFloorManagment.Shared
+﻿
+@using  SapirProductionFloorManagment.Shared
+@inherits TableBase
 
 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                 Data="@customers" TItem="Customer" ColumnWidth="40px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
