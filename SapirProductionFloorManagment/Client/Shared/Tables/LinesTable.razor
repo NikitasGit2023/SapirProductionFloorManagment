@@ -36,74 +36,74 @@
 
     </div>
     <div class="p-2">
-         <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
-                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
-                    AllowSorting="true" Data="@lines" TItem="Line"
-                    SelectionMode="DataGridSelectionMode.Single">
-        <Columns>
-            <RadzenDataGridColumn TItem="Line" Property="LineNumber" Title="No" />
+        <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
+                        AllowSorting="true" Data="@lines" TItem="Line"
+                        SelectionMode="DataGridSelectionMode.Single">
+            <Columns>
+                <RadzenDataGridColumn TItem="Line" Property="LineNumber" Title="No" />
 
-            <RadzenDataGridColumn TItem="Line" Property="Name" Title="Line Name" Frozen="IsCrudFrozen">
-                <EditTemplate Context="line">
-                    <RadzenTextBox @bind-Value="line.Name" Style="width:200px; display: block" Name="LineName" />
-                </EditTemplate>
-            </RadzenDataGridColumn>
-
-            <RadzenDataGridColumn TItem="Line" Property="ProductionRate" Title="Rate" Frozen="IsCrudFrozen">
-                <EditTemplate Context="line">
-                    <RadzenNumeric @bind-Value="line.ProductionRate" Style="width:100%; display: block;" />
-                </EditTemplate>
-            </RadzenDataGridColumn>
-
-
-            <RadzenDataGridColumn TItem="Line" Property="ShiftStartWork" Title="Start Work" Frozen="IsCrudFrozen">
-                <EditTemplate Context="line">
-                    <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftStartWork"
-                                    Style="width:100%; display: block;" />
-                </EditTemplate>
-            </RadzenDataGridColumn>
-
-
-            <RadzenDataGridColumn TItem="Line" Property="ShiftEndWork" Title="End Work" Frozen="IsCrudFrozen">
-                <EditTemplate Context="line">
-                    <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftEndWork"
-                                    Style="width:200px; display: block" />
-                </EditTemplate>
-            </RadzenDataGridColumn>
-
-            <RadzenDataGridColumn TItem="Line" Property="WorkDays" Title="Work Days" Frozen="IsCrudFrozen">
-                <Template Context="line">
-                    <div class="d-flex flex-row mb-3">
-                        <WorkingDaysCheck Line="line">
-                        </WorkingDaysCheck>
-                    </div>
-                </Template>
-            </RadzenDataGridColumn>
-            @if (IsCrudFrozen)
-            {
-                @*from here crud buttons*@
-                <RadzenDataGridColumn TItem="Line" Context="line" Filterable="false" Sortable="false"
-                                  TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
-                    <Template Context="line">
-                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(line))" @onclick:stopPropagation="true">
-                        </RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(line))" @onclick:stopPropagation="true">
-                        </RadzenButton>
-                    </Template>
+                <RadzenDataGridColumn TItem="Line" Property="Name" Title="Line Name" Frozen="IsCrudFrozen">
                     <EditTemplate Context="line">
-                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(line))">
-                        </RadzenButton>
-                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(line))">
-                        </RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(line))">
-                        </RadzenButton>
+                        <RadzenTextBox @bind-Value="line.Name" Style="width:200px; display: block" Name="LineName" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-            }
 
-        </Columns>
-    </RadzenDataGrid>
-    
+                <RadzenDataGridColumn TItem="Line" Property="ProductionRate" Title="Rate" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="line">
+                        <RadzenNumeric @bind-Value="line.ProductionRate" Style="width:100%; display: block;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn TItem="Line" Property="ShiftStartWork" Title="Start Work" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="line">
+                        <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftStartWork"
+                                        Style="width:100%; display: block;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn TItem="Line" Property="ShiftEndWork" Title="End Work" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="line">
+                        <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftEndWork"
+                                        Style="width:200px; display: block" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="Line" Property="WorkDays" Title="Work Days" Frozen="IsCrudFrozen">
+                    <Template Context="line">
+                        <div class="d-flex flex-row mb-3">
+                            <WorkingDaysCheck Line="line">
+                            </WorkingDaysCheck>
+                        </div>
+                    </Template>
+                </RadzenDataGridColumn>
+                @if (IsCrudFrozen)
+                {
+                    @*from here crud buttons*@
+                    <RadzenDataGridColumn TItem="Line" Context="line" Filterable="false" Sortable="false"
+                                      TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+                        <Template Context="line">
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(line))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(line))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                        </Template>
+                        <EditTemplate Context="line">
+                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(line))">
+                            </RadzenButton>
+                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(line))">
+                            </RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(line))">
+                            </RadzenButton>
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                }
+
+            </Columns>
+        </RadzenDataGrid>
+
 
 
     </div>
