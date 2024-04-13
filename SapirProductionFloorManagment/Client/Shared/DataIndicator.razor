@@ -1,20 +1,33 @@
 ﻿
     <div class="rz-shadow-1">
-        <div>
-            <img width="60" src="@IconSource" />
+    <div class="d-flex flex-column mb-3">
+        <div class="p-2">
+            <div class="d-flex flex-row mb-3">
+                <div class="p-2">
+                    <img width="60" src="@IconSource" />
+                </div>
+                <div id="title" class="p-2">
+                        @Title
+                </div>
+            </div>
         </div>
-        <div>
-            @Text
-        </div>
+        <div class="p-2">
+            @ChildContent
+            </div>
+    </div>
+   
     </div>
 
 
 @code 
 {
     [Parameter]
-    public string? Text { get; set; }
+    public string? Title { get; set; }
 
     [Parameter]
     public string? IconSource { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 
 }

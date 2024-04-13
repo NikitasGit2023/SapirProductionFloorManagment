@@ -1,9 +1,40 @@
 ﻿<div class="d-flex flex-row mb-3">
-    <div class="p-2"><DataIndicator IconSource="/conveyor-belt.png" /></div>
-    <div class="p-2"><DataIndicator IconSource="/top.png"/></div>
-    <div class="p-2"><DataIndicator IconSource="/productivity.png" /></div>
-    <div class="p-2"><DataIndicator IconSource="/operations.png" /></div>
-    <div class="p-2"><DataIndicator /></div>
+    <div class="p-2">
+        <DataIndicator Title="Lines Status" IconSource="/conveyor-belt.png">
+      
+          
+            <div class="d-flex flex-column mb-3">
+                <div class="p-2">
+                          <span style="color:green; font-weight:bolder; font-size:large;">Online:</span>
+                </div>
+                <div class="p-2">
+                    <span style="color:red; font-weight:bolder; font-size:large;">Offline:</span>
+                </div>
+            </div>
+            </DataIndicator>
+        </div>
+    <div class="p-2">
+        <DataIndicator Title="Top 5 Products" IconSource="/top.png">
+            <div class="d-flex flex-column mb-3">
+                <div class="p-2">Tesla Car</div>
+                <div class="p-2">Led Lamp</div>
+                <div class="p-2">Pepe Jeans</div>
+                <div class="p-2">British Cat</div>
+                <div class="p-2">Belagin Sherped</div>
+            </div>
+        </DataIndicator>
+        </div>
+    <div class="p-2">
+        <DataIndicator Title="Avg production rate" IconSource="/productivity.png">
+                25637 per hour
+            </DataIndicator>
+        </div>
+    <div class="p-2">
+        <DataIndicator Title="Production Balance" IconSource="/operations.png">
+            2500/80000
+            </DataIndicator>
+        </div>
+    @*<div class="p-2"><DataIndicator /></div>*@
 </div>
 
 <div class="d-flex flex-row mb-3">
