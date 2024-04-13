@@ -8,7 +8,8 @@
         @if (IsCrudFrozen == false)
         {
             <div class="p-2">
-                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Order" Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
+                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Order" Click="@InsertRow" 
+                                    Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
             </div>
         }
         @if (ImportFilesEnabled == true)
