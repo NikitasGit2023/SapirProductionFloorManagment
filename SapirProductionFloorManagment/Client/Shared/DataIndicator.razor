@@ -1,9 +1,20 @@
-﻿<div class="rz-shadow-1">
-    <span>
-        Nikita
-    </span>
-</div>
+﻿
+    <div class="rz-shadow-1">
+        <div>
+            <img width="60" src="@IconSource" />
+        </div>
+        <div>
+            @Text
+        </div>
+    </div>
 
-@code {
+
+@code 
+{
+    [Parameter]
+    public string? Text { get; set; }
+
+    [Parameter]
+    public string? IconSource { get; set; }
 
 }
