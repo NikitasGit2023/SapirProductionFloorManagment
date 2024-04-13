@@ -2,27 +2,34 @@
 @using SapirProductionFloorManagment.Client.Shared
 
 
+<div class="d-flex mb-3">
 
-<RadzenHtml Visible="IsVisible">
-    <div class="d-flex flex-row-reverse">
-        @if (IsCrudFrozen == false)
-        {
-            <div class="p-2">
-                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Order" Click="@InsertRow" 
-                                    Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
+    <div class="me-auto p-2">
+        <RadzenHtml Visible="IsVisible">
+            <div class="d-flex flex-row-reverse">
+                @if (IsCrudFrozen == false)
+                {
+                    <div class="p-2">
+                        <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="add_circle_outline" Text="Add Order" Click="@InsertRow"
+                                  Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
+                    </div>
+                }
+                @if (ImportFilesEnabled == true)
+                {
+                    <div class="p-2">
+                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
+                    </div>
+                    <div class="p-2">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="grid_on" Text="Export XLS" />
+                    </div>
+                }
             </div>
-        }
-        @if (ImportFilesEnabled == true)
-        {
-            <div class="p-2">
-                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
-            </div>
-            <div class="p-2">
-                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Export XLS" />
-            </div>
-        }
+        </RadzenHtml>
     </div>
-</RadzenHtml>
+ 
+</div>
+
+
 
 <RadzenDataGrid Visible="IsVisible" @ref="ordersGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"

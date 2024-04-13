@@ -3,31 +3,40 @@
 
 
 <PageTitle>Lines</PageTitle>
+@*
+<div class="d-flex mb-3">
+    <div class="me-auto p-2">Flex item</div>
+    <div class="p-2">Flex item</div>
+    <div class="p-2">Flex item</div>
+</div>*@
 
-<RadzenHtml Visible="IsVisible">
-    <div class="d-flex flex-row-reverse">
-        @if (IsCrudFrozen == false)
-        {
-            <div class="p-2">
-                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Line" Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
+<div class="d-flex flex-column mb-3">
+    <div class="p-2">
+        <RadzenHtml Visible="IsVisible">
+            <div class="d-flex flex-row-reverse">
+                @if (IsCrudFrozen == false)
+                {
+                    <div class="p-2">
+                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Line"
+                                  Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
+                    </div>
+                }
+                @if (ImportFilesEnabled == true)
+                {
+                    <div class="p-2">
+                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
+                    </div>
+                    <div class="p-2">
+                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Export XLS" />
+                    </div>
+                }
             </div>
-        }
-        @if (ImportFilesEnabled == true)
-        {
-            <div class="p-2">
-                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
-            </div>
-            <div class="p-2">
-                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Export XLS" />
-            </div>
-        }
+        </RadzenHtml>
+
+
     </div>
-</RadzenHtml>
-
-
-
-
-    <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+    <div class="p-2">
+         <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
                     AllowSorting="true" Data="@lines" TItem="Line"
                     SelectionMode="DataGridSelectionMode.Single">
@@ -96,6 +105,16 @@
     </RadzenDataGrid>
     
 
+
+    </div>
+
+</div>
+
+
+
+
+
+   
 
 
    
