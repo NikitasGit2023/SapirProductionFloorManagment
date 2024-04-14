@@ -1,38 +1,37 @@
-﻿<div class="d-flex flex-row mb-3">
+﻿@using SapirProductionFloorManagment.Client.Shared.Tables
+
+<div class="d-flex flex-row mb-3">
     <div class="p-2">
-        <DataIndicator Title="Lines Status" IconSource="/conveyor-belt.png">
-      
-          
+        <DataIndicator Style="padding-bottom:0px;" Title="Lines Status" IconSource="/conveyor-belt.png">
             <div class="d-flex flex-column mb-3">
-                <div class="p-2">
-                          <span style="color:green; font-weight:bolder; font-size:large;">Online:</span>
-                </div>
-                <div class="p-2">
-                    <span style="color:red; font-weight:bolder; font-size:large;">Offline:</span>
-                </div>
+                <div id="online-offline" class="p-2">
+                    <div class="p-2">
+                        <div class="d-flex flex-row mb-3">
+                            <div class="p-2"> <span style="color:green;font-size:large;">Online: 25</span></div>
+                            <div class="p-2"><span style="color:red;font-size:large;">Offline: 7</span></div>
+                        </div>
+                    </div>
+                </div>            
             </div>
             </DataIndicator>
         </div>
     <div class="p-2">
-        <DataIndicator Title="Top 5 Products" IconSource="/top.png">
+        <DataIndicator Style="padding-bottom: 14px;" Title="Avg production rate" IconSource="/productivity.png">
+            <span style="font-size:large">25,637 per hour</span>
+            </DataIndicator>
+        </div>
+    <div class="p-2">
+        <DataIndicator Style="padding-bottom: 14px;" Title="Production Balance" IconSource="/operations.png">
+            <span style="font-size:large">25,000 / 80,000</span>
+            </DataIndicator>
+        </div>
+         <div class="p-2">
+        <DataIndicator Style="padding-bottom: 0px;" Title="Top Product" IconSource="/top.png">
+
             <div class="d-flex flex-column mb-3">
-                <div class="p-2">Tesla Car</div>
-                <div class="p-2">Led Lamp</div>
-                <div class="p-2">Pepe Jeans</div>
-                <div class="p-2">British Cat</div>
-                <div class="p-2">Belagin Sherped</div>
+                <div class="p-2">Belgian Sherped</div>
             </div>
         </DataIndicator>
-        </div>
-    <div class="p-2">
-        <DataIndicator Title="Avg production rate" IconSource="/productivity.png">
-                25637 per hour
-            </DataIndicator>
-        </div>
-    <div class="p-2">
-        <DataIndicator Title="Production Balance" IconSource="/operations.png">
-            2500/80000
-            </DataIndicator>
         </div>
     @*<div class="p-2"><DataIndicator /></div>*@
 </div>
@@ -61,6 +60,8 @@
             </div>
         </div>
     </div>
+
+ @*   <DashboardTable></DashboardTable>*@
     
    
 </div>

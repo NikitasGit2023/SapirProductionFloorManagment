@@ -5,18 +5,7 @@
     <div class="container" >
         <div class="row">
             <div class="col-sm-12 my-5">
-
-                <div class="d-flex justify-content-end">
-                    <div class="graph-options ">
-                        <RadzenCard class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
-                            <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
-                            <RadzenLabel Text="Show Labels" Component="dataLabels" Style="margin-right: 1rem;" />
-                            <RadzenCheckBox @bind-Value="@PrevShiftIsShowed" Name="shift"></RadzenCheckBox>
-                            <RadzenLabel Text="Show Previous Shift" Component="shift" />
-                        </RadzenCard>
-                    </div>
-                </div>
-                   
+                  
                 <RadzenChart>
                     <RadzenLineSeries Smooth="@smooth" Data="@line1" CategoryProperty="Hour" Title="Line 1" LineType="LineType.Dashed" ValueProperty="Quantity">
                         <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />

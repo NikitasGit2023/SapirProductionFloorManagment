@@ -1,5 +1,6 @@
 ﻿@inherits TableBase
 @using SapirProductionFloorManagment.Client.Shared
+@using SapirProductionFloorManagment.Client.Shared.Buttons
 
 
 <div class="d-flex mb-3">
@@ -10,8 +11,7 @@
                 @if (IsCrudFrozen == false)
                 {
                     <div class="p-2">
-                        <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="add_circle_outline" Text="Add Order" Click="@InsertRow"
-                                  Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
+                        <AddRowButton Text="Add Order" OnClick="InsertRow" Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
                     </div>
                 }
                 @if (ImportFilesEnabled == true)

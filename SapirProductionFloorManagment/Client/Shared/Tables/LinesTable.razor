@@ -1,4 +1,5 @@
 ﻿@inherits TableBase
+@using SapirProductionFloorManagment.Client.Shared.Buttons
 @using SapirProductionFloorManagment.Client.Shared
 
 
@@ -17,8 +18,7 @@
                 @if (IsCrudFrozen == false)
                 {
                     <div class="p-2">
-                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="Add Line"
-                                  Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
+                        <AddRowButton OnClick="InsertRow" Text="Add Line" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
                     </div>
                 }
                 @if (ImportFilesEnabled == true)

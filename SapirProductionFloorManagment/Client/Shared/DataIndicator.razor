@@ -1,5 +1,5 @@
 ﻿
-    <div class="rz-shadow-1">
+    <div style="@Style" class="rz-shadow-1">
     <div class="d-flex flex-column mb-3">
         <div class="p-2">
             <div class="d-flex flex-row mb-3">
@@ -11,7 +11,7 @@
                 </div>
             </div>
         </div>
-        <div class="p-2">
+        <div class="p-2" style="text-align:center;font-weight:bolder">
             @ChildContent
             </div>
     </div>
@@ -28,6 +28,11 @@
     public string? IconSource { get; set; }
 
     [Parameter]
+    public string? Style { get; set; }
+
+    [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+
 
 }

@@ -1,5 +1,5 @@
 ﻿@using  SapirProductionFloorManagment.Shared
-
+ 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href=""><img class="logo-icon" src="/logo.png" /></a>
@@ -62,13 +62,19 @@
     </nav>
 </div>
 
+
 @code {
     private bool collapseNavMenu = true;
 
+    private bool navIsShowed = true;
+
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    public void HideNavMenu() => navIsShowed = !navIsShowed;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
 }

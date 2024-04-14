@@ -1,0 +1,18 @@
+﻿
+<RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="add_circle_outline" Text="@Text"  Click="@OnClick" Disabled="@Disabled" />
+            
+
+@code {
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public string? Text { get; set; }
+
+
+
+}
