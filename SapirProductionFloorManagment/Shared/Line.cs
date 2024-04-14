@@ -15,7 +15,10 @@ namespace  SapirProductionFloorManagment.Shared
         public int ProductionRate { get; set; }
         public string ShiftStartWork { get; set; } = "Unspecified";
         public string ShiftEndWork { get; set; } = "Unspecified";
+        public DateOnly WorkDate { get; set; }
+        public int NumericWorkDay { get; set; }
         public bool[] WorkDays { get; set; } = new bool[] { true, true, true, true, true, false, false };
+           
 
     }
 }

@@ -5,14 +5,18 @@
 
 
 <div class="d-flex mb-3">
-
     <div class="me-auto p-2">
         <RadzenHtml Visible="IsVisible">
             <div class="d-flex flex-row-reverse">
                 @if (IsCrudFrozen == false)
+
                 {
                     <div class="p-2">
-                        <AddRowButton Text="Add Order" OnClick="InsertRow" Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
+                        <div class="d-flex flex-row-reverse">
+                            <div class="p-2">
+                                <AddRowButton Text="Add Order" OnClick="InsertRow" Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
+                            </div>
+                        </div>
                     </div>
                 }
                 
@@ -22,14 +26,12 @@
 </div>
 
 
-
-
 <RadzenDataGrid Visible="IsVisible" @ref="ordersGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
                 AllowSorting="true" Data="@orders" TItem="WorkOrderDataContext" ColumnWidth="200px"
                 SelectionMode="DataGridSelectionMode.Single">
     <Columns>
-         <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="SerialNumber" Title="WO" Frozen="true" Width="80px" TextAlign="TextAlign.Center">
+         <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="SerialNumber" Title="WO" Frozen="true" Width="100px" TextAlign="TextAlign.Center">
              <EditTemplate Context="order">
                 <RadzenText @bind-Value="order.SerialNumber" Style="width:100%; display: block;" />
              </EditTemplate>
@@ -42,13 +44,13 @@
             </EditTemplate>
        
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="Size" Title="Size" Frozen="IsCrudFrozen"  Width="160px">
+        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="Size" Title="Size" Frozen="IsCrudFrozen"  Width="80px">
             <EditTemplate Context="order">
                 <RadzenNumeric @bind-Value="order.Size" Style="width:100%; display: block;"/>
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="Quantity" Title="Qt" Frozen="IsCrudFrozen" Width="160px">
+        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="Quantity" Title="Qt" Frozen="IsCrudFrozen" Width="80px">
             <EditTemplate Context="order">
                  <RadzenNumeric @bind-Value="order.Quantity" Style="width:100%; display: block;"/>
             </EditTemplate>
@@ -63,32 +65,32 @@
 
        @* <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="CustomerNumber" Title="Customer No" Width="120px" />*@
        
-        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="OptionalLine" Frozen="IsCrudFrozen" Title="Line Op 1" Width="160px">
+        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="OptionalLine" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
             <EditTemplate>
                 <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineNumber).ToArray()"
                                 @bind-Value="order.OptionalLine" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="OptionalLine" Frozen="IsCrudFrozen" Title="Line Op 2" Width="160px">
+        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="OptionalLine" Frozen="IsCrudFrozen" Title="Line Op 2" Width="120px">
             <EditTemplate>
                 <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineNumber).ToArray()"
                                 @bind-Value="order.OptionalLine" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="SalesOrderNumber" Frozen="IsCrudFrozen" Title="Sales Order ID" Width="160px" />
+     @*   <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="SalesOrderNumber" Frozen="IsCrudFrozen" Title="Sales Order ID" Width="80px" />*@
 
-        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="Priority" Title="Priority" Width="160px">
+        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="Priority" Title="Priority" Width="120px">
             <EditTemplate>
                 <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineNumber).ToArray()"
                                 @bind-Value="order.OptionalLine" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="WorkDuration" Frozen="IsCrudFrozen" Title="Work Duration" Width="160px" />
+        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="WorkDuration" Frozen="IsCrudFrozen" Title="Work Duration" Width="150px" />
 
-        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="CompletionDate" Frozen="IsCrudFrozen" Title="Completion Date" Width="300px">
+        <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="CompletionDate" Frozen="IsCrudFrozen" Title="Completion Date" Width="150px">
            <EditTemplate>
                 <RadzenDatePicker @bind-Value="order.CompletionDate"/>
            </EditTemplate>
@@ -97,7 +99,7 @@
         @*crud buttons*@
         @if(IsCrudFrozen is false)
         {
-            <RadzenDataGridColumn TItem="WorkOrderDataContext" Context="order" Filterable="false" Sortable="false"
+            <RadzenDataGridColumn Width="100px" TItem="WorkOrderDataContext" Context="order" Filterable="false" Sortable="false"
                               TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
                 <Template Context="order">
                     <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat"

@@ -4,12 +4,6 @@
 
 
 <PageTitle>Lines</PageTitle>
-@*
-<div class="d-flex mb-3">
-    <div class="me-auto p-2">Flex item</div>
-    <div class="p-2">Flex item</div>
-    <div class="p-2">Flex item</div>
-</div>*@
 
 <div class="d-flex flex-column mb-3">
     <div class="p-2">
@@ -33,53 +27,41 @@
     </div>
     <div class="p-2">
         <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4" ColumnWidth="50px"
-                        AllowSorting="true" Data="@gridData" TItem="Line" @bind-Value="selectedLine" SelectionMode="DataGridSelectionMode.Single">
-                        
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
+                        AllowSorting="true" Data="@lines" TItem="Line"
+                        SelectionMode="DataGridSelectionMode.Single">
             <Columns>
-                <RadzenDataGridColumn TItem="Line" Property="LineNumber" Title="No" />
 
-                <RadzenDataGridColumn TItem="Line" Property="Name" Title="Line Name" Frozen="IsCrudFrozen">
+                 <RadzenDataGridColumn  TItem="Line" Property="WorkDate" Title="Date" Frozen="IsCrudFrozen">
                     <EditTemplate Context="line">
-                        <RadzenTextBox @bind-Value="line.Name" Style="width:200px; display: block" Name="LineName" />
+                       <RadzenDatePicker @bind-Value="line.WorkDate" TValue="DateOnly"/>
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ProductionRate" 
-                                      Title="Rate" Frozen="IsCrudFrozen">
+                <RadzenDataGridColumn TItem="Line" Property="NumericWorkDay" Title="Day" Frozen="IsCrudFrozen">
                     <EditTemplate Context="line">
-                        <RadzenNumeric @bind-Value="line.ProductionRate" Style="width:100%; display: block;" />
+                        <RadzenDropDown TValue="int" Data="(new int[]{1,2,3,4,5,6,7})" @bind-Value="line.NumericWorkDay" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+     
+
+                <RadzenDataGridColumn  TItem="Line" Property="ShiftStartWork" Title="Start Work" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="line">
+                        <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftStartWork" />  
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
 
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ShiftStartWork" Title="Start Work" Frozen="IsCrudFrozen">
+                <RadzenDataGridColumn  TItem="Line" Property="ShiftEndWork" Title="End Work" Frozen="IsCrudFrozen">
                     <EditTemplate Context="line">
-                        <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftStartWork"
-                                        Style="width:100%; display: block;" />
+                        <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftEndWork" />                                       
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ShiftEndWork" Title="End Work" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="line">
-                        <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftEndWork"
-                                        Style="width:200px; display: block" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="WorkDays" Title="Work Days" Frozen="IsCrudFrozen">
-                    <Template Context="line">
-                        <div class="d-flex flex-row mb-3">
-                            <WorkingDaysCheck Line="line">
-                            </WorkingDaysCheck>
-                        </div>
-                    </Template>
-                </RadzenDataGridColumn>
                 @if (IsCrudFrozen)
                 {
                     @*from here crud buttons*@
-                    <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Context="line" Filterable="false" Sortable="false"
+                    <RadzenDataGridColumn  TItem="Line" Context="line" Filterable="false" Sortable="false"
                                       TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
                         <Template Context="line">
                             <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(line))" @onclick:stopPropagation="true">
@@ -100,18 +82,17 @@
 
             </Columns>
         </RadzenDataGrid>
-
-
-
     </div>
-
 </div>
+
 
 
 @code {
 
+
     [Parameter]
-    public bool IsDemoShowed { get; set; }
+    public List<Line>? Data { get; set;}
+
 
     DataGridEditMode editMode = DataGridEditMode.Single;
     RadzenDataGrid<Line>? linesGrid = new();
@@ -119,32 +100,18 @@
     List<Line> linesToUpdate = new List<Line>();
 
     List<Line> fetchedLines = new();
-    IList<Line>? selectedLine;
-    IList<Line>? gridData;
+    IEnumerable<Line>? lines;
     protected Line line = new();
     List<string>? hourOptions;
 
 
     protected override async Task OnInitializedAsync()
     {
-        fetchedLines.Add(new Line
-            {
-                LineNumber = 1,
-                Name = "The Best Line",
-                ProductionRate = 1000000,
-                WorkOrder = { Id = 5677395},
-            });
-
-        //get data from DB
-        gridData = fetchedLines;
-
-        //set workhours to each row
+   
         hourOptions = Enumerable.Range(0, 24)
                                .Select(hour => new TimeOnly(hour, 0).ToString())
                                .ToList();
 
-        //assign the first row of the to selectedLines
-        selectedLine = gridData.ToList();
         await base.OnInitializedAsync();
     }
 
@@ -160,7 +127,7 @@
         linesToUpdate.Remove(line);
     }
 
-
+  
 
     private async Task EditRow(Line line)
     {
@@ -208,7 +175,7 @@
     {
         Reset(line);
 
-        if (gridData.Contains(line))
+        if (lines.Contains(line))
         {
             // dbCon remove
 
@@ -234,7 +201,7 @@
         linesToInsert.Add(line);
         await linesGrid.InsertRow(line);
     }
-
+    
 
     private void OnCreateRow(Line line)
     {
@@ -243,12 +210,7 @@
         linesToInsert.Remove(line);
     }
 
-    public List<Line> GetSelectedData()
-    {
-        return selectedLine.ToList();
-
-    }
-
+    
      //to do a vocabulary to hours
 
  

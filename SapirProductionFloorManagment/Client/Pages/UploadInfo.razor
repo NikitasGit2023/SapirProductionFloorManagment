@@ -14,16 +14,18 @@
 </TablesSwitcher>
 
 <div class="orders-table">
-    <WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" ImportFilesEnabled="true" IsCrudFrozen="false"/>
+    <WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" ImportFilesEnabled="true" IsCrudFrozen="true"/>
  
 </div>
 
 
-<div class="lines-table" style="width:75%">
-
-    <LinesTable IsVisible="@keyValuePairs["Lines"]" ImportFilesEnabled="true" IsCrudFrozen ="false" />              
+<div class="lines-table" style="width:35%">
+    <LinesTable @ref="linesTable"  IsDemoShowed="true" IsVisible="@keyValuePairs["Lines"]" ImportFilesEnabled="true" IsCrudFrozen="true" />
 </div>
 
+<div claas="lines-table-connected" style="width:100%">
+    <LineWorkDaysTable Data="workDaysData"  IsVisible="@keyValuePairs["Lines"]" />
+</div>
 
 
 
@@ -31,11 +33,16 @@
 
     private Dictionary<string, bool> keyValuePairs = new();
     private TablesSwitcher tablesSwitcher = new();
-  
+    public List<Line>? workDaysData = new();
+
+    private LinesTable linesTable = new();
+
     protected override Task OnInitializedAsync()
     {
         keyValuePairs.Add("Orders", true);
         keyValuePairs.Add("Lines", false);
+        //workDaysData = linesTable.GetSelectedData();
+
 
         return base.OnInitializedAsync();
     }
