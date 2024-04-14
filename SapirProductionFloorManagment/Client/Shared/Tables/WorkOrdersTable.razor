@@ -3,6 +3,7 @@
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 
 
+
 <div class="d-flex mb-3">
 
     <div class="me-auto p-2">
@@ -14,20 +15,12 @@
                         <AddRowButton Text="Add Order" OnClick="InsertRow" Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
                     </div>
                 }
-                @if (ImportFilesEnabled == true)
-                {
-                    <div class="p-2">
-                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
-                    </div>
-                    <div class="p-2">
-                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="grid_on" Text="Export XLS" />
-                    </div>
-                }
+                
             </div>
         </RadzenHtml>
     </div>
- 
 </div>
+
 
 
 

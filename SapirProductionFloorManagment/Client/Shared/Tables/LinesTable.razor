@@ -15,21 +15,17 @@
     <div class="p-2">
         <RadzenHtml Visible="IsVisible">
             <div class="d-flex flex-row-reverse">
+                <div class="p-2">
+               
                 @if (IsCrudFrozen == false)
                 {
+                    <div class="d-flex flex-row-reverse">
                     <div class="p-2">
                         <AddRowButton OnClick="InsertRow" Text="Add Line" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
                     </div>
-                }
-                @if (ImportFilesEnabled == true)
-                {
-                    <div class="p-2">
-                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
-                    </div>
-                    <div class="p-2">
-                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Export XLS" />
                     </div>
                 }
+                </div>
             </div>
         </RadzenHtml>
 

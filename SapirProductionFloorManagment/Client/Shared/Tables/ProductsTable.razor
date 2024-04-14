@@ -4,10 +4,14 @@
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 
 
-
-    <RadzenStack Visible="(IsCrudFrozen is false)" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px" class="mt-2 mb-4">
-        <AddRowButton Text="Add Product" OnClick="InsertRow" Disabled="(editMode == DataGridEditMode.Single && productsToInsert.Count() > 0)" />
-    </RadzenStack>    
+<div class="d-flex flex-row-reverse">
+    <div class="p-2">
+        <RadzenStack Visible="(IsCrudFrozen==false && IsVisible==true)" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px" class="mt-2 mb-4">
+            <AddRowButton Text="Add Product" OnClick="InsertRow" Disabled="(editMode == DataGridEditMode.Single && productsToInsert.Count() > 0)" />
+        </RadzenStack>
+    </div>
+</div>
+   
 
 
 

@@ -1,14 +1,19 @@
 ﻿@page "/uploadinfo"
 @using SapirProductionFloorManagment.Client.Shared.Tables
+@using SapirProductionFloorManagment.Client.Shared.Buttons
 @using SapirProductionFloorManagment.Client.Shared
 
 <h3>Upload Information</h3>
+
+
+<ImportExportXLS/>
+
 
 <TablesSwitcher @ref="tablesSwitcher" Switchers="keyValuePairs" OnClick="SwitchToTable">
 
 </TablesSwitcher>
 
-<div class="orders-table" style="width: 60%;">
+<div class="orders-table">
     <WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" ImportFilesEnabled="true" IsCrudFrozen="false"/>
  
 </div>

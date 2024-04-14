@@ -4,9 +4,14 @@
 
 <PageTitle>Users</PageTitle>
 
-<RadzenStack Visible="(IsCrudFrozen==false && IsVisible==true)" Orientation="Orientation.Horizontal" AlignItems="AlignItems.End" Gap="10px" class="mt-2 mb-4">
-    <AddRowButton Text="Add User" OnClick="InsertRow" Disabled="@(editMode == DataGridEditMode.Single && usersToInsert.Count() > 0)" />
-</RadzenStack>
+<div class="d-flex flex-row-reverse">
+    <div class="p-2">
+        <RadzenStack Visible="(IsCrudFrozen==false && IsVisible==true)" Orientation="Orientation.Horizontal" AlignItems="AlignItems.End" Gap="10px" class="mt-2 mb-4">
+                <AddRowButton Text="Add User" OnClick="InsertRow" Disabled="@(editMode == DataGridEditMode.Single && usersToInsert.Count() > 0)" />
+        </RadzenStack>
+    </div>
+</div>
+
 
 
 <RadzenDataGrid Visible="IsVisible" @ref="usersGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
