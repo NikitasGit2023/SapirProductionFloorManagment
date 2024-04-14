@@ -4,7 +4,7 @@
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 
 
-@if (IsCrudFrozen is true)
+@if (IsCrudFrozen == false)
 {
     <RadzenStack Visible="IsVisible" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px" class="mt-2 mb-4">
         <AddRowButton Text="Add Product" OnClick="InsertRow" Disabled="(editMode == DataGridEditMode.Single && productsToInsert.Count() > 0)" />
