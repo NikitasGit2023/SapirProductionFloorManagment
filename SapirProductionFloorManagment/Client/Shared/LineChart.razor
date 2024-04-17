@@ -5,7 +5,13 @@
     <div class="container" >
         <div class="row">
             <div class="col-sm-12 my-5">
-                  
+                  <div class="p-2">                
+                        <div class="d-flex justify-content-center">
+                           <h4>
+                            @Title
+                           </h4> 
+                        </div>
+                  </div>
                 <RadzenChart>
                     <RadzenLineSeries Smooth="@smooth" Data="@line1" CategoryProperty="Hour" Title="Line 1" LineType="LineType.Dashed" ValueProperty="Quantity">
                         <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
@@ -90,6 +96,9 @@
 
 @code 
 {
+    [Parameter]
+    public string? Title { get; set; }
+
     class StickGraphItem
     {
         public string? Quarter { get; set; }

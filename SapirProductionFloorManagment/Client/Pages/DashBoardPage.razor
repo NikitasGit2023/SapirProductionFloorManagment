@@ -2,11 +2,105 @@
 @using SapirProductionFloorManagment.Client.Shared.Tables
 @using SapirProductionFloorManagment.Client.Shared
 
-<LinesDashboard>
-</LinesDashboard>
+
+<div class="d-flex flex-row mb-3">
+    <div class="p-2">
+        <DataIndicator Style="height:74%" Title="Lines Status" IconSource="/conveyor-belt.png">        
+                  <span style="color:green;font-size:large;">Online: 25</span>  <span style="color:red;font-size:large;">Offline: 7</span>
+        </DataIndicator>
+    </div>
+    <div class="p-2">
+        <DataIndicator Style="height:74%" Title="Avg Production Rate" IconSource="/productivity.png">
+            <span style="font-size:large">25,637 per hour</span>
+        </DataIndicator>
+    </div>
+    <div class="p-2">
+        <DataIndicator Style="height:74%" Title="Daily Target" IconSource="/target.png">
+            <span style="font-size:large">80,000 / 25,000</span>
+        </DataIndicator>
+    </div>
+    <div class="p-2">
+        <DataIndicator Style="height:74%" Title="Top 5 Product" IconSource="/top.png">
+            <div class="d-flex flex-column mb-3">
+                <div class="p-2">laflaf | box | cups</div>
+            </div>
+        </DataIndicator>
+    </div>
+    @*<div class="p-2"><DataIndicator /></div>*@
+</div>
+
+<div class="d-flex flex-row mb-3">
+
+    <div class="pie-chart" style="width:30%;">
+        <div class="p-2">
+            <div class="rz-shadow-1" style="height:483px;">
+                <span>
+                    <PieChart>
+                    </PieChart>
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="lines-chart" style="width:78%">
+        <div class="p-2">
+            <div class="rz-shadow-1">
+                <span>
+                    <LineChart Title="Production Quantity By Hours">
+                    </LineChart>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<RadzenDataGrid Visible="true"  AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
+                AllowSorting="true" Data="@data" TItem="DashBoardInfo" ColumnWidth="200px"
+                SelectionMode="DataGridSelectionMode.Single">
+  <Columns>
+        <RadzenDataGridColumn TItem="DashBoardInfo" Property="SerialNum" Title="Order No" Frozen="true" Width="160px" />
+        <RadzenDataGridColumn TItem="DashBoardInfo" Property="WorkOrderNum" Title="WO" Frozen="true" Width="160px" />
+        <RadzenDataGridColumn TItem="DashBoardInfo" Property="LineNumber" Title="Line No" Frozen="true" Width="160px" />
+        <RadzenDataGridColumn TItem="DashBoardInfo" Property="OrderStatus" Title="Status" Frozen="true" Width="160px" />
+        <RadzenDataGridColumn TItem="DashBoardInfo" Property="Units" Title="Units" Frozen="true" Width="160px" />
+        <RadzenDataGridColumn TItem="DashBoardInfo" Property="ProgressPrecentage" Title="Progress" Frozen="true" Width="160px" />
+        <RadzenDataGridColumn TItem="DashBoardInfo" Property="ProductionRate" Title="Rate" Frozen="true" Width="160px" />
+
+  </Columns>   
+</RadzenDataGrid>
+
 
 
 
 @code {
 
+
+
+    public record DashBoardInfo
+    {
+        string SerialNum { get; set; }
+        string WorkOrderNum { get; set;}
+        int LineNumber { get; set; }
+        string OrderStatus { get; set;}
+        int Units { get; set;}
+        string ProgressPrecentage { get; set;}
+        int ProductionRate { get; set;}
+
+    }
+
+    public DashBoardInfo row = new();
+    public IEnumerable<DashBoardInfo>? data;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        data = new List<DashBoardInfo>();
+        await base.OnInitializedAsync();
+
+    }
 }
+
+

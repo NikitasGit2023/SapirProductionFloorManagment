@@ -5,11 +5,25 @@
 @using SapirProductionFloorManagment.Client.Shared.Tables
 
 
-<h2>Work plan</h2>
+<div class="d-flex flex-column mb-3">
+    <div class="p-2">
+        <h2>Work plan</h2>
+    </div>
+    <div class="p-2">
+        <div class="d-flex justify-content-center">
+            <RadzenButton Text="Calc Program" ButtonStyle="ButtonStyle.Light" />
+        </div>
+    </div>
+    <div class="p-2">
+        <WorkProgramsTable Lines="lines" />
+    </div>
+</div>
 
-<WorkProgramsTable
-    Lines="lines">
-</WorkProgramsTable>
+
+
+
+   
+
 
 
 

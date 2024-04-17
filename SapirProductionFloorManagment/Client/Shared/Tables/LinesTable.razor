@@ -33,42 +33,42 @@
     </div>
     <div class="p-2">
         <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4" ColumnWidth="50px"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4" 
                         AllowSorting="true" Data="@gridData" TItem="Line" @bind-Value="selectedLine" SelectionMode="DataGridSelectionMode.Single">
                         
             <Columns>
-                <RadzenDataGridColumn TItem="Line" Property="LineNumber" Title="No" />
+                <RadzenDataGridColumn TItem="Line" Property="LineNumber" Title="No" Width="100px" />
 
-                <RadzenDataGridColumn TItem="Line" Property="Name" Title="Line Name" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="line">
+                <RadzenDataGridColumn TItem="Line" Width="150px" Property="Name" Title="Line Name" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="line" >
                         <RadzenTextBox @bind-Value="line.Name" Style="width:200px; display: block" Name="LineName" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ProductionRate" 
-                                      Title="Rate" Frozen="IsCrudFrozen">
+                                      Title="Rate" Frozen="IsCrudFrozen" Width="150px">
                     <EditTemplate Context="line">
                         <RadzenNumeric @bind-Value="line.ProductionRate" Style="width:100%; display: block;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
 
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ShiftStartWork" Title="Start Work" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="line">
+                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ShiftStartWork" Title="Start Work" Frozen="IsCrudFrozen" Width="200px">
+                    <EditTemplate Context="line" >
                         <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftStartWork"
                                         Style="width:100%; display: block;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
 
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ShiftEndWork" Title="End Work" Frozen="IsCrudFrozen">
+                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ShiftEndWork" Title="End Work" Frozen="IsCrudFrozen" Width="150px">
                     <EditTemplate Context="line">
                         <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftEndWork"
-                                        Style="width:200px; display: block" />
+                                        Style="width:100%; display: block" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="WorkDays" Title="Work Days" Frozen="IsCrudFrozen">
+                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="WorkDays" Title="Work Days" Frozen="IsCrudFrozen" >
                     <Template Context="line">
                         <div class="d-flex flex-row mb-3">
                             <WorkingDaysCheck Line="line">

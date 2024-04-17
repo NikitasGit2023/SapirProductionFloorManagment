@@ -9,9 +9,8 @@
 <ImportExportXLS/>
 
 
-<TablesSwitcher @ref="tablesSwitcher" Switchers="keyValuePairs" OnClick="SwitchToTable">
+<TablesSwitcher @ref="tablesSwitcher" Switchers="keyValuePairs" OnClick="SwitchToTable"/>
 
-</TablesSwitcher>
 
 <div class="orders-table">
     <WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" ImportFilesEnabled="true" IsCrudFrozen="true"/>
