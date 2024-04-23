@@ -33,7 +33,7 @@
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        @if (IsCrudFrozen is true)
+        @if (!IsCrudFrozen)
         {
             @*from here crud buttons*@
             <RadzenDataGridColumn TItem="Product" Context="Product" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">

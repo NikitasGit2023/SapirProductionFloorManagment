@@ -1,4 +1,5 @@
 ﻿@page "/config"
+@inject HttpClient HttpClient
 @using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Shared.Tables
 
@@ -13,6 +14,8 @@
 <UsersTable IsCrudFrozen="false" IsVisible="@keyValuePairs["Users"]" Name="Users"/>
  
 <ProductsTable IsCrudFrozen="false" IsVisible="@keyValuePairs["Products"]" Name="Products"/>
+
+<button @onclick="PostNumberOne">POST</button>
   
     
 
@@ -22,7 +25,6 @@
 
     private Dictionary<string, bool> keyValuePairs = new();
     private TablesSwitcher tablesSwitcher = new();
-
     private void SetValueToFalse(string key) => keyValuePairs[key] = false;
     private void SetValueToTrue(string key) => keyValuePairs[key] = true;
 
@@ -34,6 +36,14 @@
         keyValuePairs.Add("Lines", true);
 
         return base.OnInitializedAsync();
+    }
+
+    int num = 1;
+    protected async Task PostNumberOne()
+    {
+        using var data = await HttpClient.PostAsJsonAsync("api/Configuration", num);
+    
+       
     }
 
 
