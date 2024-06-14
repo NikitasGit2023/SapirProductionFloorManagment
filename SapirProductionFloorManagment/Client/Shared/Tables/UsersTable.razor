@@ -1,4 +1,5 @@
 ﻿@inherits TableBase
+@inject HttpClient Http
 @using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 
@@ -16,7 +17,7 @@
 
 <RadzenDataGrid Visible="IsVisible" @ref="usersGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
-                AllowSorting="true" Data="@users" TItem="User" ColumnWidth="200px"
+                AllowSorting="true" Data="@usersData" TItem="User" ColumnWidth="200px"
                 SelectionMode="DataGridSelectionMode.Single">
     <Columns>
     
@@ -69,30 +70,79 @@
 
 @code {
 
-    DataGridEditMode editMode = DataGridEditMode.Single;
-    RadzenDataGrid<User>? usersGrid;
-    List<User> usersToInsert = new List<User>();
-    List<User> usersToUpdate = new List<User>();
-
-    List<User> fetchedUsers = new();
-    IEnumerable<User>? users;
-    protected User user = new();
+    private DataGridEditMode editMode = DataGridEditMode.Single;
+    RadzenDataGrid<User>? usersGrid = new();
+    private List<User> usersToInsert = new List<User>();
+    private List<User> usersToUpdate = new List<User>();
+    private IList<User>? usersData;
 
 
     protected override async Task OnInitializedAsync()
     {
-        fetchedUsers.Add(new User
-            {
-              FullName= "Nikita Gelfman",
-              JobTitle ="World Mannager",
-              Permission ="The Best One",
-              Password = "3194Rijick",
-              WorkerId = 5677395,
-            });
-
-        users = fetchedUsers;
-
+        usersData = await GetUsersData();
         await base.OnInitializedAsync();
+    }
+
+    private async Task<List<User>> GetUsersData()
+    {
+        try
+        {
+            using var data = await Http.GetAsync("configuration/getusersdata");
+            var content = data.Content.ReadFromJsonAsync<List<User>>();
+            if (content.Result != null)
+                return content.Result;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        return null;
+    }
+
+    protected async Task AddUser(User user)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/postnewuser", user);
+            var message = data.Content.ReadFromJsonAsync<string>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+
+    }
+
+    protected async Task UpdateUser(User user)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/updateuser", user);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            Console.WriteLine(message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+    }
+
+    private async Task RemoveUser(User user)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/removeuser", user);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            Console.WriteLine(message);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private void Reset()
@@ -107,8 +157,6 @@
         usersToUpdate.Remove(user);
     }
 
-
-
     private async Task EditRow(User user)
     {
         if (editMode == DataGridEditMode.Single && usersToInsert.Count() > 0)
@@ -120,54 +168,57 @@
         await usersGrid.EditRow(user);
     }
 
-    void OnUpdateRow(User user)
+    private void OnUpdateRow(User user)
     {
         Reset(user);
-
-        //dbCon upate
-
-        //dbCon save
+        //update
     }
-
-
 
     async Task SaveRow(User user)
     {
-        await usersGrid.UpdateRow(user);
+        if (usersData.Contains(user))
+        {
+            
+            if (user.UserId is 0)
+            {
+                await usersGrid.UpdateRow(user);
+                await AddUser(user);
+                return;
+            }
+
+            await usersGrid.UpdateRow(user);
+            await UpdateUser(user);
+
+        }
+
     }
 
-    void CancelEdit(User user)
+    private void CancelEdit(User user)
     {
         Reset(user);
-
         usersGrid.CancelEditRow(user);
-
-        //TODO
-        //var orderEntry = dbContext.Entry(order);
-        //if (orderEntry.State == EntityState.Modified)
-        //{
-        //    orderEntry.CurrentValues.SetValues(orderEntry.OriginalValues);
-        //    orderEntry.State = EntityState.Unchanged;
-        //}
     }
 
     private async Task DeleteRow(User user)
     {
         Reset(user);
 
-        if (users.Contains(user))
+        if (usersData.Contains(user))
         {
-            // dbCon remove
 
-            //dbCon save
+            usersData.Remove(user);
+            CancelEdit(user);
 
-            await usersGrid.Reload();
+            if (user.UserId != 0)
+                await RemoveUser(user);
         }
         else
         {
             usersGrid.CancelEditRow(user);
             await usersGrid.Reload();
         }
+
+        await usersGrid.Reload();
     }
 
     private async Task InsertRow()
@@ -180,13 +231,13 @@
         var user = new User();
         usersToInsert.Add(user);
         await usersGrid.InsertRow(user);
-    }
 
+
+    }
 
     private void OnCreateRow(User user)
     {
-        //dbCon Add
-        //dbCon save
+
         usersToInsert.Remove(user);
     }
 

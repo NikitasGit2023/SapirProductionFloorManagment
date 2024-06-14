@@ -21,9 +21,9 @@
                 SelectionMode="DataGridSelectionMode.Single">
     <Columns>
 
-        <RadzenDataGridColumn TItem="Product" Property="ProductSN" Title="Product SN" Frozen="IsCrudFrozen">
+        <RadzenDataGridColumn TItem="Product" Property="ProductId" Title="Product SN" Frozen="IsCrudFrozen">
             <EditTemplate Context="product">
-                <RadzenNumeric @bind-Value="product.ProductSN" Style="width:200px; display: block" Name="Product SN" />
+                <RadzenNumeric @bind-Value="product.ProductId" Style="width:200px; display: block" Name="Product SN" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
@@ -74,7 +74,7 @@
     {
         fetchedproducts.Add(new Product
             {
-                ProductSN = 258999875,
+                ProductId = 258999875,
                 ProductName = "Tesla Car"
             });
 
@@ -116,8 +116,6 @@
 
         //dbCon save
     }
-
-
 
     async Task SaveRow(Product product)
     {

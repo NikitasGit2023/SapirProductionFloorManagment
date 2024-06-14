@@ -22,7 +22,7 @@
         @foreach (var line in filtered)
         {
             <tr>
-                <td>@line.LineNumber</td>
+                <td>@line.LineId</td>
                 <td>@line.WorkOrder.Id</td>
                 <td>@line.WorkOrder.ProductName</td>
                 <td>@line.WorkOrder.Quantity</td>
@@ -58,7 +58,7 @@
     private IEnumerable<int> GetLinesNumbers()
     {
         var distinctNums = Lines
-            .Select(line => line.LineNumber).
+            .Select(line => line.LineId).
              Distinct()
             .Order()
             .ToList();
@@ -75,7 +75,7 @@
         }
         else
         {
-            filtered = Lines.Where(line => line.LineNumber == num).ToList();
+            filtered = Lines.Where(line => line.LineId == num).ToList();
         }
 
     }

@@ -20,16 +20,6 @@
 </div>
 
 
-
-
-   
-
-
-
-
-
-
-
 @code 
 {
     private List<Line> lines = new()
@@ -37,7 +27,7 @@
         {
             new Line
             {
-                LineNumber = 1,
+                LineId = 1,
                 WorkOrder = {Id =1111, 
                     ProductName = "כוס פלסטיק", 
                     Quantity= 3333, 
@@ -52,7 +42,7 @@
            {
             new Line
             {
-                LineNumber = 2,
+                LineId = 2,
                 WorkOrder = {Id = 2222,
                     ProductName = "כוס זכוכית",
                     Quantity= 444,
@@ -67,7 +57,7 @@
           {
             new Line
             {
-                LineNumber = 0,
+                LineId = 0,
                 WorkOrder = {Id =1111,
                     ProductName = "כוס נייר",
                     Quantity= 3333,

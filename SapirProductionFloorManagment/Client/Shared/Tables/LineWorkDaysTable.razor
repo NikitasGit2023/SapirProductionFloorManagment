@@ -34,7 +34,7 @@
 
                  <RadzenDataGridColumn  TItem="Line" Property="WorkDate" Title="Date" Frozen="IsCrudFrozen">
                     <EditTemplate Context="line">
-                       <RadzenDatePicker @bind-Value="line.WorkDate" TValue="DateOnly"/>
+                       <RadzenDatePicker @bind-Value="line.WorkDate" TValue="DateTime"/>
                     </EditTemplate>
                 </RadzenDataGridColumn>
 

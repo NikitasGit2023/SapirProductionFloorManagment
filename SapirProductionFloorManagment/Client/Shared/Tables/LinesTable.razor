@@ -1,15 +1,11 @@
 ﻿@inherits TableBase
+@inject HttpClient Http
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 @using SapirProductionFloorManagment.Client.Shared
 
 
 <PageTitle>Lines</PageTitle>
-@*
-<div class="d-flex mb-3">
-    <div class="me-auto p-2">Flex item</div>
-    <div class="p-2">Flex item</div>
-    <div class="p-2">Flex item</div>
-</div>*@
+
 
 <div class="d-flex flex-column mb-3">
     <div class="p-2">
@@ -34,10 +30,10 @@
     <div class="p-2">
         <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4" 
-                        AllowSorting="true" Data="@gridData" TItem="Line" @bind-Value="selectedLine" SelectionMode="DataGridSelectionMode.Single">
+                        AllowSorting="true" Data="@gridData" TItem="Line"  SelectionMode="DataGridSelectionMode.Single">
                         
             <Columns>
-                <RadzenDataGridColumn TItem="Line" Property="LineNumber" Title="No" Width="100px" />
+                <RadzenDataGridColumn TItem="Line" Property="LineId" Title="Id" Width="100px" />
 
                 <RadzenDataGridColumn TItem="Line" Width="150px" Property="Name" Title="Line Name" Frozen="IsCrudFrozen">
                     <EditTemplate Context="line" >
@@ -111,32 +107,22 @@
 @code {
 
     [Parameter]
-    public bool IsDemoShowed { get; set; }
+    public bool IsDemoShowed { get; set;}
 
-    DataGridEditMode editMode = DataGridEditMode.Single;
+    private DataGridEditMode editMode = DataGridEditMode.Single;
     RadzenDataGrid<Line>? linesGrid = new();
-    List<Line> linesToInsert = new List<Line>();
-    List<Line> linesToUpdate = new List<Line>();
-
-    List<Line> fetchedLines = new();
-    IList<Line>? selectedLine;
-    IList<Line>? gridData;
-    protected Line line = new();
-    List<string>? hourOptions;
+    private List<Line> linesToInsert = new List<Line>();
+    private List<Line> linesToUpdate = new List<Line>();
+    private IList<Line>? gridData;  
+    private List<string>? hourOptions;
+    private Line selectedOne = new();
 
 
     protected override async Task OnInitializedAsync()
     {
-        fetchedLines.Add(new Line
-            {
-                LineNumber = 1,
-                Name = "The Best Line",
-                ProductionRate = 1000000,
-                WorkOrder = { Id = 5677395},
-            });
 
         //get data from DB
-        gridData = fetchedLines;
+        gridData = await GetLinesData();
 
         //set workhours to each row
         hourOptions = Enumerable.Range(0, 24)
@@ -144,8 +130,69 @@
                                .ToList();
 
         //assign the first row of the to selectedLines
-        selectedLine = gridData.ToList();
         await base.OnInitializedAsync();
+    }
+
+
+    private async Task<List<Line>> GetLinesData()
+    {
+        try
+        {
+            using var data = await Http.GetAsync("configuration/getlinesdata");
+            var content = data.Content.ReadFromJsonAsync<List<Line>>();
+            if(content.Result != null)
+                return content.Result;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        return null;
+    }
+
+    protected async Task AddLine(Line line)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/postnewline", line);
+            var message = data.Content.ReadFromJsonAsync<string>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+
+    }
+
+    protected async Task UpdateLine(Line line)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/updateline", line);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            Console.WriteLine(message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+    }
+
+    private async Task RemoveLine(Line line)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/removeline", line);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            Console.WriteLine(message);
+
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private void Reset()
@@ -160,8 +207,6 @@
         linesToUpdate.Remove(line);
     }
 
-
-
     private async Task EditRow(Line line)
     {
         if (editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)
@@ -173,54 +218,50 @@
         await linesGrid.EditRow(line);
     }
 
-    void OnUpdateRow(Line line)
+    private void OnUpdateRow(Line line)
     {
         Reset(line);
-
-        //dbCon upate
-
-        //dbCon save
+        //update
     }
-
-
 
     async Task SaveRow(Line line)
     {
+
+        if (line.LineId is 0)
+        {
+            await AddLine(line);
+            gridData?.Add(line);
+            linesGrid.CancelEditRow(line);
+            await linesGrid.Reload();
+            return;
+            
+        }
+
         await linesGrid.UpdateRow(line);
+        await UpdateLine(line);
+        await linesGrid.Reload();
     }
 
-    void CancelEdit(Line line)
+    private void CancelEdit(Line line)
     {
         Reset(line);
-
         linesGrid.CancelEditRow(line);
-
-        //TODO
-        //var orderEntry = dbContext.Entry(order);
-        //if (orderEntry.State == EntityState.Modified)
-        //{
-        //    orderEntry.CurrentValues.SetValues(orderEntry.OriginalValues);
-        //    orderEntry.State = EntityState.Unchanged;
-        //}
     }
 
     private async Task DeleteRow(Line line)
     {
+        //cleaning linesToInsert and LinesToUpdate
         Reset(line);
 
         if (gridData.Contains(line))
         {
-            // dbCon remove
+            gridData.Remove(line);
 
-            //dbCon save
-
-            await linesGrid.Reload();
+            if(line.LineId != 0)
+                await RemoveLine(line);
         }
-        else
-        {
-            linesGrid.CancelEditRow(line);
-            await linesGrid.Reload();
-        }
+        //?
+        await linesGrid.Reload();
     }
 
     private async Task InsertRow()
@@ -231,22 +272,15 @@
         }
 
         var line = new Line();
-        linesToInsert.Add(line);
-        await linesGrid.InsertRow(line);
+        selectedOne = line;
+        linesToInsert.Add(selectedOne);
+        await linesGrid.InsertRow(selectedOne);
     }
-
 
     private void OnCreateRow(Line line)
     {
-        //dbCon Add
-        //dbCon save
+    
         linesToInsert.Remove(line);
-    }
-
-    public List<Line> GetSelectedData()
-    {
-        return selectedLine.ToList();
-
     }
 
      //to do a vocabulary to hours

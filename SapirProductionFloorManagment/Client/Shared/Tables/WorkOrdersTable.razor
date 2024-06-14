@@ -67,14 +67,14 @@
        
         <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="OptionalLine" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
             <EditTemplate>
-                <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineNumber).ToArray()"
+                <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineId).ToArray()"
                                 @bind-Value="order.OptionalLine" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
         <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="OptionalLine" Frozen="IsCrudFrozen" Title="Line Op 2" Width="120px">
             <EditTemplate>
-                <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineNumber).ToArray()"
+                <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineId).ToArray()"
                                 @bind-Value="order.OptionalLine" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
@@ -83,7 +83,7 @@
 
         <RadzenDataGridColumn TItem="WorkOrderDataContext" Property="Priority" Title="Priority" Width="120px">
             <EditTemplate>
-                <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineNumber).ToArray()"
+                <RadzenDropDown TValue="int" Data="lines?.Select(line => line.LineId).ToArray()"
                                 @bind-Value="order.OptionalLine" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>

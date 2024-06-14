@@ -17,4 +17,14 @@
     [Parameter]
     public bool? ImportFilesEnabled { get; set; } = true;
 
+    [Parameter]
+    public EventCallback OnCreate { get; set; }
+
+    [Parameter]
+    public EventCallback OnUpdate { get; set; }
+
+    [Parameter]
+    public EventCallback OnDelete { get; set; }
+
+
 }
