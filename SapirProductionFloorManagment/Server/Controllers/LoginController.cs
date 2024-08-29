@@ -6,11 +6,11 @@ using SapirProductionFloorManagment.Shared;
 namespace SapirProductionFloorManagment.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]/[action]")]
     public class LoginController : Controller
     {
         [HttpPost]
-        protected bool GetLoginRequset(User user)
+        public bool GetLoginRequset(User user)
         {
             try
             {
@@ -27,13 +27,16 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                //write inside logs file
+               
 
             }
-            
+            return false;
+
 
         }
-       
+
     }
+
 
 }

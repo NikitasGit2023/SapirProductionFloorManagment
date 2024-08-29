@@ -16,7 +16,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
            
             try
             {
-                using var dbcon = new ConfigurationDbContext();
+                using var dbcon = new MainDbContext();
                 var lines =  dbcon.Lines.ToList();
                 dbcon.SaveChanges();    
                 return lines;
@@ -34,7 +34,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         {
             try
             {
-                using var dbcon = new ConfigurationDbContext();
+                using var dbcon = new MainDbContext();
                 dbcon.Lines.Add(line);
                 dbcon.SaveChanges();
 
@@ -54,7 +54,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         {
             try
             {
-                using var dbcon = new ConfigurationDbContext();
+                using var dbcon = new MainDbContext();
                 dbcon.Update(line);
                 dbcon.SaveChanges();
                 return "המידע עודכן בהצלחה";
@@ -72,7 +72,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         {
             try
             {
-                using var dbcon = new ConfigurationDbContext();
+                using var dbcon = new MainDbContext();
                 dbcon.Lines.Remove(line);
                 dbcon.SaveChanges();
                 return "הקו הוסר בהצלחה";
@@ -90,7 +90,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
             try
             {
-                using var dbcon = new ConfigurationDbContext();
+                using var dbcon = new MainDbContext();
                 var users = dbcon.Users.ToList();
                 dbcon.SaveChanges();
                 return users;
@@ -107,7 +107,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         {
             try
             {
-                using var dbcon = new ConfigurationDbContext();
+                using var dbcon = new MainDbContext();
                 dbcon.Users.Add(user);
                 dbcon.SaveChanges();
 
@@ -125,7 +125,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         {
             try
             {
-                using var dbcon = new ConfigurationDbContext();
+                using var dbcon = new MainDbContext();
                 dbcon.Update(user);
                 dbcon.SaveChanges();
                 return "המידע עודכן בהצלחה";
@@ -142,7 +142,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         {
             try
             {
-                using var dbcon = new ConfigurationDbContext();
+                using var dbcon = new MainDbContext();
                 dbcon.Remove(user);
                 dbcon.SaveChanges();
                 return "המידע עודכן בהצלחה";
@@ -154,58 +154,59 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
         }
 
-        //[HttpGet]
-        //public List<Product> GetProductsData()
-        //{
+ 
+        [HttpGet]
+        public List<Product> GetProductsData()
+        {
 
-        //    try
-        //    {
-        //        using var dbcon = new ConfigurationDbContext();
-        //        var products = dbcon.Products.ToList();
-        //        dbcon.SaveChanges();
-        //        return products;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //    }
-        //    return new List<Product>();
-        //}
+            try
+            {
+                using var dbcon = new MainDbContext();
+                var products = dbcon.Products.ToList();
+                dbcon.SaveChanges();
+                return products;
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+            }
+            return new List<Product>();
+        }
 
-        //[HttpPost]
-        //public string PostNewProduct(Product product)
-        //{
-        //    try
-        //    {
-        //        using var dbcon = new ConfigurationDbContext();
-        //        dbcon.Products.Add(product);
-        //        dbcon.SaveChanges();
+        [HttpPost]
+        public string PostNewProduct(Product product)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.Products.Add(product);
+                dbcon.SaveChanges();
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ex.Message;
-        //    }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
 
-        //    return "המוצר נוסף בהצלחה";
-        //}
+            return "המוצר נוסף בהצלחה";
+        }
 
-        //[HttpPost]
-        //public string UpdateProduct(Product product)
-        //{
-        //    try
-        //    {
-        //        using var dbcon = new ConfigurationDbContext();
-        //        dbcon.Update(product);
-        //        dbcon.SaveChanges();
-        //        return "המידע עודכן בהצלחה";
+        [HttpPost]
+        public string UpdateProduct(Product product)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.Update(product);
+                dbcon.SaveChanges();
+                return "המידע עודכן בהצלחה";
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ex.Message;
-        //    }
-        //}
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
 
 
 

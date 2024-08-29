@@ -1,4 +1,5 @@
 ﻿@inherits TableBase
+@inject HttpClient Http
 
 @using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Shared.Buttons
@@ -7,7 +8,7 @@
 <div class="d-flex flex-row-reverse">
     <div class="p-2">
         <RadzenStack Visible="(IsCrudFrozen==false && IsVisible==true)" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px" class="mt-2 mb-4">
-            <AddRowButton Text="Add Product" OnClick="InsertRow" Disabled="(editMode == DataGridEditMode.Single && productsToInsert.Count() > 0)" />
+            <AddRowButton Text="Add Product" OnClick="InsertRow" Disabled="false" />
         </RadzenStack>
     </div>
 </div>
@@ -17,13 +18,19 @@
 
 <RadzenDataGrid Visible="IsVisible" @ref="productsGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
-                AllowSorting="true" Data="@products" TItem="Product" ColumnWidth="200px"
+                AllowSorting="true" Data="@fetchedproducts" TItem="Product" ColumnWidth="200px"
                 SelectionMode="DataGridSelectionMode.Single">
     <Columns>
 
-        <RadzenDataGridColumn TItem="Product" Property="ProductId" Title="Product SN" Frozen="IsCrudFrozen">
+        <RadzenDataGridColumn Visible="false" TItem="Product" Property="ProductId" Title="Product SN" Frozen="IsCrudFrozen">
             <EditTemplate Context="product">
                 <RadzenNumeric @bind-Value="product.ProductId" Style="width:200px; display: block" Name="Product SN" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn TItem="Product" Property="ProductSN" Title="Product SN" Frozen="IsCrudFrozen">
+            <EditTemplate Context="product">
+                <RadzenNumeric @bind-Value="product.ProductSN" Style="width:200px; display: block" Name="Product SN" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
@@ -60,27 +67,29 @@
 
 @code {
 
-    DataGridEditMode editMode = DataGridEditMode.Single;
-    RadzenDataGrid<Product>? productsGrid;
-    List<Product> productsToInsert = new List<Product>();
-    List<Product> productsToUpdate = new List<Product>();
+    private DataGridEditMode editMode = DataGridEditMode.Single;
+    private RadzenDataGrid<Product>? productsGrid = new();
+    private List<Product> productsToInsert = new List<Product>();
+    private List<Product> productsToUpdate = new List<Product>();
+    private IList<Product> fetchedproducts;
+    private Product selectedProduct = new();
 
-    List<Product> fetchedproducts = new();
-    IEnumerable<Product>? products;
-    protected Product product = new();
+
 
 
     protected override async Task OnInitializedAsync()
     {
-        fetchedproducts.Add(new Product
-            {
-                ProductId = 258999875,
-                ProductName = "Tesla Car"
-            });
 
-        products = fetchedproducts;
-
+        fetchedproducts = await GetProductsData();
         await base.OnInitializedAsync();
+    }
+
+    //relevant
+    private async Task<List<Product>> GetProductsData()
+    {
+        using var json = await Http.GetAsync("configuration/getproductsdata");
+        var data = await json.Content.ReadFromJsonAsync<List<Product>>();
+        return data;
     }
 
     private void Reset()
@@ -108,6 +117,7 @@
         await productsGrid.EditRow(product);
     }
 
+
     void OnUpdateRow(Product product)
     {
         Reset(product);
@@ -117,9 +127,34 @@
         //dbCon save
     }
 
-    async Task SaveRow(Product product)
+    private async Task SaveRow(Product product)
     {
+        if (product.ProductId is 0)
+        {
+            await productsGrid.UpdateRow(product);
+            await AddProduct(product);
+            return;
+
+        }
         await productsGrid.UpdateRow(product);
+        await UpdateProduct(product);
+
+    }
+
+
+
+    private async Task AddProduct(Product product)
+    {
+        using var json = Http.PostAsJsonAsync("configuration/postnewproduct", product);
+        // add logic if product is inserted
+
+    }
+
+    private async Task UpdateProduct(Product product)
+    {
+        using var json = Http.PostAsJsonAsync("configuration/updateproduct", product);
+        //add logic if product is updated
+        
     }
 
     void CancelEdit(Product product)
@@ -137,25 +172,29 @@
         //}
     }
 
+
     private async Task DeleteRow(Product product)
     {
         Reset(product);
 
-        if (products.Contains(product))
+        if (fetchedproducts.Contains(product))
         {
-            // dbCon remove
+            fetchedproducts.Remove(product);
+            CancelEdit(product);
 
-            //dbCon save
-
-            await productsGrid.Reload();
+            if(product.ProductId != 0);
+            //await remove product
         }
         else
         {
             productsGrid.CancelEditRow(product);
             await productsGrid.Reload();
         }
+
+        await productsGrid.Reload();
     }
 
+    //relevant
     private async Task InsertRow()
     {
         if (editMode == DataGridEditMode.Single)
@@ -164,15 +203,13 @@
         }
 
         var product = new Product();
-        productsToInsert.Add(product);
-        await productsGrid.InsertRow(product);
+        selectedProduct = product;
+        productsToInsert.Add(selectedProduct);
+        await productsGrid.InsertRow(selectedProduct);
     }
-
 
     private void OnCreateRow(Product product)
     {
-        //dbCon Add
-        //dbCon save
         productsToInsert.Remove(product);
     }
 

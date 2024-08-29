@@ -1,0 +1,44 @@
+﻿@page "/loginpage"
+@using  SapirProductionFloorManagment.Shared
+@inject HttpClient Http
+
+<div class="container">
+    <div class="card">
+        <h1 class="card-title">Welcome</h1>
+        <small class="card-subtitle">Please fill your details to enter the system</small>
+@*             <form class="card-form"> *@
+            <label for="username">Worker ID</label>
+            <div class="card-input-container username">
+                <input @bind="User.UserId" type="number" placeholder="@PlaceHolder" id="id">
+            </div>
+            <label for="password">Password</label>
+            <div class="card-input-container password">
+                <input @bind="User.Password" type="text" placeholder="Enter your password" id="password">
+            </div>
+            <button @onclick="()=>PostUserData()" style="background:#2c7ae5" class="card-button">Sign In</button>
+@*               </form> *@
+    </div>
+</div>
+
+@code 
+{
+    private User? User { get; set; } = new();   
+
+
+    [Parameter]
+    public string? PlaceHolder { get; set; } = "Enter your worker Id";
+
+
+    public async Task PostUserData()
+    {
+        using var userData = await Http.PostAsJsonAsync("login/getloginrequset", User);
+        var isUserExisted = await userData.Content.ReadFromJsonAsync<bool>();
+
+        if (isUserExisted)
+            Console.WriteLine("The user is existed inside db");
+        else
+            Console.WriteLine("The user is not found inside db");
+
+    }
+
+}

@@ -2,18 +2,30 @@
 
 @foreach (var day in Enumerable.Range(0, 7))
 {
-   @*  <div class="p-2">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" @bind-value="Line.WorkDays[day]" id="workDayCheck">
-            <label class="form-check-label" for="workDayCheck">
-                @DaysOfWeek[day]
-            </label>
-        </div>
-    </div> *@
+   
+    <div class="p-2">
+        @if(Line?.WorkDays[day] is true)
+        {
+            <div class="form-check">
+                <input @oninput="()=>SetWorkDay(Line.WorkDays[day])" checked class="form-check-input" type="checkbox" @bind-value="Line.WorkDays[day]" id="workDayCheck">
+                <label class="form-check-label" for="workDayCheck">
+                    @DaysOfWeek[day]
+                </label>
+            </div>
+
+        }
+        else if(Line?.WorkDays[day] is false)
+        {
+            <div class="form-check">
+                <input @oninput="()=>SetWorkDay(Line.WorkDays[day])" class="form-check-input" type="checkbox" @bind-value="Line.WorkDays[day]" id="workDayCheck">
+                <label class="form-check-label" for="workDayCheck">
+                    @DaysOfWeek[day]
+                </label>
+            </div>
+        }     
+    </div>
     
 }
-
-
 
 
 @code 
@@ -22,4 +34,15 @@
     public Line? Line { get; set; }
 
     private string[] DaysOfWeek = new string[]{"Sun","Mod","Tue","Wed","Thurs","Fri","Sat"};
+
+    private void SetWorkDay(bool isWorking)
+    {
+        if (isWorking)
+        {
+            isWorking = false;
+            return;
+        }
+        isWorking = true;
+        
+    }
 }

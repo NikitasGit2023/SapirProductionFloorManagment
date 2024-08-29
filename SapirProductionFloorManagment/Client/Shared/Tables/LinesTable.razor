@@ -2,6 +2,7 @@
 @inject HttpClient Http
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 @using SapirProductionFloorManagment.Client.Shared
+@using SapirProductionFloorManagment.Client.Logic
 
 
 <PageTitle>Lines</PageTitle>
@@ -17,7 +18,7 @@
                 {
                     <div class="d-flex flex-row-reverse">
                     <div class="p-2">
-                        <AddRowButton OnClick="InsertRow" Text="Add Line" Disabled="@(editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)" />
+                        <AddRowButton OnClick="InsertRow" Text="Add Line" Disabled="false" />
                     </div>
                     </div>
                 }
@@ -30,10 +31,10 @@
     <div class="p-2">
         <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4" 
-                        AllowSorting="true" Data="@gridData" TItem="Line"  SelectionMode="DataGridSelectionMode.Single">
+                        AllowSorting="true" Data="@fetchedLines" TItem="Line"  SelectionMode="DataGridSelectionMode.Single">
                         
             <Columns>
-                <RadzenDataGridColumn TItem="Line" Property="LineId" Title="Id" Width="100px" />
+                <RadzenDataGridColumn  Visible="false" TItem="Line" Property="LineId" Title="Id" Width="100px" />
 
                 <RadzenDataGridColumn TItem="Line" Width="150px" Property="Name" Title="Line Name" Frozen="IsCrudFrozen">
                     <EditTemplate Context="line" >
@@ -62,16 +63,20 @@
                         <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftEndWork"
                                         Style="width:100%; display: block" />
                     </EditTemplate>
+
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="WorkDays" Title="Work Days" Frozen="IsCrudFrozen" >
+                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="WorkDate" Title="DayOfWork" Frozen="IsCrudFrozen">
+                </RadzenDataGridColumn>
+
+               @*  <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="WorkDays" Title="Work Days" Frozen="IsCrudFrozen" >
                     <Template Context="line">
                         <div class="d-flex flex-row mb-3">
                             <WorkingDaysCheck Line="line">
                             </WorkingDaysCheck>
                         </div>
                     </Template>
-                </RadzenDataGridColumn>
+                </RadzenDataGridColumn> *@
                 @if (!IsCrudFrozen)
                 {
                     @*from here crud buttons*@
@@ -106,14 +111,17 @@
 
 @code {
 
+    //TODO convert workdate to dateonly
+
     [Parameter]
     public bool IsDemoShowed { get; set;}
 
+    
     private DataGridEditMode editMode = DataGridEditMode.Single;
     RadzenDataGrid<Line>? linesGrid = new();
     private List<Line> linesToInsert = new List<Line>();
     private List<Line> linesToUpdate = new List<Line>();
-    private IList<Line>? gridData;  
+    private IList<Line>? fetchedLines;  
     private List<string>? hourOptions;
     private Line selectedOne = new();
 
@@ -122,7 +130,7 @@
     {
 
         //get data from DB
-        gridData = await GetLinesData();
+        fetchedLines = await GetLinesData();
 
         //set workhours to each row
         hourOptions = Enumerable.Range(0, 24)
@@ -224,22 +232,20 @@
         //update
     }
 
+
+    //green button
     async Task SaveRow(Line line)
     {
 
         if (line.LineId is 0)
         {
+            await linesGrid.UpdateRow(line);
             await AddLine(line);
-            gridData?.Add(line);
-            linesGrid.CancelEditRow(line);
-            await linesGrid.Reload();
             return;
-            
         }
 
         await linesGrid.UpdateRow(line);
         await UpdateLine(line);
-        await linesGrid.Reload();
     }
 
     private void CancelEdit(Line line)
@@ -253,9 +259,9 @@
         //cleaning linesToInsert and LinesToUpdate
         Reset(line);
 
-        if (gridData.Contains(line))
+        if (fetchedLines.Contains(line))
         {
-            gridData.Remove(line);
+            fetchedLines.Remove(line);
 
             if(line.LineId != 0)
                 await RemoveLine(line);

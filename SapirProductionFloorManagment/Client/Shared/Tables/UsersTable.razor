@@ -8,7 +8,7 @@
 <div class="d-flex flex-row-reverse">
     <div class="p-2">
         <RadzenStack Visible="(IsCrudFrozen==false && IsVisible==true)" Orientation="Orientation.Horizontal" AlignItems="AlignItems.End" Gap="10px" class="mt-2 mb-4">
-                <AddRowButton Text="Add User" OnClick="InsertRow" Disabled="@(editMode == DataGridEditMode.Single && usersToInsert.Count() > 0)" />
+                <AddRowButton Text="Add User" OnClick="InsertRow" Disabled="false" />
         </RadzenStack>
     </div>
 </div>
@@ -39,9 +39,15 @@
             </EditTemplate>     
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="User" Property="Permission" Title="Permission" >
+        <RadzenDataGridColumn  TItem="User" Property="Permission" Title="Permission" >
             <EditTemplate Context="user">
                 <RadzenTextBox @bind-Value="user.Permission" Style="width:200px; display: block" Name="Permission" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn Visible="false" TItem="User" Property="Permission" Title="Permission">
+            <EditTemplate Context="user">
+                <RadzenNumeric @bind-Value="user.UserId" Style="width:200px; display: block" Name="Permission" />
             </EditTemplate>
         </RadzenDataGridColumn>
    
@@ -68,13 +74,18 @@
 
 </RadzenDataGrid>
 
-@code {
+@code 
+{
+
 
     private DataGridEditMode editMode = DataGridEditMode.Single;
     RadzenDataGrid<User>? usersGrid = new();
     private List<User> usersToInsert = new List<User>();
     private List<User> usersToUpdate = new List<User>();
     private IList<User>? usersData;
+
+    private bool IsAddButtonDisabled = true;
+
 
 
     protected override async Task OnInitializedAsync()
@@ -83,6 +94,8 @@
         await base.OnInitializedAsync();
     }
 
+
+    //get users data from db
     private async Task<List<User>> GetUsersData()
     {
         try
@@ -100,6 +113,7 @@
         return null;
     }
 
+    //add user to db
     protected async Task AddUser(User user)
     {
         try
@@ -115,6 +129,8 @@
 
     }
 
+
+    //update user inisde db
     protected async Task UpdateUser(User user)
     {
         try
@@ -130,6 +146,8 @@
         }
     }
 
+
+    //remove user inside db
     private async Task RemoveUser(User user)
     {
         try
@@ -174,10 +192,11 @@
         //update
     }
 
-    async Task SaveRow(User user)
+    //the green button
+    private async Task SaveRow(User user)
     {
-        if (usersData.Contains(user))
-        {
+        // if (usersData.Contains(user))
+        // {
             
             if (user.UserId is 0)
             {
@@ -189,16 +208,20 @@
             await usersGrid.UpdateRow(user);
             await UpdateUser(user);
 
-        }
+        // }
 
     }
 
+
+    //cancel edit
     private void CancelEdit(User user)
     {
         Reset(user);
         usersGrid.CancelEditRow(user);
     }
 
+
+    //delete row 
     private async Task DeleteRow(User user)
     {
         Reset(user);
@@ -212,7 +235,7 @@
             if (user.UserId != 0)
                 await RemoveUser(user);
         }
-        else
+        else 
         {
             usersGrid.CancelEditRow(user);
             await usersGrid.Reload();
@@ -221,6 +244,7 @@
         await usersGrid.Reload();
     }
 
+    //add user 
     private async Task InsertRow()
     {
         if (editMode == DataGridEditMode.Single)

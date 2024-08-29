@@ -1,29 +1,31 @@
 ﻿@page "/prodreport"
 @using  SapirProductionFloorManagment.Shared
+@inject HttpClient Http
 
 <h3>Production Report</h3>
 @using System.Text.Json;
 
-<RadzenTemplateForm TItem="WorkOrder" Data="order" Submit=@ReportWorkIsDone>
+<RadzenTemplateForm TItem="WorkOrder" Data="wo" Submit=@UpdateWorkOrderQuantity>
     <RadzenCard class="my-5 mx-auto" Style="max-width: 400px;">
 
-        <RadzenColumn Size="12" SizeMD="4">
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Work Order</RadzenText>
-        </RadzenColumn>
-        <RadzenColumn Size="12" SizeMD="5">
-            <RadzenTextBox Style="width: 70%;" Name="WO" />
-        </RadzenColumn>
+        <RadzenDropDown @bind-Value="selectedWorkOrderId"
+                        Data="@workOrders"
+                        TextProperty="ProductName"
+                        ValueProperty="Id"
+                        Style="width: 100%;"
+                        Change="OnWorkOrderSelected">
+        </RadzenDropDown>
 
          <RadzenColumn Size="12" SizeMD="4">
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Quantity</RadzenText>
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="5">
-            <RadzenTextBox  Style="width: 70%;" Name="Quantity" />
+            <RadzenNumeric TValue="int" @bind-value="@wo.Quantity" Style="width: 70%;" Name="Quantity" />
         </RadzenColumn>
        
         <div class="row">
             <div class="col-md-12 d-flex align-items-end justify-content-left mt-4">
-                <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
+                <RadzenButton Click="UpdateWorkOrderQuantity" ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
             </div>
         </div>
     </RadzenCard>
@@ -31,14 +33,55 @@
 
 
 
-
-
 @code 
 {
-    protected WorkOrder order = new WorkOrder();
-
-    protected async Task ReportWorkIsDone()
+    protected override async Task OnInitializedAsync()
     {
-        
+        workOrders = (await GetExistedWorkOrders()).ToList();
     }
+
+    private WorkOrder wo = new WorkOrder();
+    private List<WorkOrder> workOrders = new();
+    private int? selectedWorkOrderId;
+    private WorkOrder selectedWorkOrder = new();
+
+
+    //update work order quantity inside db
+    private async Task UpdateWorkOrderQuantity()
+    {
+        try
+        {
+            using var workOrder = await Http.PostAsJsonAsync("productionreport/postworkorderquantity", wo);
+            var response = await workOrder.Content.ReadFromJsonAsync<string>();
+
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task<List<WorkOrder>> GetExistedWorkOrders()
+    {
+        using var json = await Http.GetAsync("productionreport/getexistedworkorders");
+        var data = await json.Content.ReadFromJsonAsync<List<WorkOrder>>();
+        return data;
+        //add if data fetched succesfully
+
+    }
+
+
+    private async Task OnWorkOrderSelected(object args)
+    {
+
+        if (selectedWorkOrderId.HasValue)
+        {
+            var selectedId = selectedWorkOrderId.Value;
+            selectedWorkOrder = workOrders.FirstOrDefault(wo => wo.Id == selectedId);
+
+            //binding quantity by slected id from the dropdown
+            wo.Id = selectedId;
+
+        }
+    }
+
 }

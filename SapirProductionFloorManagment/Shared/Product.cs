@@ -9,6 +9,7 @@ namespace  SapirProductionFloorManagment.Shared
     public class Product
     {
       public int ProductId { get; set; }
+      public int ProductSN { get; set; }   
       public string? ProductName { get; set; }
     }
 }

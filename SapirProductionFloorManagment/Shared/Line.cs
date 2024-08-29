@@ -17,7 +17,8 @@ namespace  SapirProductionFloorManagment.Shared
         public string ShiftStartWork { get; set; } = "Unspecified";
         public string ShiftEndWork { get; set; } = "Unspecified";
         public int ProductionRate { get; set; }
-        public int NumericWorkDay { get; set; }
+        [NotMapped]
+        public string? NumericWorkDay { get; set; }
         public DateTime WorkDate { get; set; }
        
         [NotMapped]
@@ -25,7 +26,13 @@ namespace  SapirProductionFloorManagment.Shared
         {
             true, true, true, true, true, false, false 
         };
-           
+
+
+        public override int GetHashCode()
+        {
+            return LineId.GetHashCode();
+        }
+
 
     }
 }

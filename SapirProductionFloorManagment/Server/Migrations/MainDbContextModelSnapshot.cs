@@ -10,8 +10,8 @@ using SapirProductionFloorManagment.Server;
 
 namespace SapirProductionFloorManagment.Server.Migrations
 {
-    [DbContext(typeof(ConfigurationDbContext))]
-    partial class ConfigurationDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MainDbContext))]
+    partial class MainDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -52,9 +52,6 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumericWorkDay")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductionRate")
                         .HasColumnType("int");
 
@@ -90,6 +87,9 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ProductSN")
+                        .HasColumnType("int");
+
                     b.HasKey("ProductId");
 
                     b.ToTable("Products");
@@ -104,15 +104,18 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("FullName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JobTitle")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Permission")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
@@ -168,7 +171,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("WorkOrder");
+                    b.ToTable("WorkOrders");
                 });
 
             modelBuilder.Entity("SapirProductionFloorManagment.Shared.Line", b =>

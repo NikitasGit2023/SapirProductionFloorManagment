@@ -9,19 +9,18 @@ using System.Data.SqlClient;
 
 namespace SapirProductionFloorManagment.Server
 {
-    public class ConfigurationDbContext : DbContext
+    public class MainDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Line> Lines { get; set; }
-        public DbSet<Product> Products { get; set; }
-
+        public DbSet<Product> Products { get; set; }        
+        public DbSet<WorkOrder> WorkOrders { get; set; }    
         public string _ConnectionString { get; }
 
-
-        public ConfigurationDbContext()
+        public MainDbContext()
         {
          
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProdMannagent;User ID=account;Password=3194murkin;Encrypt=False";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProdMannagment;User ID=account;Password=3194murkin;Encrypt=False";
             _ConnectionString = ConnectionString;
         }
 
