@@ -1,29 +1,40 @@
 ﻿@using SapirProductionFloorManagment.Client.Shared
+@using SapirProductionFloorManagment.Client.Pages
+@inject CustomAuthenticationStateProvider AuthenticationProvider
 @inherits LayoutComponentBase
 
+@* <CascadingAuthenticationState> *@
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu @ref="nav" />
-    </div>
+    <div class="page">
+
+@*     <AuthorizeView>
+         <Authorized> *@
+      <div class="sidebar">
+          <NavMenu />      
+      </div
+@*     </Authorized> *@
+@* 
+    <NotAuthorized>
+        <LoginPage/> *@
+  @*   </NotAuthorized>
+          
+    </AuthorizeView> *@
 
     <main>
         <div class="top-row px-4">
-            <a  target="_blank">Sign Out</a>
+            <a target="_blank">Sign Out</a>
         </div>
-        @*<div>
-            <a @onclick="ShowFullScreen"></a>
-        </div>*@
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
 
+
+
 @code
 {
-    private NavMenu nav = new();
+ 
 
-    private void ShowFullScreen() => nav.HideNavMenu();
 
 }

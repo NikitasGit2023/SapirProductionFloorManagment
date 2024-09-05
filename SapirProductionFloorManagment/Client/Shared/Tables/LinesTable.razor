@@ -1,5 +1,6 @@
 ﻿@inherits TableBase
 @inject HttpClient Http
+@inject IToastService toastService
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 @using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Logic
@@ -116,7 +117,7 @@
     [Parameter]
     public bool IsDemoShowed { get; set;}
 
-    
+
     private DataGridEditMode editMode = DataGridEditMode.Single;
     RadzenDataGrid<Line>? linesGrid = new();
     private List<Line> linesToInsert = new List<Line>();
@@ -165,6 +166,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/postnewline", line);
             var message = data.Content.ReadFromJsonAsync<string>();
+            toastService.ShowSuccess("The data is added succesfully");
         }
         catch (Exception ex)
         {
@@ -180,7 +182,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/updateline", line);
             var message = data.Content.ReadFromJsonAsync<string>();
-            Console.WriteLine(message);
+            toastService.ShowSuccess("The data is updated succesfully");
         }
         catch (Exception ex)
         {
@@ -266,7 +268,6 @@
             if(line.LineId != 0)
                 await RemoveLine(line);
         }
-        //?
         await linesGrid.Reload();
     }
 

@@ -9,6 +9,11 @@ namespace SapirProductionFloorManagment.Server.Controllers
     [Route("[controller]/[action]")]
     public class ConfigurationController : Controller
     {
+        private readonly ILogger<ConfigurationController> _logger;
+        public ConfigurationController(ILogger<ConfigurationController> logger) : base()
+        {
+            _logger = logger;
+        }
 
         [HttpGet]
         public List<Line> GetLinesData()
@@ -18,12 +23,13 @@ namespace SapirProductionFloorManagment.Server.Controllers
             {
                 using var dbcon = new MainDbContext();
                 var lines =  dbcon.Lines.ToList();
-                dbcon.SaveChanges();    
+                dbcon.SaveChanges();         
+
                 return lines;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError("GetLinesData: {ex.Message}" ,ex.Message ); 
             }
             return new List<Line>();
         }
@@ -41,10 +47,11 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("PostNewLine: {ex.Message}", ex.Message);
                 return ex.Message;
             }
 
-            return "הקו נוסף בהצלחה";
+            return "המידע הוסף בהצלחה";
         }
 
 
@@ -61,10 +68,11 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("UpdateLine: {ex.Message}", ex.Message);
                 return ex.Message;
             }
         }
-
+        
 
 
         [HttpPost]
@@ -75,11 +83,12 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 using var dbcon = new MainDbContext();
                 dbcon.Lines.Remove(line);
                 dbcon.SaveChanges();
-                return "הקו הוסר בהצלחה";
+                return "המידע הוסר בהצלחה";
 
             }
             catch(Exception ex) 
             {
+                _logger.LogError("RemoveLine: {ex.Message}", ex.Message);
                 return ex.Message;      
             } 
         }
@@ -97,7 +106,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError("GetUsersData: {ex.Message}", ex.Message);
             }
             return new List<User>();
         }
@@ -114,10 +123,11 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("PostNewUser: {ex.Message}", ex.Message);
                 return ex.Message;
             }
 
-            return "הקו נוסף בהצלחה";
+            return "המידע הוסף בהצלחה";
         }
 
         [HttpPost]
@@ -133,6 +143,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("UpdateUser: {ex.Message}", ex.Message);
                 return ex.Message;
             }
         }
@@ -145,11 +156,12 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 using var dbcon = new MainDbContext();
                 dbcon.Remove(user);
                 dbcon.SaveChanges();
-                return "המידע עודכן בהצלחה";
+                return "המידע הסור בהצלחה";
 
             }
             catch (Exception ex)
             {
+                _logger.LogError("RemoveUser: {ex.Message}", ex.Message);
                 return ex.Message;
             }
         }
@@ -168,7 +180,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
-                Console.Write(ex.Message);
+                _logger.LogError("GetProductsData: {ex.Message}", ex.Message); 
             }
             return new List<Product>();
         }
@@ -185,10 +197,11 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("PostNewProduct: {ex.Message}", ex.Message);
                 return ex.Message;
             }
 
-            return "המוצר נוסף בהצלחה";
+            return "המידע הוסף בהצלחה";
         }
 
         [HttpPost]
@@ -204,6 +217,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("UpdateProduct: {ex.Message}", ex.Message);
                 return ex.Message;
             }
         }

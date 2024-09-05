@@ -1,17 +1,33 @@
 ﻿@using SapirProductionFloorManagment.Client.Shared.Tables
 @using SapirProductionFloorManagment.Client.Shared
+@inject IToastService toastService
 
 @page "/generaltables"
 
-<TablesSwitcher @ref="tablesSwitcher" Switchers="keyValuePairs" OnClick="SwitchToTable"/>
+<TablesSwitcher 
+    @ref="tablesSwitcher" 
+    Switchers="keyValuePairs"
+    OnClick="SwitchToTable"/>
 
-<WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" IsCrudFrozen="true" ImportFilesEnabled="false"/>
+<WorkOrdersTable 
+    IsVisible="@keyValuePairs["Orders"]"
+    IsCrudFrozen="true" 
+    ImportFilesEnabled="false"/>
 
-<ProductsTable IsVisible="@keyValuePairs["Products"]" IsCrudFrozen="true" ImportFilesEnabled="false" />
+<ProductsTable 
+    IsVisible="@keyValuePairs["Products"]" 
+    IsCrudFrozen="true" 
+    ImportFilesEnabled="false" />
 
-<LinesTable IsVisible="@keyValuePairs["Lines"]" IsCrudFrozen="true" ImportFilesEnabled="false" />
+<LinesTable 
+    IsVisible="@keyValuePairs["Lines"]" 
+    IsCrudFrozen="true"
+    ImportFilesEnabled="false" />
 
-<CustomersTable IsVisible="@keyValuePairs["Customers"]" IsCrudFrozen="true" ImportFilesEnabled="false" />
+<CustomersTable 
+    IsVisible="@keyValuePairs["Customers"]" 
+    IsCrudFrozen="true" 
+    ImportFilesEnabled="false" />
 
 
 @code {
@@ -25,6 +41,7 @@
         keyValuePairs.Add("Products", false);
         keyValuePairs.Add("Customers", false);
         keyValuePairs.Add("Lines", false);
+        toastService.ShowSuccess("Toast service is working and ready for use.");
 
         return base.OnInitializedAsync();
     }

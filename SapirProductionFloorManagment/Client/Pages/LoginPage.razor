@@ -1,0 +1,48 @@
+﻿@page "/loginpage"
+
+@using SapirProductionFloorManagment.Shared
+@inject HttpClient Http
+@inject CustomAuthenticationStateProvider authenticationStateProvider
+
+
+<AuthorizeView Roles="Admin">
+    <p>You are connected, conngratz!</p>
+</AuthorizeView>
+
+
+
+<div class="container">
+    <div class="card">
+        <h1 class="card-title">Welcome</h1>
+        <small class="card-subtitle">Please fill your details to enter the system</small>
+        <label for="username">Worker ID</label>
+        <div class="card-input-container username">
+            <input @bind="User.UserId" type="number" placeholder="@PlaceHolder" id="id">
+        </div>
+        <label for="password">Password</label>
+        <div class="card-input-container password">
+            <input @bind="User.Password" type="text" placeholder="Enter your password" id="password">
+        </div>
+        <button @onclick="LoginUser" style="background:#2c7ae5" class="card-button">Sign In</button>
+    </div>
+</div>
+
+
+@code
+{
+    private User? User { get; set; } = new();
+
+    [Parameter]
+    public string? PlaceHolder { get; set; } = "Enter your worker Id";
+
+
+    public async Task LoginUser()
+    {
+        //login user
+        await authenticationStateProvider.LoginAsync(User);
+
+    }
+
+
+}
+
