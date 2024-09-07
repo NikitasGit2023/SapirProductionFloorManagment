@@ -1,5 +1,6 @@
 ﻿@page "/prodreport"
 @using  SapirProductionFloorManagment.Shared
+@* @attribute [Authorize(Roles = "Admin")] *@
 @inject HttpClient Http
 
 <h3>Production Report</h3>
@@ -35,6 +36,7 @@
 
 @code 
 {
+    //relevant
     protected override async Task OnInitializedAsync()
     {
         workOrders = (await GetExistedWorkOrders()).ToList();

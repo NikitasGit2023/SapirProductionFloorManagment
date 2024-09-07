@@ -1,82 +1,103 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using SapirProductionFloorManagment.Shared.Authentication___Autherization;
 using Microsoft.AspNetCore.Components.Authorization;
 using SapirProductionFloorManagment.Shared;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
-using System.Threading.Tasks;
+using Blazored.SessionStorage;
+using SapirProductionFloorManagment.Client.Logic;
+
+
+//relevant
 
 public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly HttpClient _httpClient;
-    private readonly ILocalStorageService _localStorageService;
+    private readonly ISessionStorageService _sessionStorageService;
+    private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-    // Constructor using dependency injection
-    public CustomAuthenticationStateProvider(HttpClient httpClient, ILocalStorageService localStorageService)
+    public CustomAuthenticationStateProvider(HttpClient httpClient, ISessionStorageService sessionStorageService)
     {
-        _httpClient = httpClient;
-        _localStorageService = localStorageService;
+         _httpClient = httpClient;
+        _sessionStorageService = sessionStorageService;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await _localStorageService.GetItemAsync("authToken");
-
-        if (string.IsNullOrEmpty(token))
-        {
-            // User is not authenticated
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-        }
-
+       
         try
         {
-            // Ideally, you would decode the token and extract claims
-            var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
+            var userSession = _sessionStorageService.ReadEncryptedItemAsync("UserSession");
 
-            // Create and return the authentication state
-            var user = new ClaimsPrincipal(identity);
-            return new AuthenticationState(user);
+
+            if (userSession == null)
+            {
+                return await Task.FromResult(new AuthenticationState(_anonymous));
+            }
+
+            else
+            {
+
+                var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, userSession.Result.UserName),
+                    new Claim(ClaimTypes.Role, userSession.Result.Role),
+
+                }, "JwtAuth"));
+
+                return await Task.FromResult(new AuthenticationState(claimsPrincipal));
+
+
+            }
         }
-        catch
+        catch(Exception ex) 
         {
             // Token is invalid or error occurred
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            Console.WriteLine(ex.Message);  
+            return new AuthenticationState(new ClaimsPrincipal(_anonymous));
         }
     }
+    
 
-    public async Task LoginAsync(User user)
+    public async Task UpdateAuthenticationState(UserSession userSession)
     {
-        var response = await _httpClient.PostAsJsonAsync("login/getloginrequest", user);
+        ClaimsPrincipal claimsPrincipal;
 
-        if (response.IsSuccessStatusCode)
+        if(userSession != null)
         {
-            var token = await response.Content.ReadAsStringAsync();
-            await _localStorageService.SetItemAsync("authToken", token);
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, userSession.UserName),
+                    new Claim(ClaimTypes.Role, userSession.Role),
+
+                }));
+            userSession.ExpityTimeStamp = DateTime.Now.AddSeconds(userSession.ExpiresIn);
+            await _sessionStorageService.SaveEncryptedItemAsync("UserSession", userSession);
+
         }
-    }
-
-    public async Task LogoutAsync()
-    {
-        await _localStorageService.RemoveItemAsync("authToken");
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-    }
-
-    private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
-    {
-        var payload = jwt.Split('.')[1];
-        var jsonBytes = ParseBase64WithoutPadding(payload);
-        var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
-        return keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()));
-    }
-
-    private byte[] ParseBase64WithoutPadding(string base64)
-    {
-        switch (base64.Length % 4)
+        else
         {
-            case 2: base64 += "=="; break;
-            case 3: base64 += "="; break;
+            claimsPrincipal = _anonymous;
+            _sessionStorageService.RemoveItemAsync("UserSession");
         }
-        return Convert.FromBase64String(base64);
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));  
+
+    }
+
+    public async Task<string> GetToken()
+    {
+        var result = string.Empty;
+        try
+        {
+            var userSession = await _sessionStorageService.ReadEncryptedItemAsync("UserSession");
+            if (userSession != null && DateTime.Now < userSession.ExpityTimeStamp)
+                result = userSession.Token;
+        }
+        catch (Exception ex)
+        {
+            //TODO
+        }
+        return result;
+
     }
 }

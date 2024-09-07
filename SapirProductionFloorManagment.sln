@@ -9,6 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SapirProductionFloorManagme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SapirProductionFloorManagment.Shared", "SapirProductionFloorManagment\Shared\SapirProductionFloorManagment.Shared.csproj", "{5DBCF569-26D3-4481-95E4-0CCE9A00054D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C3E9F7F8-8AE5-4E75-84A9-1C5404033B99}"
+	ProjectSection(SolutionItems) = preProject
+		Guides.txt = Guides.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

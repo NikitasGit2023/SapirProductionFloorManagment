@@ -12,8 +12,8 @@ using SapirProductionFloorManagment.Server;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20240828143005_MigrationName")]
-    partial class MigrationName
+    [Migration("20240906134628_MainDbContextMigration")]
+    partial class MainDbContextMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,7 +117,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Permission")
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

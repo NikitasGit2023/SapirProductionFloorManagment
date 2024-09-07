@@ -10,11 +10,12 @@ namespace  SapirProductionFloorManagment.Shared
     public record User
     {
         public int UserId { get; set; }
-        public string FullName { get; set; } = string.Empty;          
+        public string FullName { get; set; } = string.Empty;    
+        public string? Password { get; set; }
+        public string Role { get; set; } = string.Empty;    
         public string JobTitle { get; set; } = string.Empty;    
-        public string Permission { get; set; } = string.Empty;     
-        public string?  Password { get; set; }
 
+       
     
 
         public override int GetHashCode()

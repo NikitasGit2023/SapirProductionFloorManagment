@@ -1,10 +1,28 @@
 ﻿@page "/"
+@inject AuthenticationStateProvider authenticationState
 
 
+<AuthorizeView Roles="Admin,Basic,Developer">
+    <Authorized>
+        <DashBoardPage/>
+    </Authorized>
+    <NotAuthorized>
+        <LoginPage/> 
+    </NotAuthorized> 
+</AuthorizeView>
 
+@code
+{
+    protected override Task OnInitializedAsync()
+    {
+        var customAuthenticationStateProvider = (CustomAuthenticationStateProvider)authenticationState;
+        // var token = customAuthenticationStateProvider.GetToken();
+        // if (string.IsNullOrWhiteSpace(token.Result))
+        // {
+        // }
+        return base.OnInitializedAsync();
+    }
 
-
-
-@code{
+    //relevant
 
 }

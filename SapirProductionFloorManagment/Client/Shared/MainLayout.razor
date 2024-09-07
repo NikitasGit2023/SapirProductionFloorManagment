@@ -1,28 +1,23 @@
 ﻿@using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Pages
-@inject CustomAuthenticationStateProvider AuthenticationProvider
+@inject AuthenticationStateProvider authenticationProvider
+@inject NavigationManager navigatonManager
 @inherits LayoutComponentBase
 
-@* <CascadingAuthenticationState> *@
-
     <div class="page">
-
-@*     <AuthorizeView>
-         <Authorized> *@
       <div class="sidebar">
           <NavMenu />      
-      </div
-@*     </Authorized> *@
-@* 
-    <NotAuthorized>
-        <LoginPage/> *@
-  @*   </NotAuthorized>
-          
-    </AuthorizeView> *@
-
+       </div
     <main>
         <div class="top-row px-4">
-            <a target="_blank">Sign Out</a>
+            <AuthorizeView Roles="Admin">
+                <Authorized >
+                    <a @onclick="Logout" href="/">Logout</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
         <article class="content px-4">
             @Body
@@ -34,6 +29,15 @@
 
 @code
 {
+    //relevant
+
+    private async Task Logout()
+    {
+        var customAuthentocationStateProvider = (CustomAuthenticationStateProvider)authenticationProvider;
+        await customAuthentocationStateProvider.UpdateAuthenticationState(null);
+        navigatonManager.NavigateTo("/", true);
+    }
+
  
 
 

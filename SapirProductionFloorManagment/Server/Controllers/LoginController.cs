@@ -1,15 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using SapirProductionFloorManagment.Shared;
+using SapirProductionFloorManagment.Server.Authentication;
+using SapirProductionFloorManagment.Shared.Authentication___Autherization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SapirProductionFloorManagment.Server.Controllers
 {
-
     [ApiController]
     [Route("[controller]/[action]")]
     public class LoginController : Controller
@@ -21,52 +17,62 @@ namespace SapirProductionFloorManagment.Server.Controllers
             _logger = logger;
         }
 
+        //relevant
 
+
+        [AllowAnonymous]
         [HttpPost]
-        public HttpResponseMessage GetLoginRequest(User user)
+        public UserSession GetLoginRequset(User user)
         {
+
             try
             {
-                using var dbContext = new MainDbContext();
-                var existedUser = dbContext.Users.Find(user.UserId);
-
-                if (existedUser != null)
+                using var dbCon = new MainDbContext();
+                var userFromDb = dbCon.Users.Where(u => u.FullName  == user.FullName && u.Password == user.Password).First();
+                if (userFromDb != null)
                 {
-                    // Serialize user object to JSON
-                    var json = JsonSerializer.Serialize(user.UserId);
-                    var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
-                    {
-                        Content = new StringContent(json, Encoding.UTF8, "application/json")
-                    };
-
-                    // Log success
-                    _logger.LogInformation("Success to login at {DateTime.Now}, ID: {user.UserId}", DateTime.Now, user.UserId);
-                    return responseMessage;
+                    var jwtAuthenticationManager = new JwtAuthenticationManager(userFromDb);
+                    var userSession = jwtAuthenticationManager.GenerateJwtToken(user.FullName, user.Password);
+                    if (userSession == null)
+                        Unauthorized();
+                    else
+                        _logger.LogInformation("Success to login at {DateTime.Now}, ID: {userFromDb.UserId}", DateTime.Now, userFromDb.UserId);
+                         return userSession;
                 }
                 else
-                {
-                    // User not found
-                    var responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
-                    {
-                        Content = new StringContent("User not found.")
-                    };
+                    Unauthorized();
 
-                    _logger.LogWarning("Failed to login at {DateTime.Now}, ID: {user.UserId}", DateTime.Now, user.UserId);
-                    return responseMessage;
-                }
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 // Log error
                 _logger.LogError("GetLoginRequest: {ex.Message}", ex.Message);
 
-                // Return internal server error
-                var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError)
-                {
-                    Content = new StringContent("An error occurred.")
-                };
+            }
+            return null;
+        }
 
-                return responseMessage;
+
+
+        [HttpPost]
+        public string PostWorkOrderQuantity(WorkOrder wo)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                var workOrder = dbcon.WorkOrders.Where(x => x.Id == wo.Id).FirstOrDefault();
+
+                if (workOrder.Quantity > wo.Quantity)
+                    return "הכמות שהזנת קטנה מהכמות הקיימת במערכת";
+                workOrder.Quantity = wo.Quantity;
+                dbcon.Update(workOrder);
+                dbcon.SaveChanges();
+                return "המידע עודכן בהצלחה";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("PostWorkOrderQuantity: {DateTime.Now} , {ex.Message}", DateTime.Now, ex.Message);
+                return ex.Message;
             }
         }
 

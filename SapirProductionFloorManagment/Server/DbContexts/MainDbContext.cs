@@ -2,9 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using SapirProductionFloorManagment.Shared;
-using MySql.EntityFrameworkCore.Extensions;
 using System.Diagnostics.Contracts;
-using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
 
 namespace SapirProductionFloorManagment.Server
@@ -20,7 +18,7 @@ namespace SapirProductionFloorManagment.Server
         public MainDbContext()
         {
          
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProdMannagment;User ID=account;Password=3194murkin;Encrypt=False";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProdManagment;User ID=account;Password=3194murkin;Encrypt=False";
             _ConnectionString = ConnectionString;
         }
 
