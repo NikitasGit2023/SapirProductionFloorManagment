@@ -8,7 +8,7 @@ using Blazored.SessionStorage;
 using SapirProductionFloorManagment.Client.Logic;
 
 
-//relevant
+
 
 public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
@@ -83,6 +83,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));  
 
     }
+
 
     public async Task<string> GetToken()
     {

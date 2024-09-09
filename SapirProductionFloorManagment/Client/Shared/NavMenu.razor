@@ -23,9 +23,15 @@
                 </NavLink>
             </div>
             </Authorized>
+            <NotAuthorized>
+
+            </NotAuthorized>
+            <NotAuthorized>
+
+            </NotAuthorized>
         </AuthorizeView>
 
-        <AuthorizeView Roles="Basic,Admin,Developer" >
+        <AuthorizeView Roles="Admin,Developer" >
             <Authorized>
             <br />
             <div class="nav-item px-3">
@@ -37,9 +43,12 @@
                 </NavLink>
             </div>
             </Authorized>
+            <NotAuthorized>
+
+            </NotAuthorized>
         </AuthorizeView>
 
-        <AuthorizeView role="Basic,Admin,Developer">
+        <AuthorizeView Roles="Basic,Admin,Developer">
             <Authorized>
             <br />
             <div class="nav-item px-3">
@@ -50,6 +59,9 @@
                 </NavLink>
             </div>
             </Authorized>
+            <NotAuthorized>
+
+            </NotAuthorized>
         </AuthorizeView>
 
         <AuthorizeView Roles="Admin,Developer,Basic">
@@ -63,10 +75,13 @@
                     </NavLink>
                 </div>
             </Authorized>
+            <NotAuthorized>
+
+            </NotAuthorized>
         </AuthorizeView>
 
             <AuthorizeView Roles="Admin,Developer"> 
-                <Authorized>
+                <Authorized> 
                 <br />
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="uploadinfo">
@@ -75,8 +90,11 @@
                         </span><IconText Content="&nbsp; &nbsp; Upload Info"></IconText>
                     </NavLink>
                 </div>
-                </Authorized>
-            </AuthorizeView>
+               </Authorized>
+               <NotAuthorized>
+
+               </NotAuthorized>
+            </AuthorizeView> 
    
 
             <AuthorizeView Roles="Admin,Developer">
@@ -90,6 +108,9 @@
                     </NavLink>
                 </div>
                 </Authorized>
+                <NotAuthorized>
+
+                </NotAuthorized>
             </AuthorizeView>
 
     </nav>
@@ -99,7 +120,7 @@
 
 @code {
 
-    //relevant
+    //bugged
 
     private bool collapseNavMenu = true;
 

@@ -17,7 +17,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             _logger = logger;
         }
 
-        //relevant
+        
 
 
         [AllowAnonymous]
@@ -55,12 +55,12 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
 
         [HttpPost]
-        public string PostWorkOrderQuantity(WorkOrder wo)
+        public string PostWorkOrderQuantity(WorkOrdersTableContext wo)
         {
             try
             {
                 using var dbcon = new MainDbContext();
-                var workOrder = dbcon.WorkOrders.Where(x => x.Id == wo.Id).FirstOrDefault();
+                var workOrder = dbcon.WorkOrdersFromXL.Where(x => x.WorkOrderSN == wo.WorkOrderSN).FirstOrDefault();
 
                 if (workOrder.Quantity > wo.Quantity)
                     return "הכמות שהזנת קטנה מהכמות הקיימת במערכת";
@@ -76,11 +76,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
         }
 
-        public bool GetLogOutRequset()
-        {
-            return false;
-        }
-
+        //optional
         [HttpPost]
         public bool RegisterUser(User user)
         {

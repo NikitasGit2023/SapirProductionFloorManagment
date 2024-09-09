@@ -84,7 +84,7 @@
         await base.OnInitializedAsync();
     }
 
-    //relevant
+    
     private async Task<List<Product>> GetProductsData()
     {
         using var json = await Http.GetAsync("configuration/getproductsdata");
@@ -194,7 +194,7 @@
         await productsGrid.Reload();
     }
 
-    //relevant
+    
     private async Task InsertRow()
     {
         if (editMode == DataGridEditMode.Single)

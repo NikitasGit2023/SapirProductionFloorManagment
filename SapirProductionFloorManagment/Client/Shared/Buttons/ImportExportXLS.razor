@@ -1,20 +1,96 @@
-﻿<div class="d-flex align-items-end flex-column mb-3" style="height: 20px;">
+﻿@* @using OfficeOpenXml
+@using System.Data
+@using System.IO
+@using NPOI.SS.UserModel
+@using NPOI.XSSF.UserModel
+@using SapirProductionFloorManagment.Client.Shared.Tables
+
+
+<div class="d-flex align-items-end flex-column mb-3" style="height: 20px;">
     <div class="p-2">
         <div class="d-flex flex-row mb-3">
             <div class="p-2">
-                <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="grid_on" Text="Import XLS" />
+                <InputFile OnChange="@ImportXlsxFile"></InputFile>
             </div>
             <div class="p-2"><RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="grid_on" Text="Export XLS" /></div>
         </div>
     </div>
-   
-  
 </div>
-
-
 
 
 
 @code {
 
+
+    private async Task ImportXlsxFile(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            using (var fileStream = e.File.OpenReadStream())
+            using (var ms = new MemoryStream())
+            {
+                await fileStream.CopyToAsync(ms);
+                ms.Position = 0;
+
+                var xxwb = new XSSFWorkbook(ms);
+                var sheet = xxwb.GetSheetAt(0);
+
+
+                for (var i = sheet.FirstRowNum+1; i <= sheet.LastRowNum; i++)
+                {
+                    var row = sheet.GetRow(i);
+                    if (row == null) continue;
+
+                    var workOrder = new WorkOrdersTableContext();
+
+
+                    for (var j = row.FirstCellNum; j < row.LastCellNum; j++)
+                    {
+                        var cell = row.GetCell(j);
+                        if (cell == null) continue; 
+
+
+                        switch (cell.CellType)
+                        {
+                            //if string
+                            case CellType.String:
+                                var cellValue = cell.ToString();
+
+                                if (j == 0) workOrder.WorkOrderSN = cellValue;
+                                else if (j == 1) workOrder.ProductDesc = cellValue;
+                                else if (j == 3) workOrder.Comments = cellValue;
+                                
+                                break;
+                            case CellType.Numeric:
+                                if (DateUtil.IsCellDateFormatted(cell))
+                                {
+                                    workOrder.CompletionDate = (DateTime)cell.DateCellValue;
+                                }
+                                else
+                                {
+                                    // if numeric
+                                    if (j == 2) workOrder.Quantity = (int)cell.NumericCellValue;
+                                    else if (j == 4) workOrder.OptionalLine1 = (int)cell.NumericCellValue;
+                                    else if (j == 5) workOrder.OptionalLine2 = (int)cell.NumericCellValue;
+                                    else if (j == 6) workOrder.Priority = (int)cell.NumericCellValue;
+                                    else if (j == 8) workOrder.SizeInMicron = (int)cell.NumericCellValue;
+                                }
+                                break;
+                        }
+                    }
+
+                    Data.Add(workOrder);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("ImportXlsxFile:" + "" + ex.Message);
+            
+        }
+    }
+
+
+
 }
+ *@

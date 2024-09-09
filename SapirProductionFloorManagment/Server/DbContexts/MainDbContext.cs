@@ -12,13 +12,13 @@ namespace SapirProductionFloorManagment.Server
         public DbSet<User> Users { get; set; }
         public DbSet<Line> Lines { get; set; }
         public DbSet<Product> Products { get; set; }        
-        public DbSet<WorkOrder> WorkOrders { get; set; }    
+        public DbSet<WorkOrdersTableContext> WorkOrdersFromXL { get; set; }    
         public string _ConnectionString { get; }
 
         public MainDbContext()
         {
          
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProdManagment;User ID=account;Password=3194murkin;Encrypt=False";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagment;User ID=account;Password=3194murkin;Encrypt=False";
             _ConnectionString = ConnectionString;
         }
 

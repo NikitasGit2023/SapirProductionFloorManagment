@@ -5,13 +5,19 @@
 @inherits LayoutComponentBase
 
     <div class="page">
+        <AuthorizeView Roles="Admin,Developer,Basic">
+            <Authorized>
       <div class="sidebar">
           <NavMenu />      
-       </div
+       </div>
+        </Authorized>
+        <NotAuthorized>
+        </NotAuthorized>
+          </AuthorizeView>
     <main>
         <div class="top-row px-4">
-            <AuthorizeView Roles="Admin">
-                <Authorized >
+            <AuthorizeView Roles="Admin,Developer,Basic">
+                <Authorized>
                     <a @onclick="Logout" href="/">Logout</a>
                 </Authorized>
                 <NotAuthorized>
@@ -29,7 +35,7 @@
 
 @code
 {
-    //relevant
+    
 
     private async Task Logout()
     {

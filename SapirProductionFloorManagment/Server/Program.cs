@@ -15,7 +15,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 
-//relevant
+
 builder.Services.AddAuthentication(O =>
 {
     O.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;   

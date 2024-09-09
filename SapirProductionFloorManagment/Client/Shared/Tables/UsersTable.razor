@@ -39,18 +39,11 @@
             </EditTemplate>     
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn  TItem="User" Property="Permission" Title="Permission" >
+        <RadzenDataGridColumn  TItem="User" Property="Role" Title="Permission" >
             <EditTemplate Context="user">
                 <RadzenTextBox @bind-Value="user.Role" Style="width:200px; display: block" Name="Permission" />
             </EditTemplate>
         </RadzenDataGridColumn>
-
-        <RadzenDataGridColumn Visible="false" TItem="User" Property="Permission" Title="Permission">
-            <EditTemplate Context="user">
-                <RadzenNumeric @bind-Value="user.UserId" Style="width:200px; display: block" Name="Permission" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-   
 
 
         @*from here crud buttons*@

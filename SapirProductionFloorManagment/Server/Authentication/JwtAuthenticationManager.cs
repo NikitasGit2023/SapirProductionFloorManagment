@@ -7,7 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace SapirProductionFloorManagment.Server.Authentication
-{   //relevant
+{   
     public class JwtAuthenticationManager
     {
         public const string JWT_SECURITY_KEY = "NikitaDanielLiliaYuriMurkinRijick1234567890";

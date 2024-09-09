@@ -12,7 +12,7 @@ using SapirProductionFloorManagment.Server;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20240906134628_MainDbContextMigration")]
+    [Migration("20240908130132_MainDbContextMigration")]
     partial class MainDbContextMigration
     {
         /// <inheritdoc />
@@ -174,7 +174,50 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("WorkOrders");
+                    b.ToTable("WorkOrder");
+                });
+
+            modelBuilder.Entity("SapirProductionFloorManagment.Shared.WorkOrdersTableContext", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CompletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OptionalLine1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OptionalLine2")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductDesc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SizeInMicron")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WorkOrderSN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkOrdersFromXL");
                 });
 
             modelBuilder.Entity("SapirProductionFloorManagment.Shared.Line", b =>
