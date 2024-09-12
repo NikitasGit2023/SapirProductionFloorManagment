@@ -1,0 +1,255 @@
+﻿@inherits TableBase
+@inject HttpClient Http
+@inject IToastService toastService 
+
+<div class="d-flex flex-column mb-3">
+    <div class="p-2">
+        <RadzenHtml Visible="IsVisible">
+            <div class="d-flex flex-row-reverse">
+                <div class="p-2">
+                    @if (IsCrudFrozen == false)
+                    {
+                        <div class="d-flex flex-row-reverse">
+                            <div class="p-2">
+                                <AddRowButton OnClick="InsertRow" Text="Add Line" Disabled="false" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </RadzenHtml>
+    </div>
+    <div class="p-2">
+        <RadzenDataGrid Visible="IsVisible" @ref="scheduleGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20" 
+                        AllowSorting="true" Data="@Data" TItem="LinesScheduleTableContext" SelectionMode="DataGridSelectionMode.Single">
+                        
+            <Columns>
+                <RadzenDataGridColumn Visible="false" TItem="LinesScheduleTableContext" Property="Id" Title="Id" Width="100px" />
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="StartWork" Title="Start Work" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenDatePicker @bind-Value="schedule.StartWork" Style="width:200px; display: block" Name="StartWork" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="EndWork" Title="End Work" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenDatePicker @bind-Value="schedule.EndWork" Style="width:200px; display: block" Name="EndWork" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="WorkDuraion" Title="Work Duration" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenDatePicker @bind-Value="schedule.WorkDuraion" Style="width:200px; display: block" Name="WorkDuraion" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="QuantityInKg" Title="Quantity (Kg)" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenNumeric @bind-Value="schedule.QuantityInKg" Style="width:100%; display: block;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="Description" Title="Description" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenTextBox @bind-Value="schedule.Description" Style="width:200px; display: block" Name="Description" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="WorkOrderSN" Title="Work Order SN" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenTextBox @bind-Value="schedule.WorkOrderSN" Style="width:200px; display: block" Name="WorkOrderSN" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="Comments" Title="Comments" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenTextBox @bind-Value="schedule.Comments" Style="width:200px; display: block" Name="Comments" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="After11PM" Title="After 11 PM" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenCheckBox @bind-Value="schedule.After11PM" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="TimeToFinish" Title="Time to Finish" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenDatePicker @bind-Value="schedule.TimeToFinish" Style="width:200px; display: block" Name="TimeToFinish" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                @if (!IsCrudFrozen)
+                {
+                    <RadzenDataGridColumn Width="150px" Visible="(IsDemoShowed is false)" TItem="LinesScheduleTableContext" Context="schedule" Filterable="false" Sortable="false"
+                                          TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+                        <Template Context="schedule">
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(schedule))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(schedule))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                        </Template>
+                        <EditTemplate Context="schedule">
+                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(schedule))">
+                            </RadzenButton>
+                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(schedule))">
+                            </RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(schedule))">
+                            </RadzenButton>
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                }
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsDemoShowed { get; set; }
+
+    [Parameter]
+    public List<LinesScheduleTableContext>? Data { get; set; } = new();
+
+    private DataGridEditMode editMode = DataGridEditMode.Single;
+    private RadzenDataGrid<LinesScheduleTableContext>? scheduleGrid = new();
+    private List<LinesScheduleTableContext> schedulesToInsert = new List<LinesScheduleTableContext>();
+    private List<LinesScheduleTableContext> schedulesToUpdate = new List<LinesScheduleTableContext>();
+    private List<LinesScheduleTableContext>? fetchedSchedules;
+    private LinesScheduleTableContext selectedOne = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+
+    private async Task AddSchedule(LinesScheduleTableContext schedule)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/postnewschedule", schedule);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            toastService.ShowSuccess("The data is added successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task UpdateSchedule(LinesScheduleTableContext schedule)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/updateschedule", schedule);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            toastService.ShowSuccess("The data is updated successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task RemoveSchedule(LinesScheduleTableContext schedule)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/removeschedule", schedule);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            Console.WriteLine(message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private void Reset()
+    {
+        schedulesToInsert.Clear();
+        schedulesToUpdate.Clear();
+    }
+
+    private void Reset(LinesScheduleTableContext schedule)
+    {
+        schedulesToInsert.Remove(schedule);
+        schedulesToUpdate.Remove(schedule);
+    }
+
+    private async Task EditRow(LinesScheduleTableContext schedule)
+    {
+        if (editMode == DataGridEditMode.Single && schedulesToInsert.Count() > 0)
+        {
+            Reset();
+        }
+
+        schedulesToUpdate.Add(schedule);
+        await scheduleGrid.EditRow(schedule);
+    }
+
+    private void OnUpdateRow(LinesScheduleTableContext schedule)
+    {
+        Reset(schedule);
+    }
+
+    private async Task SaveRow(LinesScheduleTableContext schedule)
+    {
+        if (schedule.Id == 0)
+        {
+            await scheduleGrid.UpdateRow(schedule);
+            await AddSchedule(schedule);
+            return;
+        }
+
+        await scheduleGrid.UpdateRow(schedule);
+        await UpdateSchedule(schedule);
+    }
+
+    private void CancelEdit(LinesScheduleTableContext schedule)
+    {
+        Reset(schedule);
+        scheduleGrid.CancelEditRow(schedule);
+    }
+
+    private async Task DeleteRow(LinesScheduleTableContext schedule)
+    {
+        Reset(schedule);
+
+        if (fetchedSchedules.Contains(schedule))
+        {
+            fetchedSchedules.Remove(schedule);
+
+            if(schedule.Id != 0)
+                await RemoveSchedule(schedule);
+        }
+        await scheduleGrid.Reload();
+    }
+
+    private async Task InsertRow()
+    {
+        if (editMode == DataGridEditMode.Single)
+        {
+            Reset();
+        }
+
+        var schedule = new LinesScheduleTableContext();
+        selectedOne = schedule;
+        schedulesToInsert.Add(selectedOne);
+        await scheduleGrid.InsertRow(selectedOne);
+    }
+
+    private void OnCreateRow(LinesScheduleTableContext schedule)
+    {
+        schedulesToInsert.Remove(schedule);
+    }
+
+    // public void RefreshTable()
+    // {
+    //     scheduleGrid?.Reload();
+    // }
+
+}

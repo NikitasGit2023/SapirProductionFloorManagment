@@ -1,5 +1,8 @@
 ﻿@page "/uploadinfo"
 
+@inject HttpClient Http
+
+
 @using SapirProductionFloorManagment.Client.Shared.Tables
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 @using SapirProductionFloorManagment.Client.Shared
@@ -31,47 +34,117 @@
 <TablesSwitcher @ref="tablesSwitcher" Switchers="keyValuePairs" OnClick="SwitchToTable"/>
 
 
+<RadzenStack Visible="@keyValuePairs["Lines"]" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
+    <RadzenLabel Text="Select Line" Component="LinesFilter" />
+    <RadzenDropDown Change="FilterLinesTable" TValue="string" Data="linesName" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
+</RadzenStack>
+
 <div class="orders-table">
     <WorkOrdersTable @ref="workOrdersTable"
         IsVisible="@keyValuePairs["Orders"]"
         Data="workOrders" 
-        ImportFilesEnabled="true" 
         IsCrudFrozen="true"/>
 </div>
 
 
-<div class="lines-table" style="width:35%">
-    <LinesTable @ref="linesTable"  
-    IsDemoShowed="true"
-    IsVisible="@keyValuePairs["Lines"]" 
-    ImportFilesEnabled="true"
-    IsCrudFrozen="true" />
-</div>
-
-
-<div claas="lines-table-connected" style="width:100%">
-    <LineWorkDaysTable 
-     Data="workDaysData"  
-     IsVisible="@keyValuePairs["Lines"]" />
+<div class="lines-table" style="width:100%">
+    <LinesScheduleTable
+           @ref="lineSchedulesTable"
+          IsDemoShowed="true"
+          Data = "linesSchedule"
+          IsVisible="@keyValuePairs["Lines"]" 
+     />
 </div>
 
 
 
 @code {
+
     private List<WorkOrdersTableContext> workOrders = new();
+    private List<LinesScheduleTableContext> linesSchedule = new();
+    private List<LinesScheduleTableContext> filteredSchedule = new();
+    private List<LinesScheduleTableContext> unfilteredSchedule = new();
     private Dictionary<string, bool> keyValuePairs = new();
     private TablesSwitcher tablesSwitcher = new();
-    private LinesTable linesTable = new();
+    private LinesScheduleTable lineSchedulesTable = new();
     private WorkOrdersTable workOrdersTable = new();
+    private string selectedLineName = string.Empty;
+    private List<string?> linesName = new();
 
-    public List<Line>? workDaysData = new();
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         keyValuePairs.Add("Orders", true);
         keyValuePairs.Add("Lines", false);
+        await AskForLineNames();       
+    }
 
-        return base.OnInitializedAsync();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Async code to run after the first render
+            await AskForGetExistedOrders();
+            workOrdersTable.RefreshTable();
+
+            await AskForLinesScedule();
+            unfilteredSchedule = linesSchedule;
+            // lineSchedulesTable.RefreshTable();
+            StateHasChanged();
+        }
+    }
+
+    private void FilterLinesTable(object e)
+    {
+        linesSchedule = unfilteredSchedule;
+        var lineNum = (string)e;
+
+        if (e == string.Empty)
+            return;
+
+        linesSchedule = linesSchedule.Where(e => e.RelatedToLine == lineNum).ToList();
+        StateHasChanged();
+    }
+
+    private async Task AskForLinesScedule()
+    {
+        try
+        {
+            using var request = await Http.GetAsync("uploadinfo/getexistedlinesscedule");
+            var json = request.Content.ReadFromJsonAsync<List<LinesScheduleTableContext>>();
+            linesSchedule = json.Result;
+
+
+        }catch(Exception ex)
+        {
+            //TODO
+
+        }
+
+    }
+
+    private async Task AskForLineNames()
+    {
+        using var request = await Http.GetAsync("uploadinfo/getlinesname");
+        var json = request.Content.ReadFromJsonAsync<List<string>>();
+        linesName = json.Result;
+    }
+
+    private async Task AskForGetExistedOrders()
+    {
+        try
+        {
+            using var request = await Http.GetAsync("uploadinfo/getexistedworkorders");
+            var response = await request.Content.ReadFromJsonAsync<List<WorkOrdersTableContext>>();
+            workOrders = response;
+
+
+        }
+        catch (Exception ex)
+        {
+            //TODO  
+        }
+
     }
 
     private async Task ImportXlsxFile(InputFileChangeEventArgs e)
@@ -111,6 +184,7 @@
                                 if (j == 0) workOrder.WorkOrderSN = cellValue;
                                 else if (j == 1) workOrder.ProductDesc = cellValue;
                                 else if (j == 3) workOrder.Comments = cellValue;
+                              
 
                                 break;
                             case CellType.Numeric:
@@ -122,18 +196,28 @@
                                 {
                                     // if numeric
                                     if (j == 2) workOrder.Quantity = (int)cell.NumericCellValue;
-                                    else if (j == 4) workOrder.OptionalLine1 = (int)cell.NumericCellValue;
-                                    else if (j == 5) workOrder.OptionalLine2 = (int)cell.NumericCellValue;
+                                    else if (j == 4) workOrder.OptionalLine1 = cell.ToString();
+                                    else if (j == 5) workOrder.OptionalLine2 = cell.ToString();
                                     else if (j == 6) workOrder.Priority = (int)cell.NumericCellValue;
                                     else if (j == 8) workOrder.SizeInMicron = (int)cell.NumericCellValue;
                                 }
                                 break;
                         }
                     }
-                    workOrders.Add(workOrder);
-                    workOrdersTable.RefreshTable();
+                    if (workOrders.Contains(workOrder) || string.IsNullOrEmpty(workOrder.WorkOrderSN))
+                    {
+                        continue;
+                    }
+                    else
+                        workOrders.Add(workOrder);
+
+
 
                 }
+
+                workOrdersTable.RefreshTable();
+                await AskForUploadInfoRequset(workOrders);
+                await AskForSettigDataToRelatedTables(workOrders);
             }
         }
         catch (Exception ex)
@@ -141,10 +225,27 @@
             Console.WriteLine("ImportXlsxFile:" + "" + ex.Message);
 
         }
+        StateHasChanged();
     }
 
+    private async Task AskForUploadInfoRequset(List<WorkOrdersTableContext> info)
+    {
+        using var request = await Http.PostAsJsonAsync("uploadinfo/postworkorderstable", info);
+    }
 
-
+    private async Task AskForSettigDataToRelatedTables(List<WorkOrdersTableContext> workOrders)
+    {
+        try
+        {
+            using var request = await Http.PostAsJsonAsync("uploadinfo/postdatatorelatedtables", workOrders);
+            //TODO - write a toast message if process get wrong
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("AskForSettigDataToRelatedTables:" + "" + ex.Message);
+            
+        }
+    }
 
     private void SwitchToTable()
     {
@@ -153,14 +254,11 @@
         foreach (var visibility in keyValuePairs?.Keys)
         {
             keyValuePairs[visibility] = false;
-
         }
         MakeVisible(outPut);
         StateHasChanged();
 
     }
-
-
 
     private void MakeVisible(string target)
     {
@@ -170,13 +268,12 @@
             if (kvp.Key == target)
             {
                 SetValueToTrue(target);
-
             }
         }
     }
 
-
     private void SetValueToFalse(string key) => keyValuePairs[key] = false;
+
     private void SetValueToTrue(string key) => keyValuePairs[key] = true;
 }
   

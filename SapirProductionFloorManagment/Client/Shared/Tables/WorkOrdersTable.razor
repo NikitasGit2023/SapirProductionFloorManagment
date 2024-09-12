@@ -1,4 +1,5 @@
 ﻿@inherits TableBase
+@inject HttpClient Http
 @using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 
@@ -26,7 +27,7 @@
 
 
 <RadzenDataGrid Visible="IsVisible" @ref="ordersGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="30"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="15"
                 AllowSorting="true" Data="@orders" TItem="WorkOrdersTableContext" ColumnWidth="200px"
                 SelectionMode="DataGridSelectionMode.Single" >
     <Columns>
@@ -54,14 +55,14 @@
        
         <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="OptionalLine1" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
             <EditTemplate>
-                <RadzenNumeric @bind-Value="order.OptionalLine1" Style="width:100%; display: block;" />
+                <RadzenText @bind-Value="order.OptionalLine1" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
 
         <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="OptionalLine2" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
             <EditTemplate>
-                <RadzenNumeric @bind-Value="order.OptionalLine2" Style="width:100%; display: block;" />
+                <RadzenText @bind-Value="order.OptionalLine2" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
@@ -130,9 +131,9 @@
     protected List<WorkOrdersTableContext> fetchedOrders = new();
     protected WorkOrdersTableContext order = new();
 
-
     protected override async Task OnInitializedAsync()
-    { 
+    {
+        await AskForGetExistedOrders();
         orders = Data;
 
         await base.OnInitializedAsync();
@@ -140,7 +141,49 @@
 
     public void RefreshTable()
     {
-        ordersGrid?.Reload();
+        try
+        {
+            orders = new();
+            orders = Data;
+            ordersGrid?.Reload();
+
+
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        
+    }
+
+    private async Task AskForGetExistedOrders()
+    {
+        try
+        {
+            using var request = await Http.GetAsync("uploadinfo/getexistedworkorders");
+            var response = await request.Content.ReadFromJsonAsync<List<WorkOrdersTableContext>>();
+            Data = response;
+
+
+        }
+        catch (Exception ex)
+        {
+            //TODO
+        }
+
+    }
+
+    public async Task AskForPostWorkOrders()
+    {
+        using var requset = await Http.PostAsJsonAsync("", orders);
+    }
+
+    public List<WorkOrdersTableContext> ReturnTableData()
+    {
+        if(orders != null)
+            return orders;
+        return new List<WorkOrdersTableContext>();
+
     }
 
     private void Reset()
@@ -154,8 +197,6 @@
         ordersToInsert.Remove(order);
         ordersToUpdate.Remove(order);
     }
-
-
 
     private async Task EditRow(WorkOrdersTableContext order)
     {
@@ -172,8 +213,6 @@
     {
         Reset(order);
     }
-
-
 
     private async Task SaveRow(WorkOrdersTableContext order)
     {
@@ -215,11 +254,13 @@
         await ordersGrid.InsertRow(order);
     }
 
-
     private void OnCreateRow(WorkOrdersTableContext order)
     {
         ordersToInsert.Remove(order);
     }
+
+
+ 
 
 
 }

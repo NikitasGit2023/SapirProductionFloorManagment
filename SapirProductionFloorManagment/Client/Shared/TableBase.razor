@@ -14,18 +14,9 @@
     [Parameter]
     public string? Title { get; set;}
 
-    [Parameter]
-    public bool? ImportFilesEnabled { get; set; } = true;
-
-    [Parameter]
-    public EventCallback OnCreate { get; set; }
-
-    [Parameter]
-    public EventCallback OnUpdate { get; set; }
-
-    [Parameter]
-    public EventCallback OnDelete { get; set; }
-
-
+    public void RefreshTable(RadzenDataGrid<object> grid)
+    {
+        grid?.Reload();
+    }
 
 }

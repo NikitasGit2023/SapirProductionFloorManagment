@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class MainDbContextMigration : Migration
+    public partial class MainDbContextDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,6 +23,30 @@ namespace SapirProductionFloorManagment.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customer", x => x.CustomerId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LinesWorkSchedule",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RelatedToLine = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartWork = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndWork = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WorkDuraion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    QuantityInKg = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WorkOrderSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    After11PM = table.Column<bool>(type: "bit", nullable: false),
+                    TimeToFinish = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SizeInMicron = table.Column<int>(type: "int", nullable: false),
+                    IsCalculted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LinesWorkSchedule", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,8 +88,8 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     WorkOrderSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductDesc = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    OptionalLine1 = table.Column<int>(type: "int", nullable: false),
-                    OptionalLine2 = table.Column<int>(type: "int", nullable: false),
+                    OptionalLine1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OptionalLine2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Priority = table.Column<int>(type: "int", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CompletionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -144,6 +168,9 @@ namespace SapirProductionFloorManagment.Server.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Lines");
+
+            migrationBuilder.DropTable(
+                name: "LinesWorkSchedule");
 
             migrationBuilder.DropTable(
                 name: "Products");

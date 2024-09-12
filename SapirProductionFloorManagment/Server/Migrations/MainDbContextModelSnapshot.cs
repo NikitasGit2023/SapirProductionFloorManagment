@@ -76,6 +76,56 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.ToTable("Lines");
                 });
 
+            modelBuilder.Entity("SapirProductionFloorManagment.Shared.LinesScheduleTableContext", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("After11PM")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndWork")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCalculted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("QuantityInKg")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RelatedToLine")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SizeInMicron")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartWork")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("TimeToFinish")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("WorkDuraion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WorkOrderSN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LinesWorkSchedule");
+                });
+
             modelBuilder.Entity("SapirProductionFloorManagment.Shared.Product", b =>
                 {
                     b.Property<int>("ProductId")
@@ -189,11 +239,13 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<DateTime>("CompletionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OptionalLine1")
-                        .HasColumnType("int");
+                    b.Property<string>("OptionalLine1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OptionalLine2")
-                        .HasColumnType("int");
+                    b.Property<string>("OptionalLine2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");

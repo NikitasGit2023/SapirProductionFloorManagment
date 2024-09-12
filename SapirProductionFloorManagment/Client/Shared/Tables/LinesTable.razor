@@ -1,9 +1,7 @@
 ﻿@inherits TableBase
 @inject HttpClient Http
 @inject IToastService toastService
-@using SapirProductionFloorManagment.Client.Shared.Buttons
-@using SapirProductionFloorManagment.Client.Shared
-@using SapirProductionFloorManagment.Client.Logic
+
 
 
 <PageTitle>Lines</PageTitle>
@@ -51,25 +49,6 @@
                 </RadzenDataGridColumn>
 
 
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ShiftStartWork" Title="Start Work" Frozen="IsCrudFrozen" Width="200px">
-                    <EditTemplate Context="line" >
-                        <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftStartWork"
-                                        Style="width:100%; display: block;" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-
-
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="ShiftEndWork" Title="End Work" Frozen="IsCrudFrozen" Width="150px">
-                    <EditTemplate Context="line">
-                        <RadzenDropDown TValue="string" Data="@hourOptions" @bind-Value="line.ShiftEndWork"
-                                        Style="width:100%; display: block" />
-                    </EditTemplate>
-
-                </RadzenDataGridColumn>
-
-                <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="WorkDate" Title="DayOfWork" Frozen="IsCrudFrozen">
-                </RadzenDataGridColumn>
-
                @*  <RadzenDataGridColumn Visible="(IsDemoShowed is false)" TItem="Line" Property="WorkDays" Title="Work Days" Frozen="IsCrudFrozen" >
                     <Template Context="line">
                         <div class="d-flex flex-row mb-3">
@@ -112,8 +91,6 @@
 
 @code {
 
-    //TODO convert workdate to dateonly
-
     [Parameter]
     public bool IsDemoShowed { get; set;}
 
@@ -122,7 +99,7 @@
     RadzenDataGrid<Line>? linesGrid = new();
     private List<Line> linesToInsert = new List<Line>();
     private List<Line> linesToUpdate = new List<Line>();
-    private IList<Line>? fetchedLines;  
+    private IList<Line>? fetchedLines;
     private List<string>? hourOptions;
     private Line selectedOne = new();
 
@@ -135,15 +112,14 @@
 
         //set workhours to each row
         hourOptions = Enumerable.Range(0, 24)
-                               .Select(hour => new TimeOnly(hour, 0).ToString())
-                               .ToList();
+                                .Select(hour => new TimeOnly(hour, 0).ToString())
+                                .ToList();
 
         //assign the first row of the to selectedLines
         await base.OnInitializedAsync();
     }
 
-
-    private async Task<List<Line>> GetLinesData()
+    public async Task<List<Line>> GetLinesData()
     {
         try
         {
@@ -234,7 +210,6 @@
         //update
     }
 
-
     //green button
     async Task SaveRow(Line line)
     {
@@ -290,7 +265,7 @@
         linesToInsert.Remove(line);
     }
 
-     //to do a vocabulary to hours
+    
 
  
 }
