@@ -15,14 +15,19 @@ namespace SapirProductionFloorManagment.Client.Logic
             await sessionServiceStorage.SetItemAsync(key, base64Json);
         }
         
-        //problem
+        //bugged
         public static async Task<UserSession> ReadEncryptedItemAsync(this ISessionStorageService sessionServiceStorage, string key)
         {
-            var base64Json = await sessionServiceStorage.GetItemAsync<string>(key); 
-            var itemJsonBytes = Convert.FromBase64String(base64Json);
-            var itemJosn = Encoding.UTF8.GetString(itemJsonBytes);
-            var item = JsonSerializer.Deserialize<object>(itemJosn);
-            return (UserSession)item;
+            var base64Json = await sessionServiceStorage.GetItemAsync<string>(key);
+            if (base64Json != null)
+            {
+                var itemJsonBytes = Convert.FromBase64String(base64Json);
+                var itemJosn = Encoding.UTF8.GetString(itemJsonBytes);
+                var item = JsonSerializer.Deserialize<object>(itemJosn);
+                return (UserSession)item;
+            }
+            return null; 
+                
         }
     }
 }

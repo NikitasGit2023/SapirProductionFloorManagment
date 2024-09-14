@@ -84,9 +84,6 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("After11PM")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Comments")
                         .HasColumnType("nvarchar(max)");
 
@@ -114,8 +111,8 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<DateTime>("TimeToFinish")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("WorkDuraion")
-                        .HasColumnType("datetime2");
+                    b.Property<double>("WorkDuraion")
+                        .HasColumnType("float");
 
                     b.Property<string>("WorkOrderSN")
                         .IsRequired()

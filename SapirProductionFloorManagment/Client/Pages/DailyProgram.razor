@@ -1,5 +1,5 @@
 ﻿@page "/dailyprogram"
-
+@inject HttpClient Http
 @inherits TableBase
 @using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Shared.Tables
@@ -10,67 +10,97 @@
         <h2>Work plan</h2>
     </div>
     <div class="p-2">
-        <div class="d-flex justify-content-center">
-            <RadzenButton Text="Calc Program" ButtonStyle="ButtonStyle.Light" />
-        </div>
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+                <RadzenButton @onclick="RefreshWeeklyProgram" Text="Calc Program" ButtonStyle="ButtonStyle.Light" />
+            </div> 
+            <div class="p-2">
+                Last Update: @lastUpdatedAt
+            </div>
+        </div> 
     </div>
     <div class="p-2">
-        <WorkProgramsTable Lines="lines" />
+
+
+         <RadzenStack Visible="true" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
+            <RadzenLabel Text="Select Line" Component="LinesFilter" />
+            <RadzenDropDown Change="FilterLinesTable" TValue="string" Data="linesName" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
+        </RadzenStack>
+
+        <div class="lines-table" style="width:100%">
+            <LinesScheduleTable @ref="lineSchedulesTable"
+                                Data="linesSchedule"
+                                IsCrudFrozen="false"
+                                IsNewRowCanAdded="false"
+                                IsVisible="true" />
+        </div>
+ 
     </div>
 </div>
 
 
 @code 
 {
-    private List<Line> lines = new()
+    private string lastUpdatedAt = string.Empty;
+    private List<WorkOrdersTableContext> workOrders = new();
+    private List<LinesScheduleTableContext> linesSchedule = new();
+    private List<LinesScheduleTableContext> filteredSchedule = new();
+    private List<LinesScheduleTableContext> unfilteredSchedule = new();
+    private LinesScheduleTable lineSchedulesTable = new();
+    private string selectedLineName = string.Empty;
+    private List<string?> linesName = new();
+
+
+    protected override async Task OnInitializedAsync()
     {
+        await AskForLineNames();
+        await AskForLinesScedule();
+        unfilteredSchedule = linesSchedule;
+        // lineSchedulesTable.RefreshTable();
+        StateHasChanged();
+    }
+
+    private void FilterLinesTable(object e)
+    {
+        linesSchedule = unfilteredSchedule;
+        var lineNum = (string)e;
+
+        if (e == string.Empty)
+            return;
+
+        linesSchedule = linesSchedule.Where(e => e.RelatedToLine == lineNum).ToList();
+        StateHasChanged();
+    }
+
+    private async Task AskForLinesScedule()
+    {
+        try
         {
-            new Line
-            {
-                LineId = 1,
-                WorkOrder = {Id =1111, 
-                    ProductName = "כוס פלסטיק", 
-                    Quantity= 3333, 
-                    WorkDuration = 24, 
-                    StartDate = DateTime.Now, 
-                    EndDate = DateTime.Now.AddDays(1),
-                    Comments = "Hell"
-                },
-            }
-            
-        },
-           {
-            new Line
-            {
-                LineId = 2,
-                WorkOrder = {Id = 2222,
-                    ProductName = "כוס זכוכית",
-                    Quantity= 444,
-                    WorkDuration = 23,
-                    StartDate = DateTime.Now,
-                    EndDate = DateTime.Now.AddDays(1),
-                    Comments = "Hello"
-                },
-            }
+            using var request = await Http.GetAsync("dailyprogram/getexistedlinesscedule");
+            var json = request.Content.ReadFromJsonAsync<List<LinesScheduleTableContext>>();
+            linesSchedule = json.Result;
 
-        },
-          {
-            new Line
-            {
-                LineId = 0,
-                WorkOrder = {Id =1111,
-                    ProductName = "כוס נייר",
-                    Quantity= 3333,
-                    WorkDuration = 24,
-                    StartDate = DateTime.Now,
-                    EndDate = DateTime.Now.AddDays(1),
-                    Comments = "Hello world"
-                },
-            }
+        }
+        catch (Exception ex)
+        {
+            //TODO
+        }
 
-        },
+    }
 
-    };
+    private async Task AskForLineNames()
+    {
+        using var request = await Http.GetAsync("dailyprogram/getlinesname");
+        var json = request.Content.ReadFromJsonAsync<List<string>>();
+        linesName = json.Result;
+    }
 
+    private async Task RefreshWeeklyProgram()
+    {
+        lastUpdatedAt = DateTime.Now.ToString();
+        await AskForLinesScedule();
+        StateHasChanged();
+        // await AskForLinesScedule();
+    }
 
 }

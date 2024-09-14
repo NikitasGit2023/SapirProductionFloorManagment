@@ -8,55 +8,82 @@
 
 <AuthorizeView>
     <NotAuthorized>
-        <div class="container">
-    <div class="card">
-        <h1 class="card-title">Welcome</h1>
-        <small class="card-subtitle">Please fill your details to enter the system</small>
-        <label for="username">Worker ID</label>
-        <div class="card-input-container username">
-            <input @bind="Userdata.FullName" type="text" placeholder="@PlaceHolder" id="id">
-        </div>
-        <label for="password">Password</label>
-        <div class="card-input-container password">
-            <input @bind="Userdata.Password" type="password" placeholder="Enter your password" id="password">
-        </div>
-        <button @onclick="LoginUser" style="background:#2c7ae5" class="card-button">Sign In</button>
-    </div>
-</div>
+        @if (Visible)
+        {
+            <div style="margin-top:5%;" class="d-flex justify-content-center">
+                <div class="card">
+                    <h1 class="card-title">Welcome</h1>
+                    <small class="card-subtitle">Please fill your details to enter the system</small>
+                    <label for="username">Worker ID</label>
+                    <div class="card-input-container username">
+                        <input @bind="Userdata.FullName" type="text" placeholder="@PlaceHolder" id="id">
+                    </div>
+                    <label for="password">Password</label>
+                    <div class="card-input-container password">
+                        <input @bind="Userdata.Password" type="password" placeholder="Enter your password" id="password">
+                    </div>
+                    <button @onclick="LoginUser" style="background:#2c7ae5" class="card-button">Sign In</button>
+                </div>
+
+            </div>
+            
+            <div style="color:red; font-style:italic;">
+                @Message
+            </div>
+            
+        }
+        @if (!Visible)
+        {
+            <div class="d-flex justify-content-center">
+
+                    <RadzenProgressBarCircular Style="margin-top:10%;" Size="ProgressBarCircularSize.Large"
+                                               ProgressBarStyle="ProgressBarStyle.Danger"
+                                               Value="100" ShowValue="false"
+                                               Mode="ProgressBarMode.Indeterminate" />             
+            </div>
+        }
     </NotAuthorized>
+
     <Authorized>
-        Welcome @Userdata.FullName!
+   
     </Authorized>
 </AuthorizeView>
-
 
 
 
 @code
 {
 
-    
-
-
-    private User Userdata { get; set; } = new();
 
     [Parameter]
     public string? PlaceHolder { get; set; } = "Enter your worker name";
 
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
+    private User Userdata { get; set; } = new();
+
+    private string Message = string.Empty;
+
+
     private async Task LoginUser()
     {
+       
         using var loginRespose = await http.PostAsJsonAsync("login/getloginrequset", Userdata);
+        Visible = !Visible;
 
         if (loginRespose.IsSuccessStatusCode)
         {
+           
             var userSession = await loginRespose.Content.ReadFromJsonAsync<UserSession>();
             var custAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
             await custAuthStateProvider.UpdateAuthenticationState(userSession);
             StateHasChanged();
-
-            //add logic if user is unathorized
+            return;
 
         }
+        Message = "Username or Password are incorrected please try again!";
+
 
     }
 

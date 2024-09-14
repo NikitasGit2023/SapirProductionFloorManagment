@@ -1,9 +1,13 @@
 ﻿
+
 @code 
 {
 
     [Parameter]
     public bool IsCrudFrozen { get; set; } = true;
+
+    [Parameter]
+    public bool IsNewRowCanAdded { get; set; } = true;
 
     [Parameter]
     public bool IsVisible { get; set; } = true;
@@ -14,9 +18,5 @@
     [Parameter]
     public string? Title { get; set;}
 
-    public void RefreshTable(RadzenDataGrid<object> grid)
-    {
-        grid?.Reload();
-    }
 
 }

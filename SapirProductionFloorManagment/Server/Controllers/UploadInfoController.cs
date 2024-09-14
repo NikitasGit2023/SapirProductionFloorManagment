@@ -69,22 +69,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<List<LinesScheduleTableContext>> GetExistedLinesScedule()
-        {
-            try 
-            {
-                using var dbcon = new MainDbContext();
-                var schedule = dbcon.LinesWorkSchedule.Where(e => e.IsCalculted == false).ToList(); // bugged
-                return await Task.FromResult(schedule);
-            }
-            catch (Exception ex) 
-            {
-                _logger?.LogError("GetExistedLinesScedule: {ex.Message}", ex.Message);
 
-            } 
-            return new List<LinesScheduleTableContext> { }; //check if null can be returned
-        }
 
         [HttpGet]
         public async Task<List<string>> GetLinesName()

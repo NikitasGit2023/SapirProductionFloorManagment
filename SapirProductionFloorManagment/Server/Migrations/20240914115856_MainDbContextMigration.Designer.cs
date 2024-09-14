@@ -12,8 +12,8 @@ using SapirProductionFloorManagment.Server;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20240912191216_MainDbContextDb")]
-    partial class MainDbContextDb
+    [Migration("20240914115856_MainDbContextMigration")]
+    partial class MainDbContextMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,9 +87,6 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("After11PM")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Comments")
                         .HasColumnType("nvarchar(max)");
 
@@ -117,8 +114,8 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<DateTime>("TimeToFinish")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("WorkDuraion")
-                        .HasColumnType("datetime2");
+                    b.Property<double>("WorkDuraion")
+                        .HasColumnType("float");
 
                     b.Property<string>("WorkOrderSN")
                         .IsRequired()

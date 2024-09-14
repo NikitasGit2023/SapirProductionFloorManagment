@@ -17,8 +17,6 @@
 <h3>Upload Information</h3>
 
 
-
-
 <div class="d-flex align-items-end flex-column mb-3" style="height: 20px;">
     <div class="p-2">
         <div class="d-flex flex-row mb-3">
@@ -31,103 +29,33 @@
 </div>
 
 
-<TablesSwitcher @ref="tablesSwitcher" Switchers="keyValuePairs" OnClick="SwitchToTable"/>
-
-
-<RadzenStack Visible="@keyValuePairs["Lines"]" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
-    <RadzenLabel Text="Select Line" Component="LinesFilter" />
-    <RadzenDropDown Change="FilterLinesTable" TValue="string" Data="linesName" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
-</RadzenStack>
 
 <div class="orders-table">
     <WorkOrdersTable @ref="workOrdersTable"
-        IsVisible="@keyValuePairs["Orders"]"
         Data="workOrders" 
-        IsCrudFrozen="true"/>
+        IsCrudFrozen="false"/>
 </div>
-
-
-<div class="lines-table" style="width:100%">
-    <LinesScheduleTable
-           @ref="lineSchedulesTable"
-          IsDemoShowed="true"
-          Data = "linesSchedule"
-          IsVisible="@keyValuePairs["Lines"]" 
-     />
-</div>
-
 
 
 @code {
 
     private List<WorkOrdersTableContext> workOrders = new();
-    private List<LinesScheduleTableContext> linesSchedule = new();
-    private List<LinesScheduleTableContext> filteredSchedule = new();
-    private List<LinesScheduleTableContext> unfilteredSchedule = new();
-    private Dictionary<string, bool> keyValuePairs = new();
-    private TablesSwitcher tablesSwitcher = new();
-    private LinesScheduleTable lineSchedulesTable = new();
     private WorkOrdersTable workOrdersTable = new();
-    private string selectedLineName = string.Empty;
-    private List<string?> linesName = new();
 
 
     protected override async Task OnInitializedAsync()
     {
-        keyValuePairs.Add("Orders", true);
-        keyValuePairs.Add("Lines", false);
-        await AskForLineNames();       
+        await AskForGetExistedOrders();
+        workOrdersTable.RefreshTable();
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            // Async code to run after the first render
-            await AskForGetExistedOrders();
-            workOrdersTable.RefreshTable();
-
-            await AskForLinesScedule();
-            unfilteredSchedule = linesSchedule;
-            // lineSchedulesTable.RefreshTable();
-            StateHasChanged();
+            // Async code to run after the first render      
         }
-    }
-
-    private void FilterLinesTable(object e)
-    {
-        linesSchedule = unfilteredSchedule;
-        var lineNum = (string)e;
-
-        if (e == string.Empty)
-            return;
-
-        linesSchedule = linesSchedule.Where(e => e.RelatedToLine == lineNum).ToList();
-        StateHasChanged();
-    }
-
-    private async Task AskForLinesScedule()
-    {
-        try
-        {
-            using var request = await Http.GetAsync("uploadinfo/getexistedlinesscedule");
-            var json = request.Content.ReadFromJsonAsync<List<LinesScheduleTableContext>>();
-            linesSchedule = json.Result;
-
-
-        }catch(Exception ex)
-        {
-            //TODO
-
-        }
-
-    }
-
-    private async Task AskForLineNames()
-    {
-        using var request = await Http.GetAsync("uploadinfo/getlinesname");
-        var json = request.Content.ReadFromJsonAsync<List<string>>();
-        linesName = json.Result;
     }
 
     private async Task AskForGetExistedOrders()
@@ -142,7 +70,7 @@
         }
         catch (Exception ex)
         {
-            //TODO  
+            //TODO
         }
 
     }
@@ -247,33 +175,6 @@
         }
     }
 
-    private void SwitchToTable()
-    {
-        var outPut = tablesSwitcher.GetTableName();
 
-        foreach (var visibility in keyValuePairs?.Keys)
-        {
-            keyValuePairs[visibility] = false;
-        }
-        MakeVisible(outPut);
-        StateHasChanged();
-
-    }
-
-    private void MakeVisible(string target)
-    {
-
-        foreach (KeyValuePair<string, bool> kvp in keyValuePairs)
-        {
-            if (kvp.Key == target)
-            {
-                SetValueToTrue(target);
-            }
-        }
-    }
-
-    private void SetValueToFalse(string key) => keyValuePairs[key] = false;
-
-    private void SetValueToTrue(string key) => keyValuePairs[key] = true;
 }
   

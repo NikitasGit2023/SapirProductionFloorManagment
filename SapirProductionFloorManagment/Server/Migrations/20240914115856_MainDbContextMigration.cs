@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class MainDbContextDb : Migration
+    public partial class MainDbContextMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,12 +34,11 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     RelatedToLine = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartWork = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndWork = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WorkDuraion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WorkDuraion = table.Column<double>(type: "float", nullable: false),
                     QuantityInKg = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WorkOrderSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    After11PM = table.Column<bool>(type: "bit", nullable: false),
                     TimeToFinish = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SizeInMicron = table.Column<int>(type: "int", nullable: false),
                     IsCalculted = table.Column<bool>(type: "bit", nullable: false)

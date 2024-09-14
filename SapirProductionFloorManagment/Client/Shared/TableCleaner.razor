@@ -1,0 +1,48 @@
+﻿@typeparam T
+
+<AuthorizeView Roles="Developer">
+    <Authorized>
+        <button @onclick="()=>CleanData()" type="button" class="btn btn-danger">Clean</button>
+    </Authorized>
+
+    <NotAuthorized>
+
+    </NotAuthorized>
+
+</AuthorizeView>
+
+
+@code 
+{
+    [Parameter]
+    public IList<T>? Data { get; set; }
+
+    private void CleanData()
+    {
+        try
+        {
+            if (Data != null)
+            {
+                // Check if Data is an array
+                if (Data is T[] array)
+                {
+                    
+                    var list = array.ToList();
+                    list.Clear();
+                  
+                    Data = list.ToArray();
+                }
+                else
+                {
+                   
+                    Data.Clear();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+}

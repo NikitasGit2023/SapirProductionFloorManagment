@@ -19,7 +19,7 @@ namespace SapirProductionFloorManagment.Server
         public MainDbContext()
         {
          
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductsManagment5;User ID=account;Password=3194murkin;Encrypt=False";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductsManagment6;User ID=account;Password=3194murkin;Encrypt=False";
             _ConnectionString = ConnectionString;
         }
 
