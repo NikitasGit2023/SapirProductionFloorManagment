@@ -3,11 +3,11 @@ using SapirProductionFloorManagment.Shared;
 
 namespace SapirProductionFloorManagment.Server.BackgroundTasks
 {
-    public class ProductionCalculator
+    public class ProductionTimeCalculator
     {
-        public ProductionCalculator() { }   
+        public ProductionTimeCalculator() { }   
 
-        public int CalculateProductionRate(int lineNum, int sizeInMicron)
+        private int CalculateProductionRate(int lineNum, int sizeInMicron)
         {
             var productRate = 0;
 
@@ -172,37 +172,39 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             return productRate;
         }
 
-        public double CalculateWorkDuration(int quantityInKg, int productionRate, LinesScheduleTableContext linesSchedule)
+        private double CalculateWorkDuration(int quantityInKg, LinesScheduleTableContext lineSchedule)
         {
             var duration = 0.0; 
             int relatedLine;
 
-            if (int.TryParse(linesSchedule.RelatedToLine, out relatedLine))
+            if (int.TryParse(lineSchedule.RelatedToLine, out relatedLine))
             {
                 if (relatedLine == 4 || relatedLine == 5)
                 {
         
-                    var prodRate = CalculateProductionRate(relatedLine, linesSchedule.SizeInMicron);
+                    var prodRate = CalculateProductionRate(relatedLine, lineSchedule.SizeInMicron);
                 
                     duration = (double)quantityInKg / prodRate / 24;  
                     return duration;
                 }
             }
-        
-            duration = (double)quantityInKg / productionRate / 24; 
+
+            using var dbcon = new MainDbContext();
+
+            var prodRateAnother = dbcon.Lines.Where(e => e.Name == lineSchedule.RelatedToLine).Select(e => e.ProductionRate).First();
+            duration = (double)quantityInKg / prodRateAnother / 24; 
             return duration;
         }
 
         //not used
-        public DateTime CalculateEndWork(DateTime startWork, double workDuration)
+        private DateTime CalculateEndWork(DateTime startWork, double workDuration)
         {
           
             DateTime endWork = startWork.AddHours(workDuration);
-        
             return endWork;
         }
 
-        private async Task CalculateLinesSchdule()
+        public Task CalculateLinesProductionTime()
         {
             var lineNum = 0;
 
@@ -217,17 +219,18 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                     var schuduleItem = schdule[i];
                     int.TryParse(schuduleItem.RelatedToLine, out lineNum);
                     var productionRate = CalculateProductionRate(lineNum, schuduleItem.SizeInMicron);
-                    var workDuration = CalculateWorkDuration(schuduleItem.QuantityInKg, productionRate, schuduleItem);
+                    var workDuration = CalculateWorkDuration(schuduleItem.QuantityInKg, schuduleItem);
                     schuduleItem.WorkDuraion = workDuration;
                     dbcon.LinesWorkSchedule.Update(schuduleItem);
                     dbcon.SaveChanges();
-                    
                 }
 
             }catch(Exception ex) 
             {
+                //TODO
+            }
+            return Task.CompletedTask;
 
-            }    
 
 
         }

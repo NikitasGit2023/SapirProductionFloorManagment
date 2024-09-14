@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Identity.Client;
 using Org.BouncyCastle.Crypto;
 using SapirProductionFloorManagment.Client.Shared.Tables;
+using SapirProductionFloorManagment.Server.BackgroundTasks;
 using SapirProductionFloorManagment.Shared;
 using System.Collections.Immutable;
 using System.Linq.Dynamic.Core;
@@ -140,6 +141,8 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 }
 
                 //waking up background task for system calculations
+                ProductionTimeCalculator productionTimeCalculator = new ProductionTimeCalculator();
+                await productionTimeCalculator.CalculateLinesProductionTime();
             }
             catch (Exception ex)
             {

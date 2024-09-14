@@ -34,19 +34,19 @@
 
                 <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="StartWork" Title="Start Work" Frozen="IsCrudFrozen">
                     <EditTemplate Context="schedule">
-                        <RadzenDatePicker @bind-Value="schedule.StartWork" Style="width:200px; display: block" Name="StartWork" />
+                        <RadzenDatePicker TValue="DateTime" @bind-Value="schedule.StartWork" Style="width:200px; display: block" Name="StartWork" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="EndWork" Title="End Work" Frozen="IsCrudFrozen">
                     <EditTemplate Context="schedule">
-                        <RadzenDatePicker @bind-Value="schedule.EndWork" Style="width:200px; display: block" Name="EndWork" />
+                        <RadzenDatePicker TValue="DateTime" @bind-Value="schedule.EndWork" Style="width:200px; display: block" Name="EndWork" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LinesScheduleTableContext" Width="150px" Property="WorkDuraion" Title="Work Duration" Frozen="IsCrudFrozen">
                     <EditTemplate Context="schedule">
-                        <RadzenNumeric @bind-Value="schedule.WorkDuraion" Style="width:200px; display: block" Name="WorkDuraion" />
+                        <RadzenText @bind-Value="schedule.WorkDuraion" Style="width:200px; display: block" Name="WorkDuraion" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
@@ -243,5 +243,21 @@
     // {
     //     scheduleGrid?.Reload();
     // }
+
+    public string ConvertDoubleToTimeFormat(double time)
+    {
+       
+        int hours = (int)time;
+
+        double fractionalPart = time - hours;
+
+        int minutes = (int)(fractionalPart * 60);
+
+        string formattedHours = $"({hours:D2})";
+
+        string formattedMinutes = $"{minutes:D2}:00";
+
+        return $"{formattedHours}+ {formattedMinutes}";
+    }
 
 }
