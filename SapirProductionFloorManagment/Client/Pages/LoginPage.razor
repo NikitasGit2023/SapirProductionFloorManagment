@@ -65,16 +65,22 @@
 
     private string Message = string.Empty;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await AskForDefaultUser();
+    }
+
+
 
     private async Task LoginUser()
     {
-       
+
         using var loginRespose = await http.PostAsJsonAsync("login/getloginrequset", Userdata);
         Visible = !Visible;
 
         if (loginRespose.IsSuccessStatusCode)
         {
-           
+
             var userSession = await loginRespose.Content.ReadFromJsonAsync<UserSession>();
             var custAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
             await custAuthStateProvider.UpdateAuthenticationState(userSession);
@@ -84,8 +90,14 @@
         }
         Message = "Username or Password are incorrected please try again!";
 
-
     }
+
+    private async Task AskForDefaultUser()
+    {
+        using var requset = await http.GetAsync("login/createdefaultuser");
+    }
+
+    
 
 
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using SapirProductionFloorManagment.Client.Logic;
+using SapirProductionFloorManagment.Server;
 using SapirProductionFloorManagment.Server.Authentication;
 using System.Text;
 
@@ -61,5 +62,4 @@ app.UseAuthentication();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-
 app.Run();

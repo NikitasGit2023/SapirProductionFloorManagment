@@ -3,6 +3,7 @@ using SapirProductionFloorManagment.Shared;
 using SapirProductionFloorManagment.Server.Authentication;
 using SapirProductionFloorManagment.Shared.Authentication___Autherization;
 using Microsoft.AspNetCore.Authorization;
+using NPOI.SS.Formula.Functions;
 
 namespace SapirProductionFloorManagment.Server.Controllers
 {
@@ -82,5 +83,36 @@ namespace SapirProductionFloorManagment.Server.Controllers
         {
             return false;
         }
+
+
+        [HttpGet]
+        public string CreateDefaultUser()
+        {
+
+            using var dbcon = new MainDbContext();
+            try
+            {
+                var user = dbcon.Users.Where(e => e.UserId == 1).First();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("PostWorkOrderQuantity: {ex.Message}", ex.Message);
+                if(ex.Message == "Sequence contains no elements")
+                {
+                    dbcon.Users.Add(new User { FullName = "devslave", Password = "devslave", Role = "Developer", JobTitle = "Developer" });
+                    dbcon.SaveChanges();
+                    return "";
+
+                }
+                 
+                return ex.Message.ToString();       
+
+            }
+            return "";
+
+        }
     }
+
+   
 }
