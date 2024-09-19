@@ -11,23 +11,22 @@
 
 <WorkOrdersTable 
     IsVisible="@keyValuePairs["Orders"]"
-    IsCrudFrozen="true" 
-    ImportFilesEnabled="false"/>
+                 IsCrudFrozen="true" />
+    
 
 <ProductsTable 
-    IsVisible="@keyValuePairs["Products"]" 
-    IsCrudFrozen="true" 
-    ImportFilesEnabled="false" />
+    IsVisible="@keyValuePairs["Products"]"
+               IsCrudFrozen="true" />
+  
 
 <LinesTable 
-    IsVisible="@keyValuePairs["Lines"]" 
-    IsCrudFrozen="true"
-    ImportFilesEnabled="false" />
+    IsVisible="@keyValuePairs["Lines"]"
+            IsCrudFrozen="true" />
+    
 
 <CustomersTable 
     IsVisible="@keyValuePairs["Customers"]" 
-    IsCrudFrozen="true" 
-    ImportFilesEnabled="false" />
+    IsCrudFrozen="true" />
 
 
 @code {
@@ -41,7 +40,6 @@
         keyValuePairs.Add("Products", false);
         keyValuePairs.Add("Customers", false);
         keyValuePairs.Add("Lines", false);
-        toastService.ShowSuccess("Toast service is working and ready for use.");
 
         return base.OnInitializedAsync();
     }

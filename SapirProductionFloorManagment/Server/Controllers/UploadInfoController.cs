@@ -12,17 +12,89 @@ namespace SapirProductionFloorManagment.Server.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
-    public class UploadInfoController : Controller
+    public class UploadInfoController : Controller  
     {
         private readonly ILogger<UploadInfoController>? _logger;
-        
-        public UploadInfoController(ILogger<UploadInfoController> logger)
+
+        public UploadInfoController(ILogger<UploadInfoController> logger) : base()
         {
             _logger = logger;
         }
 
         [HttpPost]
-        public void PostWorkOrdersTable(List<WorkOrdersTableContext> table)
+        public async Task<string> UpdateOrder(WorkOrder wo)
+        {
+            if (wo == null) 
+            {
+              return await Task.FromResult("");
+            }
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.Update(wo);
+                dbcon.SaveChanges();
+            }
+            catch
+            (Exception ex)
+            {
+                _logger?.LogError("UpdateOrder: {ex.Message}", ex.Message);
+                return await Task.FromResult(ex.Message);   
+            }
+            return await Task.FromResult("המידע עודכן בהצלחה");
+
+        }
+
+        [HttpPost]
+        public async Task<string> DeleteOrder(WorkOrder wo)
+        {
+            if (wo == null)
+            {
+                return await Task.FromResult("");
+            }
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.Remove(wo);
+                dbcon.SaveChanges();
+
+            }
+            catch
+            (Exception ex)
+            {
+                _logger?.LogError("DeleteOrder: {ex.Message}", ex.Message);
+                return await Task.FromResult(ex.Message);
+            }
+            return await Task.FromResult("המידע עודכן בהצלחה");
+
+        }
+
+        [HttpPost]
+        public async Task<string> AddOrder(WorkOrder wo)
+        {
+            if (wo == null)
+            {
+                return await Task.FromResult("");
+            }
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.Add(wo);
+                dbcon.SaveChanges();
+
+            }
+            catch
+            (Exception ex)
+            {
+                _logger?.LogError("AddOrder: {ex.Message}", ex.Message);
+                return await Task.FromResult(ex.Message);
+            }
+            return await Task.FromResult("המידע עודכן בהצלחה");
+
+        }
+
+
+        [HttpPost]
+        public void PostWorkOrdersTable(List<WorkOrder> table)
         {
             try
             {
@@ -50,7 +122,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
 
         [HttpGet]
-        public async Task<List<WorkOrdersTableContext>> GetExistedWorkOrders()
+        public async Task<List<WorkOrder>> GetExistedWorkOrders()
         {
             try
             {
@@ -66,10 +138,9 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 _logger?.LogError("GetExistedWorkOrders: {ex.Message}", ex.Message);
 
             }
-            return new List<WorkOrdersTableContext>();
+            return new List<WorkOrder>();
 
         }
-
 
 
         [HttpGet]
@@ -91,15 +162,15 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
         [HttpPost]
-        public async Task PostDataToRelatedTables(List<WorkOrdersTableContext> linesSchedule)
+        public async Task PostDataToRelatedTables(List<WorkOrder> linesSchedule)
         {
             try
             {
                 using var dbcon = new MainDbContext();
-                var scheduleToDb = new List<LinesScheduleTableContext>();         
+                var scheduleToDb = new List<LineWorkPlan>();         
 
                 // Putting work orders inside a lines schedule dictionary
-                Dictionary<WorkOrdersTableContext, bool> workOrdersDictionary = new();
+                Dictionary<WorkOrder, bool> workOrdersDictionary = new();
 
                 foreach (var lineSchedule in linesSchedule) 
                 {
@@ -119,7 +190,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
                             if (workOrdersDictionary[workOrder] == false)
                             {
-                                dbcon.LinesWorkSchedule.Add(new LinesScheduleTableContext
+                                dbcon.LinesWorkSchedule.Add(new LineWorkPlan
                                 {
                                     RelatedToLine = lineName,
                                     QuantityInKg = workOrder.Quantity,
@@ -134,15 +205,15 @@ namespace SapirProductionFloorManagment.Server.Controllers
                                 workOrdersDictionary[workOrder] = true;
 
                             }
-
-                     
                         }
                     }
                 }
 
                 //waking up background task for system calculations
-                ProductionTimeCalculator productionTimeCalculator = new ProductionTimeCalculator();
-                await productionTimeCalculator.CalculateLinesProductionTime();
+                var productionTimeCalculator = new ProductionTimeScheduler(_logger);
+               
+
+                productionTimeCalculator.WakeUpBackGroundService();
             }
             catch (Exception ex)
             {

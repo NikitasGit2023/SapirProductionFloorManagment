@@ -1,21 +1,17 @@
 ﻿@page "/uploadinfo"
-
 @inject HttpClient Http
+@inject IToastService toastService
 
 
-@using SapirProductionFloorManagment.Client.Shared.Tables
-@using SapirProductionFloorManagment.Client.Shared.Buttons
-@using SapirProductionFloorManagment.Client.Shared
 @using OfficeOpenXml
 @using System.Data
 @using System.IO
 @using NPOI.SS.UserModel
 @using NPOI.XSSF.UserModel
 
-@* @inject WorkOrdersTable table *@
 
 <h3>Upload Information</h3>
-
+<BlazoredToasts></BlazoredToasts>
 
 <div class="d-flex align-items-end flex-column mb-3" style="height: 20px;">
     <div class="p-2">
@@ -39,7 +35,7 @@
 
 @code {
 
-    private List<WorkOrdersTableContext> workOrders = new();
+    private List<WorkOrder> workOrders = new();
     private WorkOrdersTable workOrdersTable = new();
 
 
@@ -63,14 +59,14 @@
         try
         {
             using var request = await Http.GetAsync("uploadinfo/getexistedworkorders");
-            var response = await request.Content.ReadFromJsonAsync<List<WorkOrdersTableContext>>();
+            var response = await request.Content.ReadFromJsonAsync<List<WorkOrder>>();
             workOrders = response;
-
 
         }
         catch (Exception ex)
         {
-            //TODO
+            toastService.ShowError(ex.Message);
+
         }
 
     }
@@ -94,7 +90,7 @@
                     var row = sheet.GetRow(i);
                     if (row == null) continue;
 
-                    var workOrder = new WorkOrdersTableContext();
+                    var workOrder = new WorkOrder();
 
 
                     for (var j = row.FirstCellNum; j < row.LastCellNum; j++)
@@ -112,7 +108,7 @@
                                 if (j == 0) workOrder.WorkOrderSN = cellValue;
                                 else if (j == 1) workOrder.ProductDesc = cellValue;
                                 else if (j == 3) workOrder.Comments = cellValue;
-                              
+
 
                                 break;
                             case CellType.Numeric:
@@ -139,8 +135,6 @@
                     else
                         workOrders.Add(workOrder);
 
-
-
                 }
 
                 workOrdersTable.RefreshTable();
@@ -150,28 +144,35 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine("ImportXlsxFile:" + "" + ex.Message);
+            toastService.ShowError(ex.Message);
 
         }
         StateHasChanged();
     }
 
-    private async Task AskForUploadInfoRequset(List<WorkOrdersTableContext> info)
+    private async Task AskForUploadInfoRequset(List<WorkOrder> info)
     {
-        using var request = await Http.PostAsJsonAsync("uploadinfo/postworkorderstable", info);
+        try
+        {
+            using var request = await Http.PostAsJsonAsync("uploadinfo/postworkorderstable", info);
+
+        }catch(Exception ex)
+        {
+            toastService.ShowError(ex.Message);  
+        }
+
     }
 
-    private async Task AskForSettigDataToRelatedTables(List<WorkOrdersTableContext> workOrders)
+    private async Task AskForSettigDataToRelatedTables(List<WorkOrder> workOrders)
     {
         try
         {
             using var request = await Http.PostAsJsonAsync("uploadinfo/postdatatorelatedtables", workOrders);
-            //TODO - write a toast message if process get wrong
         }
         catch (Exception ex)
         {
-            Console.WriteLine("AskForSettigDataToRelatedTables:" + "" + ex.Message);
-            
+            toastService.ShowError(ex.Message);
+
         }
     }
 

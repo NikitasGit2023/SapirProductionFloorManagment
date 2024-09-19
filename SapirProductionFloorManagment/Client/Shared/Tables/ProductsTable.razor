@@ -1,5 +1,6 @@
 ﻿@inherits TableBase
 @inject HttpClient Http
+@inject IToastService toastService
 
 @using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Shared.Buttons
@@ -14,6 +15,7 @@
 </div>
 
 
+<BlazoredToasts></BlazoredToasts>
 
 <RadzenDataGrid Visible="IsVisible" @ref="productsGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
@@ -83,12 +85,21 @@
         await base.OnInitializedAsync();
     }
 
-    
+
     private async Task<List<Product>> GetProductsData()
     {
-        using var json = await Http.GetAsync("configuration/getproductsdata");
-        var data = await json.Content.ReadFromJsonAsync<List<Product>>();
-        return data;
+        try
+        {
+            using var json = await Http.GetAsync("configuration/getproductsdata");
+            var data = await json.Content.ReadFromJsonAsync<List<Product>>();
+            return data;
+
+        }catch(Exception ex)
+        {
+            toastService.ShowError(ex.Message);   
+        }
+        return null;
+
     }
 
     private void Reset()
@@ -120,10 +131,6 @@
     void OnUpdateRow(Product product)
     {
         Reset(product);
-
-        //dbCon upate
-
-        //dbCon save
     }
 
     private async Task SaveRow(Product product)
@@ -144,19 +151,39 @@
 
     private async Task AddProduct(Product product)
     {
-        using var json = Http.PostAsJsonAsync("configuration/postnewproduct", product);
-        // add logic if product is inserted
+        try
+        {
+            using var json = await Http.PostAsJsonAsync("configuration/postnewproduct", product);
+            var message = await json.Content.ReadFromJsonAsync<string>();
+            toastService.ShowError(message);
 
+
+
+        }catch(Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+        }
     }
 
     private async Task UpdateProduct(Product product)
     {
-        using var json = Http.PostAsJsonAsync("configuration/updateproduct", product);
-        //add logic if product is updated
+        try
+        {
+            using var json = await Http.PostAsJsonAsync("configuration/updateproduct", product);
+            var message = await json.Content.ReadFromJsonAsync<string>();
+            toastService.ShowError(message);
+
+
+
+        }catch(Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+        }
+
         
     }
 
-    void CancelEdit(Product product)
+    private void CancelEdit(Product product)
     {
         Reset(product);
 

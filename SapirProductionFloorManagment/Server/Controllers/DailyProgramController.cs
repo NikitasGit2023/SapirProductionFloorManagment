@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NPOI.OpenXmlFormats.Dml;
 using SapirProductionFloorManagment.Shared;
 
 namespace SapirProductionFloorManagment.Server.Controllers
@@ -16,10 +15,10 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
         [HttpGet]
-        public Task<List<LinesScheduleTableContext>> GetWeeklyProgram()
+        public Task<List<LineWorkPlan>> GetWeeklyProgram()
         {
             using var dbcon = new MainDbContext();
-            var weeklyProgram = new List<LinesScheduleTableContext>();  
+            var weeklyProgram = new List<LineWorkPlan>();  
             
             try
             {
@@ -35,7 +34,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<List<LinesScheduleTableContext>> GetExistedLinesScedule()
+        public async Task<List<LineWorkPlan>> GetExistedLinesScedule()
         {
             try
             {
@@ -48,7 +47,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 _logger?.LogError("GetExistedLinesScedule: {ex.Message}", ex.Message);
 
             }
-            return new List<LinesScheduleTableContext> { }; //check if null can be returned
+            return new List<LineWorkPlan> { }; //check if null can be returned
         }
 
         [HttpGet]

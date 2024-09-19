@@ -14,16 +14,22 @@ namespace SapirProductionFloorManagment.Server.Controllers
         } 
 
         [HttpPost]
-        public string PostWorkOrderQuantity(WorkOrdersTableContext wo) 
+        public string PostWorkOrderQuantity(WorkOrder wo) 
         {
             try
             {
                 using var dbcon = new MainDbContext();
                 var workOrder = dbcon.WorkOrdersFromXL.Where(x => x.WorkOrderSN == wo.WorkOrderSN).FirstOrDefault();
 
-                    if (workOrder.Quantity > wo.Quantity)
-                        return "הכמות שהזנת קטנה מהכמות הקיימת במערכת";
-                    workOrder.Quantity = wo.Quantity;       
+                    
+                    workOrder.ProducedQuantity =+ wo.ProducedQuantity;
+                    workOrder.QuantityLeft = workOrder.Quantity - workOrder.ProducedQuantity;   
+
+                    if(workOrder.ProducedQuantity > workOrder.Quantity) 
+                    {
+                        workOrder.ProducedQuantity = workOrder.Quantity;
+                        workOrder.QuantityLeft = 0;
+                    }
                     dbcon.Update(workOrder);
                     dbcon.SaveChanges();
                     return "המידע עודכן בהצלחה";
@@ -36,7 +42,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
         [HttpGet]
-        public List<WorkOrdersTableContext> GetExistedWorkOrders()
+        public List<WorkOrder> GetExistedWorkOrders()
         {
             try
             {
@@ -49,7 +55,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             {
                 _logger.LogError("GetExistedWorkOrders: {DateTime.Now} , {ex.Message}", DateTime.Now, ex.Message);
             }
-            return new List<WorkOrdersTableContext>();   
+            return new List<WorkOrder>();   
         }    
 
        

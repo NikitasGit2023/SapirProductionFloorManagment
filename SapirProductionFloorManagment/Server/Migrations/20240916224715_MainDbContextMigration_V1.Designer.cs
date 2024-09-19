@@ -12,8 +12,8 @@ using SapirProductionFloorManagment.Server;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20240914115856_MainDbContextMigration")]
-    partial class MainDbContextMigration
+    [Migration("20240916224715_MainDbContextMigration_V1")]
+    partial class MainDbContextMigration_V1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,23 +25,21 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SapirProductionFloorManagment.Shared.Customer", b =>
+            modelBuilder.Entity("SapirProductionFloorManagment.Shared.AppGeneralData", b =>
                 {
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("CustomerId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LastSceduleCalculation")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("SalesOrderNumber")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasKey("CustomerId");
-
-                    b.ToTable("Customer");
+                    b.ToTable("AppGeneralData");
                 });
 
             modelBuilder.Entity("SapirProductionFloorManagment.Shared.Line", b =>
@@ -53,10 +51,36 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LineId"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductionRate")
                         .HasColumnType("int");
+
+                    b.HasKey("LineId");
+
+                    b.ToTable("Lines");
+                });
+
+            modelBuilder.Entity("SapirProductionFloorManagment.Shared.LineWorkHours", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BreakEnd")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BreakStart")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReferencedToLine")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShiftEndWork")
                         .IsRequired()
@@ -66,20 +90,16 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("WorkDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("WorkDay")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WorkOrderId")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasKey("LineId");
-
-                    b.HasIndex("WorkOrderId");
-
-                    b.ToTable("Lines");
+                    b.ToTable("LinseWorkHours");
                 });
 
-            modelBuilder.Entity("SapirProductionFloorManagment.Shared.LinesScheduleTableContext", b =>
+            modelBuilder.Entity("SapirProductionFloorManagment.Shared.LinesSchedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,10 +111,15 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EndWork")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FormatedWorkDuration")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsCalculted")
                         .HasColumnType("bit");
@@ -103,6 +128,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RelatedToLine")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SizeInMicron")
@@ -185,57 +211,6 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Weigth")
-                        .HasColumnType("int");
-
-                    b.Property<double>("WorkDuration")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("WorkOrder");
-                });
-
-            modelBuilder.Entity("SapirProductionFloorManagment.Shared.WorkOrdersTableContext", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comments")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CompletionDate")
                         .HasColumnType("datetime2");
 
@@ -250,11 +225,17 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProducedQuantity")
+                        .HasColumnType("int");
+
                     b.Property<string>("ProductDesc")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityLeft")
                         .HasColumnType("int");
 
                     b.Property<int>("SizeInMicron")
@@ -267,26 +248,6 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WorkOrdersFromXL");
-                });
-
-            modelBuilder.Entity("SapirProductionFloorManagment.Shared.Line", b =>
-                {
-                    b.HasOne("SapirProductionFloorManagment.Shared.WorkOrder", "WorkOrder")
-                        .WithMany()
-                        .HasForeignKey("WorkOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("WorkOrder");
-                });
-
-            modelBuilder.Entity("SapirProductionFloorManagment.Shared.WorkOrder", b =>
-                {
-                    b.HasOne("SapirProductionFloorManagment.Shared.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
-                    b.Navigation("Customer");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,6 +10,9 @@ namespace SapirProductionFloorManagment.Server.Authentication
 {   
     public class JwtAuthenticationManager
     {
+        
+        public ILogger Logger { get; set;} 
+
         public const string JWT_SECURITY_KEY = "NikitaDanielLiliaYuriMurkinRijick1234567890";
 
         public const int JWT_VALIDITY_TIME_IN_MINS = 20;
@@ -18,52 +21,64 @@ namespace SapirProductionFloorManagment.Server.Authentication
 
         public JwtAuthenticationManager(User user)
         {
-            _user = user;
+            _user = user;  
         }
 
         public UserSession? GenerateJwtToken(string name, string password)
         {
-            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrEmpty(password))
-                return null;
 
-            var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_VALIDITY_TIME_IN_MINS);
-            var tokeKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
-            var claimsIdentity = new ClaimsIdentity(new List<Claim>
+            var userSession = new UserSession();    
+            try
+            {
+
+                if (string.IsNullOrWhiteSpace(password) || string.IsNullOrEmpty(password))
+                    return null;
+
+                var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_VALIDITY_TIME_IN_MINS);
+                var tokeKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
+                var claimsIdentity = new ClaimsIdentity(new List<Claim>
             {
                 new Claim(ClaimTypes.Name, _user.FullName),
-                new Claim(ClaimTypes.Role,_user.Role)   
+                new Claim(ClaimTypes.Role,_user.Role)
 
             });
 
-            var signInCredentials =  new SigningCredentials
-                (
-                    new SymmetricSecurityKey(tokeKey),
-                    SecurityAlgorithms.HmacSha256   
+                var signInCredentials = new SigningCredentials
+                    (
+                        new SymmetricSecurityKey(tokeKey),
+                        SecurityAlgorithms.HmacSha256
 
-                );
+                    );
 
-            var securityKeyDescriptor = new SecurityTokenDescriptor()
+                var securityKeyDescriptor = new SecurityTokenDescriptor()
+                {
+                    Subject = claimsIdentity,
+                    Expires = tokenExpiryTimeStamp,
+                    SigningCredentials = signInCredentials
+
+                };
+
+
+                var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+                var securityToken = jwtSecurityTokenHandler.CreateToken(securityKeyDescriptor);
+                var token = jwtSecurityTokenHandler.WriteToken(securityToken);
+
+                userSession = new UserSession
+                {
+                    UserName = _user.FullName,
+                    Role = _user.Role,
+                    Token = token,
+                    ExpiresIn = (int)tokenExpiryTimeStamp.Subtract(DateTime.Now).TotalSeconds
+                };
+
+
+            }
+            catch(Exception ex) 
             {
-                Subject =claimsIdentity,
-                Expires = tokenExpiryTimeStamp,
-                SigningCredentials = signInCredentials      
-                
-            };
-                
-
-            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            var securityToken = jwtSecurityTokenHandler.CreateToken(securityKeyDescriptor);
-            var token = jwtSecurityTokenHandler.WriteToken(securityToken);  
-
-            var userSession = new UserSession
-            {
-                UserName = _user.FullName,
-                Role = _user.Role,
-                Token = token,
-                ExpiresIn = (int)tokenExpiryTimeStamp.Subtract(DateTime.Now).TotalSeconds
-            };
-
+                Logger.LogError(ex.Message);
+            }
             return userSession;
+
         }
 
     }

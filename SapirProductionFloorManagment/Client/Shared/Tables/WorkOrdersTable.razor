@@ -14,7 +14,7 @@
                     <div class="p-2">
                         <div class="d-flex flex-row-reverse">
                             <div class="p-2">
-                                <AddRowButton Text="Add Order" OnClick="InsertRow" Disabled="@(editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)" />
+                                <AddRowButton Text="Add Order" OnClick="InsertRow"  />
                             </div>
                         </div>
                     </div>
@@ -27,66 +27,73 @@
 
 <RadzenDataGrid Visible="IsVisible" @ref="ordersGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="15"
-                AllowSorting="true" Data="@orders" TItem="WorkOrdersTableContext" ColumnWidth="200px"
+                AllowSorting="true" Data="@orders" TItem="WorkOrder" ColumnWidth="200px"
                 SelectionMode="DataGridSelectionMode.Single" >
     <Columns>
-         <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="WorkOrderSN" Title="WO" Frozen="true" Width="100px" TextAlign="TextAlign.Center">
-             <EditTemplate Context="order">
-                <RadzenText @bind-Value="order.WorkOrderSN" Style="width:100%; display: block;" />
+         <RadzenDataGridColumn TItem="WorkOrder" Property="WorkOrderSN" Title="WO" Frozen="true" Width="100px" TextAlign="TextAlign.Center">
+            <EditTemplate Context="order">
+                <RadzenTextBox @bind-Value="order.WorkOrderSN" Style="width:100%; display: block;" />
              </EditTemplate>
          </RadzenDataGridColumn>
       
-         <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="ProductDesc" Title="PN" Frozen="true" 
+         <RadzenDataGridColumn TItem="WorkOrder" Property="ProductDesc" Title="PN" Frozen="true" 
              Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center">
              <EditTemplate Context="order">
-                <RadzenText @bind-Value="order.ProductDesc" Style="width:100%; display: block;" />
+                <RadzenTextBox @bind-Value="order.ProductDesc" Style="width:100%; display: block;" />
             </EditTemplate>       
         </RadzenDataGridColumn>
 
 
-        <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="Quantity" Title="Qt" Frozen="IsCrudFrozen" Width="80px">
+        <RadzenDataGridColumn TItem="WorkOrder" Property="Quantity" Title="Qt" Frozen="IsCrudFrozen" Width="80px">
             <EditTemplate Context="order">
                  <RadzenNumeric @bind-Value="order.Quantity" Style="width:100%; display: block;"/>
             </EditTemplate>
         </RadzenDataGridColumn>
 
+        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="QuantityLeft" Title="Quntity Left" Width="120px">
+            <EditTemplate>
+                <RadzenNumeric @bind-Value="order.QuantityLeft" Style="width:100%; display: block;" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
     
        
-        <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="OptionalLine1" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
+        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="OptionalLine1" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
             <EditTemplate>
-                <RadzenText @bind-Value="order.OptionalLine1" Style="width:100%; display: block;" />
+                <RadzenTextBox @bind-Value="order.OptionalLine1" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
 
-        <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="OptionalLine2" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
+        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="OptionalLine2" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
             <EditTemplate>
-                <RadzenText @bind-Value="order.OptionalLine2" Style="width:100%; display: block;" />
+                <RadzenTextBox @bind-Value="order.OptionalLine2" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="Priority" Title="Priority" Width="120px">
+        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="Priority" Title="Priority" Width="120px">
             <EditTemplate>
                 <RadzenNumeric @bind-Value="order.Priority" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="CompletionDate" Frozen="IsCrudFrozen" Title="Completion Date" Width="150px">
+        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="CompletionDate" Frozen="IsCrudFrozen" Title="Completion Date" Width="150px">
            <EditTemplate>
                 <RadzenDatePicker @bind-Value="order.CompletionDate"/>
            </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="WorkOrdersTableContext" Property="Priority" Title="SizeInMicron" Width="120px">
+        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="SizeInMicron" Title="Size(Micron)" Width="120px">
             <EditTemplate>
                 <RadzenNumeric @bind-Value="order.SizeInMicron" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
+
+
         @*crud buttons*@
         @if(IsCrudFrozen is false)
         {
-            <RadzenDataGridColumn Width="100px" TItem="WorkOrdersTableContext" Context="order" Filterable="false" Sortable="false"
+            <RadzenDataGridColumn Width="100px" TItem="WorkOrder" Context="order" Filterable="false" Sortable="false"
                               TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
                 <Template Context="order">
                     <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat"
@@ -97,7 +104,7 @@
                               Click="@(args => DeleteRow(order))" @onclick:stopPropagation="true">
                     </RadzenButton>
                 </Template>
-                <EditTemplate Context="line">
+                <EditTemplate Context="order">
                     <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat"
                               Size="ButtonSize.Medium" Click="@((args) => SaveRow(order))">
                     </RadzenButton>
@@ -109,26 +116,22 @@
                     </RadzenButton>
                 </EditTemplate>
             </RadzenDataGridColumn>
-        }
-         
+        }    
     </Columns>
 </RadzenDataGrid>
-
 
 
 @code 
 {
     [Parameter]
-    public List<WorkOrdersTableContext>? Data { get; set; }
+    public List<WorkOrder>? Data { get; set; }
 
     private DataGridEditMode editMode = DataGridEditMode.Single;
-    private RadzenDataGrid<WorkOrdersTableContext>? ordersGrid;
-    private List<WorkOrdersTableContext> ordersToInsert = new List<WorkOrdersTableContext>();
-    private List<WorkOrdersTableContext> ordersToUpdate = new List<WorkOrdersTableContext>();
-    private List<WorkOrdersTableContext>? orders;
-
-    protected List<WorkOrdersTableContext> fetchedOrders = new();
-    protected WorkOrdersTableContext order = new();
+    private RadzenDataGrid<WorkOrder>? ordersGrid;
+    private List<WorkOrder> ordersToInsert = new List<WorkOrder>();
+    private List<WorkOrder> ordersToUpdate = new List<WorkOrder>();
+    private List<WorkOrder>? orders;
+    private WorkOrder order = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -152,7 +155,7 @@
         {
             Console.WriteLine(ex.Message);
         }
-        
+
     }
 
     private async Task AskForGetExistedOrders()
@@ -160,7 +163,7 @@
         try
         {
             using var request = await Http.GetAsync("uploadinfo/getexistedworkorders");
-            var response = await request.Content.ReadFromJsonAsync<List<WorkOrdersTableContext>>();
+            var response = await request.Content.ReadFromJsonAsync<List<WorkOrder>>();
             Data = response;
 
 
@@ -172,17 +175,50 @@
 
     }
 
-    public async Task AskForPostWorkOrders()
+    private async Task AskForAddOrder(WorkOrder order)
     {
-        using var requset = await Http.PostAsJsonAsync("", orders);
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("uploadinfo/addorder", order);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            // toastService.ShowSuccess("The data is added succesfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+
     }
 
-    public List<WorkOrdersTableContext> ReturnTableData()
+    private async Task AskForUpdateOrder(WorkOrder order)
     {
-        if(orders != null)
-            return orders;
-        return new List<WorkOrdersTableContext>();
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("uploadinfo/updateorder", order);
+            var message = data.Content.ReadFromJsonAsync<string>();
 
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+    }
+
+    private async Task AskForRemoveOrder(WorkOrder order)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("uploadinfo/removeorder", order);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            Console.WriteLine(message);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private void Reset()
@@ -191,13 +227,13 @@
         ordersToUpdate.Clear();
     }
 
-    private void Reset(WorkOrdersTableContext order)
+    private void Reset(WorkOrder order)
     {
         ordersToInsert.Remove(order);
         ordersToUpdate.Remove(order);
     }
 
-    private async Task EditRow(WorkOrdersTableContext order)
+    private async Task EditRow(WorkOrder order)
     {
         if (editMode == DataGridEditMode.Single && ordersToInsert.Count() > 0)
         {
@@ -208,37 +244,47 @@
         await ordersGrid.EditRow(order);
     }
 
-    private void OnUpdateRow(WorkOrdersTableContext order)
+    private void OnUpdateRow(WorkOrder order)
     {
         Reset(order);
+        //update
     }
 
-    private async Task SaveRow(WorkOrdersTableContext order)
+    //green button
+    async Task SaveRow(WorkOrder order)
     {
+
+        if (order.Id is 0)
+        {
+            await ordersGrid.UpdateRow(order);
+            await AskForAddOrder(order);
+            return;
+        }
+
         await ordersGrid.UpdateRow(order);
+        await AskForUpdateOrder(order);
     }
 
-    private void CancelEdit(WorkOrdersTableContext order)
+    private void CancelEdit(WorkOrder order)
     {
         Reset(order);
-
         ordersGrid.CancelEditRow(order);
-
     }
 
-    private async Task DeleteRow(WorkOrdersTableContext order)
+    //check
+    private async Task DeleteRow(WorkOrder order)
     {
+        //cleaning linesToInsert and LinesToUpdate
         Reset(order);
 
         if (orders.Contains(order))
         {
-            await ordersGrid.Reload();
+            orders.Remove(order);
+
+            if (order.Id != 0)
+                await AskForRemoveOrder(order);
         }
-        else
-        {
-            ordersGrid.CancelEditRow(order);
-            await ordersGrid.Reload();
-        }
+        await ordersGrid.Reload();
     }
 
     private async Task InsertRow()
@@ -248,13 +294,15 @@
             Reset();
         }
 
-        var order = new WorkOrdersTableContext();
+        var selected = new WorkOrder();
+        order = selected;
         ordersToInsert.Add(order);
         await ordersGrid.InsertRow(order);
     }
 
-    private void OnCreateRow(WorkOrdersTableContext order)
+    private void OnCreateRow(WorkOrder order)
     {
+
         ordersToInsert.Remove(order);
     }
 

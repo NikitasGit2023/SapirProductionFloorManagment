@@ -1,0 +1,338 @@
+﻿@inherits TableBase
+@inject HttpClient Http
+@inject IToastService toastService
+
+
+
+<PageTitle>Lines</PageTitle>
+
+<BlazoredToasts></BlazoredToasts>
+
+
+<div class="d-flex flex-column mb-3">
+    <div class="p-2">
+        <RadzenHtml Visible="IsVisible">
+            <div class="d-flex flex-row-reverse">
+                <div class="p-2">
+
+                    @if (IsCrudFrozen == false)
+                    {
+                        @if (IsNewRowCanAdded)
+                        {
+                            <div class="d-flex flex-row-reverse">
+                                <div class="p-2">
+                                    <AddRowButton OnClick="InsertRow" Text="Add Line" Disabled="false" />
+                                </div>
+                            </div>
+
+                        }
+                    }
+                </div>
+            </div>
+        </RadzenHtml>
+
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenLabel Text="Select Line" Component="LinesFilter" />
+            <RadzenDropDown @bind-Value="selectedLine" Data="unfilteredWorkHours.Select(e=> e.ReferencedToLine).Distinct().ToList()" TValue="string" Change="OnLineChange" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
+        </RadzenStack>
+
+
+
+    </div>
+    <div class="p-2">
+        <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="8"
+                        AllowSorting="true" Data="@Data" TItem="LineWorkHours" SelectionMode="DataGridSelectionMode.Single">
+
+            <Columns>
+                <RadzenDataGridColumn TItem="LineWorkHours" Property="WorkDay"
+                                      Title="Day Of Week" Frozen="IsCrudFrozen" Width="150px">
+                    <EditTemplate Context="line">
+                        <RadzenDropDown Data="@daysOfTheWeek" @bind-Value="line.WorkDay" Style="width:100%; display: block;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn Visible="false" TItem="LineWorkHours" Property="ReferencedToLine" Title="Id" Width="100px" />
+
+                <RadzenDataGridColumn Visible="false"  TItem="LineWorkHours" Width="150px" Property="ReferencedToLine" Title="Line Name" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="line">
+                        <RadzenTextBox @bind-Value="line.ReferencedToLine" Style="width:200px; display: block" Name="LineName" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LineWorkHours" Property="ShiftStartWork"
+                                      Title="Start Work" Frozen="IsCrudFrozen" Width="150px">
+                    <EditTemplate Context="line">
+                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.ShiftStartWork" Style="width:100%; display: block;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn TItem="LineWorkHours" Property="ShiftEndWork"
+                                      Title="End Work" Frozen="IsCrudFrozen" Width="150px">
+                    <EditTemplate Context="line">
+                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.ShiftEndWork" Style="width:100%; display: block;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LineWorkHours" Property="BreakStart"
+                                      Title="Start Break" Frozen="IsCrudFrozen" Width="150px">
+                    <EditTemplate Context="line">
+                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.BreakStart" Style="width:100%; display: block;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LineWorkHours" Property="BreakEnd"
+                                      Title="Start End" Frozen="IsCrudFrozen" Width="150px">
+                    <EditTemplate Context="line">
+                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.BreakEnd" Style="width:100%; display: block;" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+
+                @if (!IsCrudFrozen)
+                {
+                    @*from here crud buttons*@
+                    <RadzenDataGridColumn Width="150px" TItem="LineWorkHours" Context="line" Filterable="false" Sortable="false"
+                                          TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+                        <Template Context="line">
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(line))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(line))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                        </Template>
+                        <EditTemplate Context="line">
+                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(line))">
+                            </RadzenButton>
+                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(line))">
+                            </RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(line))">
+                            </RadzenButton>
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                }
+
+            </Columns>
+        </RadzenDataGrid>
+
+
+
+    </div>
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public bool Distinct { get; set; }
+
+    [Parameter]
+    public List<LineWorkHours>? Data { get; set; }
+
+    private DataGridEditMode editMode = DataGridEditMode.Single;
+    private RadzenDataGrid<LineWorkHours>? linesGrid = new();
+    private List<LineWorkHours> linesToInsert = new List<LineWorkHours>();
+    private List<LineWorkHours> linesToUpdate = new List<LineWorkHours>();
+    private IList<LineWorkHours>? fetchedLines;
+    private List<string>? hourOptions;
+    private string[] daysOfTheWeek = new string[8];
+    private LineWorkHours selectedOne = new();
+
+
+    private string? selectedLine;
+    private List<LineWorkHours> unfilteredWorkHours = new();
+    private List<LineWorkHours> filteredWorkHours = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        //set workhours to each row
+        hourOptions = Enumerable.Range(0, 24)
+                                .Select(hour => new TimeOnly(hour, 0)
+                                .ToString())
+                                .ToList();
+
+        //set days of week vocabulaty
+        daysOfTheWeek = new string[]
+        {
+            "Sunday", "Monday" ,"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+
+        };
+
+        Data = await AskForLinesWorkHoursData();
+        unfilteredWorkHours = Data;
+
+        if (Data.Any())
+        {
+            selectedLine = Data[0].ReferencedToLine;
+        }       
+        await base.OnInitializedAsync();
+    }
+
+    public async Task<List<LineWorkHours>> AskForLinesWorkHoursData()
+    {
+        try
+        {
+            using var data = await Http.GetAsync("configuration/getlinesworkhours");
+            var content = data.Content.ReadFromJsonAsync<List<LineWorkHours>>();
+            if (content.Result != null)
+                return content.Result;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        return null;
+    }
+
+    protected async Task AddLine(LineWorkHours line)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/postlineworkhours", line);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            toastService.ShowSuccess(message.Result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+
+    }
+
+    protected async Task UpdateLine(LineWorkHours line)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/updatelineworkgours", line);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            toastService.ShowSuccess(message.Result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+    }
+
+    private async Task RemoveLine(LineWorkHours line)
+    {
+        try
+        {
+            using var data = await Http.PostAsJsonAsync("configuration/removelineworkhours", line);
+            var message = data.Content.ReadFromJsonAsync<string>();
+            toastService.ShowSuccess(message.Result);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private void Reset()
+    {
+        linesToInsert.Clear();
+        linesToUpdate.Clear();
+    }
+
+    private void Reset(LineWorkHours line)
+    {
+        linesToInsert.Remove(line);
+        linesToUpdate.Remove(line);
+    }
+
+    private async Task EditRow(LineWorkHours line)
+    {
+        if (editMode == DataGridEditMode.Single && linesToInsert.Count() > 0)
+        {
+            Reset();
+        }
+
+        linesToUpdate.Add(line);
+        await linesGrid.EditRow(line);
+    }
+
+    private void OnUpdateRow(LineWorkHours line)
+    {
+        Reset(line);
+    }
+
+    //green button
+    private async Task SaveRow(LineWorkHours line)
+    {
+
+        if (line.Id is 0)
+        {
+            await linesGrid.UpdateRow(line);
+            await AddLine(line);
+            return;
+        }
+
+        await linesGrid.UpdateRow(line);
+        await UpdateLine(line);
+    }
+
+    private void CancelEdit(LineWorkHours line)
+    {
+        Reset(line);
+        linesGrid.CancelEditRow(line);
+    }
+
+    private async Task DeleteRow(LineWorkHours line)
+    {
+        //cleaning linesToInsert and LinesToUpdate
+        Reset(line);
+
+        if (Data.Contains(line))
+        {
+            Data.Remove(line);
+
+            if (line.Id != 0)
+                await RemoveLine(line);
+        }
+        await linesGrid.Reload();
+    }
+
+    private async Task InsertRow()
+    {
+        if (editMode == DataGridEditMode.Single)
+        {
+            Reset();
+        }
+
+        var line = new LineWorkHours();
+        selectedOne = line;
+        linesToInsert.Add(selectedOne);
+        await linesGrid.InsertRow(selectedOne);
+    }
+
+    private void OnCreateRow(LineWorkHours line)
+    {
+        linesToInsert.Remove(line);
+    }
+
+    private void OnLineChange(object value)
+    {
+        selectedLine = value.ToString();
+        FilterLinesData();
+    }
+
+    private void FilterLinesData()
+    {
+        Data = unfilteredWorkHours;
+
+        if (!string.IsNullOrEmpty(selectedLine))
+        {
+            filteredWorkHours = Data.Where(line => line.ReferencedToLine == selectedLine).ToList();
+            Data = filteredWorkHours;
+        }
+    }
+
+
+
+
+}

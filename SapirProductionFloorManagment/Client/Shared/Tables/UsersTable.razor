@@ -1,9 +1,11 @@
 ﻿@inherits TableBase
 @inject HttpClient Http
+@inject IToastService toastService
 @using SapirProductionFloorManagment.Client.Shared
 @using SapirProductionFloorManagment.Client.Shared.Buttons
 
 <PageTitle>Users</PageTitle>
+
 
 <div class="d-flex flex-row-reverse">
     <div class="p-2">
@@ -101,7 +103,7 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
         }
         return null;
     }
@@ -113,10 +115,11 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/postnewuser", user);
             var message = data.Content.ReadFromJsonAsync<string>();
+            toastService.ShowSuccess(message.Result);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
 
         }
 
@@ -130,11 +133,11 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/updateuser", user);
             var message = data.Content.ReadFromJsonAsync<string>();
-            Console.WriteLine(message);
+            toastService.ShowSuccess(message.Result);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
 
         }
     }
@@ -147,12 +150,11 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/removeuser", user);
             var message = data.Content.ReadFromJsonAsync<string>();
-            Console.WriteLine(message);
-
+            toastService.ShowSuccess(message.Result);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
         }
     }
 

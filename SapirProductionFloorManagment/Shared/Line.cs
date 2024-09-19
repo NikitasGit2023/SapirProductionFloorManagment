@@ -11,21 +11,9 @@ namespace  SapirProductionFloorManagment.Shared
 {
     public record Line
     {
-        public int LineId { get; set; } 
-        public string? Name { get; set; }
-        public WorkOrder WorkOrder { get; set; } = new();
-        public string ShiftStartWork { get; set; } = "Unspecified";
-        public string ShiftEndWork { get; set; } = "Unspecified";
+        public int LineId { get; set; }
+        public string Name { get; set; } = "";
         public int ProductionRate { get; set; }
-        [NotMapped]
-        public string? NumericWorkDay { get; set; }
-        public DateTime WorkDate { get; set; }
-       
-        [NotMapped]
-        public bool[] WorkDays { get; set; } = new bool[] 
-        {
-            true, true, true, true, true, false, false 
-        };
 
 
         public override int GetHashCode()

@@ -1,6 +1,7 @@
 ﻿@page "/loginpage"
 
 @using SapirProductionFloorManagment.Shared.Authentication___Autherization;
+@inject IToastService toastService
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject NavigationManager navigatonManager
 @inject HttpClient http
@@ -10,27 +11,41 @@
     <NotAuthorized>
         @if (Visible)
         {
-            <div style="margin-top:5%;" class="d-flex justify-content-center">
-                <div class="card">
-                    <h1 class="card-title">Welcome</h1>
-                    <small class="card-subtitle">Please fill your details to enter the system</small>
-                    <label for="username">Worker ID</label>
-                    <div class="card-input-container username">
-                        <input @bind="Userdata.FullName" type="text" placeholder="@PlaceHolder" id="id">
+
+            <div class="d-flex flex-column mb-3">
+                <div class="p-2">
+                    <div style="margin-top:5%;" class="d-flex justify-content-center">
+                        <div class="card">
+                            <h1 class="card-title">Welcome</h1>
+                            <small class="card-subtitle">Please fill your details to enter the system</small>
+                            <label for="username">Worker ID</label>
+                            <div class="card-input-container username">
+                                <input @bind="Userdata.FullName" type="text" placeholder="@PlaceHolder" id="id">
+                            </div>
+                            <label for="password">Password</label>
+                            <div class="card-input-container password">
+                                <input @bind="Userdata.Password" type="password" placeholder="Enter your password" id="password">
+                            </div>
+                            <button @onclick="LoginUser" style="background:#2c7ae5" class="card-button">Sign In</button>
+                        </div>
+
                     </div>
-                    <label for="password">Password</label>
-                    <div class="card-input-container password">
-                        <input @bind="Userdata.Password" type="password" placeholder="Enter your password" id="password">
+                </div>
+                <div >
+                <br />
+                <br />
+                </div>
+                <div  class="d-flex justify-content-center">
+                    <div style="color:red; font-style:italic;">
+                        @Message
                     </div>
-                    <button @onclick="LoginUser" style="background:#2c7ae5" class="card-button">Sign In</button>
+
                 </div>
 
             </div>
+    
             
-            <div style="color:red; font-style:italic;">
-                @Message
-            </div>
-            
+          
         }
         @if (!Visible)
         {
@@ -74,31 +89,39 @@
 
     private async Task LoginUser()
     {
-
-        using var loginRespose = await http.PostAsJsonAsync("login/getloginrequset", Userdata);
         Visible = !Visible;
-
-        if (loginRespose.IsSuccessStatusCode)
+        try
         {
+            using var loginRespose = await http.PostAsJsonAsync("login/getloginrequset", Userdata);
+            if (loginRespose.IsSuccessStatusCode)
+            {
+                var userSession = await loginRespose.Content.ReadFromJsonAsync<UserSession>();
+                var custAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
+                await custAuthStateProvider.UpdateAuthenticationState(userSession);
+                toastService.ShowSuccess($"Welcome back {userSession.UserName}");
+                return;
+            }
 
-            var userSession = await loginRespose.Content.ReadFromJsonAsync<UserSession>();
-            var custAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
-            await custAuthStateProvider.UpdateAuthenticationState(userSession);
-            StateHasChanged();
-            return;
 
+        }catch(Exception ex)
+        {
+            Visible = true;
+            toastService.ShowError(ex.Message);
+            Message = "Username or Password are incorrected please try again!";
         }
-        Message = "Username or Password are incorrected please try again!";
-
     }
 
     private async Task AskForDefaultUser()
     {
-        using var requset = await http.GetAsync("login/createdefaultuser");
+        try
+        {
+            using var requset = await http.GetAsync("login/createdefaultuser");
+
+        }catch(Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+        }
     }
-
-    
-
 
 }
 

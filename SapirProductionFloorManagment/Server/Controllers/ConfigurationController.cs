@@ -55,7 +55,6 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
 
-
         [HttpPost]
         public string UpdateLine(Line line)
         {
@@ -73,7 +72,6 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
         }
         
-
 
         [HttpPost]
         public string RemoveLine(Line line)
@@ -156,7 +154,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 using var dbcon = new MainDbContext();
                 dbcon.Remove(user);
                 dbcon.SaveChanges();
-                return "המידע הסור בהצלחה";
+                return "המידע הוסר בהצלחה";
 
             }
             catch (Exception ex)
@@ -221,6 +219,86 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 return ex.Message;
             }
         }
+
+
+        [HttpGet]
+        public List<LineWorkHours> GetLinesWorkHours()
+        {
+
+            try
+            {
+                using var dbcon = new MainDbContext();
+                var lines = dbcon.LinseWorkHours.ToList();
+                dbcon.SaveChanges();
+
+                return lines;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GetLinesData: {ex.Message}", ex.Message);
+            }
+            return new List<LineWorkHours>();
+        }
+
+
+        [HttpPost]
+        public string PostLineWorkHours(LineWorkHours workHours)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.LinseWorkHours.Add(workHours);
+                dbcon.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("PostNewLine: {ex.Message}", ex.Message);
+                return ex.Message;
+            }
+
+            return "המידע הוסף בהצלחה";
+        }
+
+
+
+        [HttpPost]
+        public string UpdateLineWorkHours(LineWorkHours workHours)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.LinseWorkHours.Update(workHours);
+                dbcon.SaveChanges();
+                return "המידע עודכן בהצלחה";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("UpdateLine: {ex.Message}", ex.Message);
+                return ex.Message;
+            }
+        }
+
+
+
+        [HttpPost]
+        public string RemoveLineWorkHours(LineWorkHours workHours)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.LinseWorkHours.Remove(workHours);
+                dbcon.SaveChanges();
+                return "המידע הוסר בהצלחה";
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("RemoveLine: {ex.Message}", ex.Message);
+                return ex.Message;
+            }
+        }
+
 
 
 

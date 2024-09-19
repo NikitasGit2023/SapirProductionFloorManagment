@@ -1,8 +1,7 @@
 ﻿@page "/dailyprogram"
+@inject IToastService toastService
 @inject HttpClient Http
 @inherits TableBase
-@using SapirProductionFloorManagment.Client.Shared
-@using SapirProductionFloorManagment.Client.Shared.Tables
 
 
 <div class="d-flex flex-column mb-3">
@@ -11,16 +10,19 @@
     </div>
     <div class="p-2">
         <div class="d-flex flex-row-reverse">
-            <div class="p-2">
-                <RadzenButton @onclick="RefreshWeeklyProgram" Text="Calc Program" ButtonStyle="ButtonStyle.Light" />
-            </div> 
-            <div class="p-2">
-                Last Update: @lastUpdatedAt
+
+            <div class="d-flex flex-row mb-3">
+                <div class="p-2">
+                    <button @onclick="() => RefreshWeeklyProgram()" class="btn btn-primary">Calc Program</button>
+                </div>
+                <div class="p-2" style="font-weight:bolder;">
+                    Last Update: @lastUpdatedAt
+                </div>
             </div>
+
         </div> 
     </div>
     <div class="p-2">
-
 
          <RadzenStack Visible="true" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
             <RadzenLabel Text="Select Line" Component="LinesFilter" />
@@ -28,8 +30,8 @@
         </RadzenStack>
 
         <div class="lines-table" style="width:100%">
-            <LinesScheduleTable @ref="lineSchedulesTable"
-                                Data="linesSchedule"
+            <WorkPlanTable @ref="workPlanTable"
+                                Data="linesWorkPlan"
                                 IsCrudFrozen="false"
                                 IsNewRowCanAdded="false"
                                 IsVisible="true" />
@@ -42,11 +44,11 @@
 @code 
 {
     private string lastUpdatedAt = string.Empty;
-    private List<WorkOrdersTableContext> workOrders = new();
-    private List<LinesScheduleTableContext> linesSchedule = new();
-    private List<LinesScheduleTableContext> filteredSchedule = new();
-    private List<LinesScheduleTableContext> unfilteredSchedule = new();
-    private LinesScheduleTable lineSchedulesTable = new();
+    private List<WorkOrder> workOrders = new();
+    private List<LineWorkPlan> linesWorkPlan = new();
+    private List<LineWorkPlan> filteredWorkPlan = new();
+    private List<LineWorkPlan> unfilteredWorkPlan = new();
+    private WorkPlanTable workPlanTable = new();
     private string selectedLineName = string.Empty;
     private List<string?> linesName = new();
 
@@ -55,20 +57,25 @@
     {
         await AskForLineNames();
         await AskForLinesScedule();
-        unfilteredSchedule = linesSchedule;
-        // lineSchedulesTable.RefreshTable();
+        await RefreshWeeklyProgram();
+
+        unfilteredWorkPlan = linesWorkPlan;
         StateHasChanged();
     }
 
     private void FilterLinesTable(object e)
     {
-        linesSchedule = unfilteredSchedule;
+        linesWorkPlan = unfilteredWorkPlan;
         var lineNum = (string)e;
 
-        if (e == string.Empty)
+        if (lineNum == string.Empty)
+        {
+            linesWorkPlan = unfilteredWorkPlan;
             return;
+        }
 
-        linesSchedule = linesSchedule.Where(e => e.RelatedToLine == lineNum).ToList();
+        filteredWorkPlan = linesWorkPlan.Where(e => e.RelatedToLine == lineNum).ToList();
+        linesWorkPlan = filteredWorkPlan;
         StateHasChanged();
     }
 
@@ -77,22 +84,31 @@
         try
         {
             using var request = await Http.GetAsync("dailyprogram/getexistedlinesscedule");
-            var json = request.Content.ReadFromJsonAsync<List<LinesScheduleTableContext>>();
-            linesSchedule = json.Result;
+            var json = request.Content.ReadFromJsonAsync<List<LineWorkPlan>>();
+            linesWorkPlan = json.Result;
 
         }
         catch (Exception ex)
         {
-            //TODO
+            toastService.ShowError(ex.Message);
         }
 
     }
 
     private async Task AskForLineNames()
     {
-        using var request = await Http.GetAsync("dailyprogram/getlinesname");
-        var json = request.Content.ReadFromJsonAsync<List<string>>();
-        linesName = json.Result;
+        try
+        {
+            using var request = await Http.GetAsync("dailyprogram/getlinesname");
+            var json = request.Content.ReadFromJsonAsync<List<string>>();
+            linesName = json.Result;
+
+        }catch(Exception ex)
+        {
+
+            toastService.ShowError(ex.Message);
+        }
+        
     }
 
     private async Task RefreshWeeklyProgram()
@@ -100,7 +116,6 @@
         lastUpdatedAt = DateTime.Now.ToString();
         await AskForLinesScedule();
         StateHasChanged();
-        // await AskForLinesScedule();
     }
 
 }

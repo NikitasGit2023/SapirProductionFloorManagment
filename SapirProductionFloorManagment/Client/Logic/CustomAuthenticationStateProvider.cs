@@ -14,12 +14,15 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly HttpClient _httpClient;
     private readonly ISessionStorageService _sessionStorageService;
+    private readonly ILogger<CustomAuthenticationStateProvider> _logger;        
     private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-    public CustomAuthenticationStateProvider(HttpClient httpClient, ISessionStorageService sessionStorageService)
+    public CustomAuthenticationStateProvider(HttpClient httpClient, ILogger<CustomAuthenticationStateProvider> logger ,ISessionStorageService sessionStorageService)
     {
-         _httpClient = httpClient;
         _sessionStorageService = sessionStorageService;
+        _httpClient = httpClient;
+        _logger = logger;
+        
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -53,7 +56,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         catch(Exception ex) 
         {
             // Token is invalid or error occurred
-            Console.WriteLine(ex.Message);  
+            _logger.LogError(ex.Message); 
             return new AuthenticationState(new ClaimsPrincipal(_anonymous));
         }
     }
@@ -61,26 +64,34 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public async Task UpdateAuthenticationState(UserSession userSession)
     {
-        ClaimsPrincipal claimsPrincipal;
-
-        if(userSession != null)
+        try
         {
-            claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+            ClaimsPrincipal claimsPrincipal;
+
+            if (userSession != null)
+            {
+                claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userSession.UserName),
                     new Claim(ClaimTypes.Role, userSession.Role),
 
                 }));
-            userSession.ExpityTimeStamp = DateTime.Now.AddSeconds(userSession.ExpiresIn);
-            await _sessionStorageService.SaveEncryptedItemAsync("UserSession", userSession);
+                userSession.ExpityTimeStamp = DateTime.Now.AddSeconds(userSession.ExpiresIn);
+                await _sessionStorageService.SaveEncryptedItemAsync("UserSession", userSession);
+
+            }
+            else
+            {
+                claimsPrincipal = _anonymous;
+                _sessionStorageService.RemoveItemAsync("UserSession");
+            }
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
 
         }
-        else
+        catch (Exception ex) 
         {
-            claimsPrincipal = _anonymous;
-            _sessionStorageService.RemoveItemAsync("UserSession");
+            _logger.LogError(ex.Message);   
         }
-        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));  
 
     }
 
@@ -96,7 +107,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         }
         catch (Exception ex)
         {
-            //TODO
+            _logger.LogError(ex.Message);
         }
         return result;
 

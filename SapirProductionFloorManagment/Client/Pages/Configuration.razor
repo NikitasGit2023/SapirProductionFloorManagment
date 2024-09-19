@@ -5,19 +5,38 @@
 
 <h3>Configuration</h3>
 
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <img src="..." class="rounded me-2" alt="...">
+        <strong class="me-auto">Bootstrap</strong>
+        <small>11 mins ago</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        Hello, world! This is a toast message.
+    </div>
+</div>
+
 <TablesSwitcher @ref="tablesSwitcher" OnClick="()=>SwitchToTable()" Switchers="keyValuePairs"/>
 
 <br/>
 
-<LinesTable IsCrudFrozen="false" IsVisible="@keyValuePairs["Lines"]" Name="Lines"/>
 
-<UsersTable IsCrudFrozen="false" IsVisible="@keyValuePairs["Users"]" Name="Users"/>
+<LinesWorkHoursTable IsCrudFrozen="false" IsVisible="@keyValuePairs["Lines Work Days"]" />
+
+<LinesTable IsCrudFrozen="false" Data="linesData" IsVisible="@keyValuePairs["Lines General Information"]" />
+
+<UsersTable IsCrudFrozen="false" IsVisible="@keyValuePairs["Users Information"]"/>
 
     
 @code {
 
     private Dictionary<string, bool> keyValuePairs = new();
     private TablesSwitcher tablesSwitcher = new();
+    private List<Line> linesData = new();
+    private List<LineWorkHours> workHoursData = new();
+
+
     private void SetValueToFalse(string key) => keyValuePairs[key] = false;
     private void SetValueToTrue(string key) => keyValuePairs[key] = true;
 
@@ -25,11 +44,33 @@
     protected override async Task OnInitializedAsync()
     {
         // keyValuePairs.Add("Products", false);
-        keyValuePairs.Add("Users", false);
-        keyValuePairs.Add("Lines", true);
+        keyValuePairs.Add("Users Information", false);
+        keyValuePairs.Add("Lines General Information", true);
+        keyValuePairs.Add("Lines Work Days", false);
+
+        linesData = await AskForLinesData();
+
+        StateHasChanged();
     }
 
 
+
+    public async Task<List<Line>> AskForLinesData()
+    {
+        try
+        {
+            using var data = await Http.GetAsync("configuration/getlinesdata");
+            var content = data.Content.ReadFromJsonAsync<List<Line>>();
+            if (content.Result != null)
+                return content.Result;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        return null;
+    }
 
 
     private void SwitchToTable()
@@ -45,7 +86,6 @@
         StateHasChanged();
 
     }
-
 
 
     private void MakeVisible(string target)
@@ -64,13 +104,7 @@
 
 
 
-
-
-   
-
-   
-
-
-    
-
 }
+
+
+

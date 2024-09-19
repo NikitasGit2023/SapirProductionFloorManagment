@@ -6,6 +6,7 @@
 
 <PageTitle>Lines</PageTitle>
 
+<BlazoredToasts></BlazoredToasts>
 
 <div class="d-flex flex-column mb-3">
     <div class="p-2">
@@ -34,9 +35,10 @@
     <div class="p-2">
         <RadzenDataGrid Visible="IsVisible" @ref="linesGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4" 
-                        AllowSorting="true" Data="@fetchedLines" TItem="Line"  SelectionMode="DataGridSelectionMode.Single">
+                        AllowSorting="true" Data="@Data" TItem="Line"  SelectionMode="DataGridSelectionMode.Single">
                         
-            <Columns>
+            <Columns>         
+
                 <RadzenDataGridColumn  Visible="false" TItem="Line" Property="LineId" Title="Id" Width="100px" />
 
                 <RadzenDataGridColumn TItem="Line" Width="150px" Property="Name" Title="Line Name" Frozen="IsCrudFrozen">
@@ -53,7 +55,6 @@
                 </RadzenDataGridColumn>
 
 
-                @if (!IsCrudFrozen)
                 {
                     @*from here crud buttons*@
                     <RadzenDataGridColumn Width="150px"  TItem="Line" Context="line" Filterable="false" Sortable="false"
@@ -87,6 +88,11 @@
 
 @code {
 
+    [Parameter]
+    public bool Distinct { get; set; }
+
+    [Parameter]
+    public List<Line>? Data { get; set;}
 
     private DataGridEditMode editMode = DataGridEditMode.Single;
     private RadzenDataGrid<Line>? linesGrid = new();
@@ -94,39 +100,31 @@
     private List<Line> linesToUpdate = new List<Line>();
     private IList<Line>? fetchedLines;
     private List<string>? hourOptions;
+    private string[] daysOfTheWeek = new string[8];
     private Line selectedOne = new();
-
 
     protected override async Task OnInitializedAsync()
     {
+        if(Distinct)
+            Data = Data.Distinct().ToList();
 
-        //get data from DB
-        fetchedLines = await GetLinesData();
 
         //set workhours to each row
         hourOptions = Enumerable.Range(0, 24)
-                                .Select(hour => new TimeOnly(hour, 0).ToString())
+                                .Select(hour => new TimeOnly(hour, 0)
+                                .ToString())
+                                .OrderDescending()
                                 .ToList();
+
+        //set days of week vocabulaty
+        daysOfTheWeek = new string[]
+        {
+            "Sunday", "Monday" ,"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+
+        };
 
         //assign the first row of the to selectedLines
         await base.OnInitializedAsync();
-    }
-
-    public async Task<List<Line>> GetLinesData()
-    {
-        try
-        {
-            using var data = await Http.GetAsync("configuration/getlinesdata");
-            var content = data.Content.ReadFromJsonAsync<List<Line>>();
-            if(content.Result != null)
-                return content.Result;
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        return null;
     }
 
     protected async Task AddLine(Line line)
@@ -139,7 +137,7 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
 
         }
 
@@ -155,7 +153,7 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
 
         }
     }
@@ -166,11 +164,12 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/removeline", line);
             var message = data.Content.ReadFromJsonAsync<string>();
-            Console.WriteLine(message);
+            toastService.ShowSuccess(message.Result);
+
 
         }catch(Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
         }
     }
 
@@ -204,7 +203,7 @@
     }
 
     //green button
-    async Task SaveRow(Line line)
+    private async Task SaveRow(Line line)
     {
 
         if (line.LineId is 0)
@@ -229,9 +228,9 @@
         //cleaning linesToInsert and LinesToUpdate
         Reset(line);
 
-        if (fetchedLines.Contains(line))
+        if (Data.Contains(line))
         {
-            fetchedLines.Remove(line);
+            Data.Remove(line);
 
             if(line.LineId != 0)
                 await RemoveLine(line);

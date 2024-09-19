@@ -1,18 +1,22 @@
 ﻿@page "/prodreport"
-@using  SapirProductionFloorManagment.Shared
-@* @attribute [Authorize(Roles = "Admin")] *@
+@inject IToastService toastService
 @inject HttpClient Http
+@using  SapirProductionFloorManagment.Shared
+@using System.Text.Json;
+@* @attribute [Authorize(Roles = "Admin")] *@
+
 
 <h3>Production Report</h3>
-@using System.Text.Json;
+<BlazoredToasts></BlazoredToasts>
+
 
 <RadzenTemplateForm TItem="WorkOrder" Data="wo" Submit=@UpdateWorkOrderQuantity>
     <RadzenCard class="my-5 mx-auto" Style="max-width: 400px;">
 
-        <RadzenDropDown @bind-Value="selectedWorkOrderId"
+        <RadzenDropDown @bind-Value="selectedWorkOrderSN"
                         Data="@workOrders"
-                        TextProperty="ProductName"
-                        ValueProperty="Id"
+                        TextProperty="WorkOrderSN"
+                        ValueProperty="WorkOrderSN"
                         Style="width: 100%;"
                         Change="OnWorkOrderSelected">
         </RadzenDropDown>
@@ -21,7 +25,7 @@
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Quantity</RadzenText>
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="5">
-            <RadzenNumeric TValue="int" @bind-value="@wo.Quantity" Style="width: 70%;" Name="Quantity" />
+            <RadzenNumeric TValue="int" @bind-value="@wo.ProducedQuantity" Style="width: 70%;" Name="Quantity" />
         </RadzenColumn>
        
         <div class="row">
@@ -36,7 +40,7 @@
 
 @code 
 {
-    
+
     protected override async Task OnInitializedAsync()
     {
         workOrders = (await GetExistedWorkOrders()).ToList();
@@ -44,7 +48,7 @@
 
     private WorkOrder wo = new WorkOrder();
     private List<WorkOrder> workOrders = new();
-    private int? selectedWorkOrderId;
+    private string? selectedWorkOrderSN;
     private WorkOrder selectedWorkOrder = new();
 
 
@@ -55,33 +59,41 @@
         {
             using var workOrder = await Http.PostAsJsonAsync("productionreport/postworkorderquantity", wo);
             var response = await workOrder.Content.ReadFromJsonAsync<string>();
+            toastService.ShowSuccess(response);
 
         }catch(Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
         }
     }
 
     private async Task<List<WorkOrder>> GetExistedWorkOrders()
     {
-        using var json = await Http.GetAsync("productionreport/getexistedworkorders");
-        var data = await json.Content.ReadFromJsonAsync<List<WorkOrder>>();
-        return data;
+        try
+        {
+            using var json = await Http.GetAsync("productionreport/getexistedworkorders");
+            var data = await json.Content.ReadFromJsonAsync<List<WorkOrder>>();
+            return data;
+        }
+        catch(Exception ex)
+        {
+            toastService.ShowError(ex.Message);            
+        }
+        return null;
         //add if data fetched succesfully
-
     }
 
 
     private async Task OnWorkOrderSelected(object args)
     {
 
-        if (selectedWorkOrderId.HasValue)
+        if (selectedWorkOrderSN != string.Empty)
         {
-            var selectedId = selectedWorkOrderId.Value;
-            selectedWorkOrder = workOrders.FirstOrDefault(wo => wo.Id == selectedId);
+            var selectedSN = selectedWorkOrderSN;
+            selectedWorkOrder = workOrders.FirstOrDefault(wo => wo.WorkOrderSN == selectedSN);
 
             //binding quantity by slected id from the dropdown
-            wo.Id = selectedId;
+            wo.WorkOrderSN = selectedSN;
 
         }
     }

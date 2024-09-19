@@ -15,9 +15,6 @@ namespace  SapirProductionFloorManagment.Shared
         public string Role { get; set; } = string.Empty;    
         public string JobTitle { get; set; } = string.Empty;    
 
-       
-    
-
         public override int GetHashCode()
         {
             return UserId.GetHashCode();

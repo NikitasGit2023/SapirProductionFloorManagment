@@ -11,13 +11,12 @@ using SapirProductionFloorManagment.Client.Shared.Tables;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddBlazoredToast();
-
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 //authonticstion and authorization services
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddBlazoredToast();
 
 await builder.Build().RunAsync();
