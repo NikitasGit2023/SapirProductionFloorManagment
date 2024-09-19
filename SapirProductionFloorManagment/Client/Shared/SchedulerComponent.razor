@@ -1,0 +1,33 @@
+﻿@using Radzen
+@using Radzen.Blazor
+
+<div class="scheduler-container" style="width:100%; margin-top:20px;">
+    <RadzenScheduler Data="@appointments" TItem="Appointment" StartProperty="Start" EndProperty="End" TextProperty="Text">
+        <RadzenDayView />
+        <RadzenWeekView />
+        <RadzenMonthView />
+    </RadzenScheduler>
+</div>
+
+@code {
+    public class Appointment
+    {
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public string Text { get; set; }
+    }
+
+    IList<Appointment> appointments;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        // Заполнение расписания тестовыми событиями
+        appointments = new List<Appointment>
+        {
+            new Appointment { Start = DateTime.Now.AddHours(1), End = DateTime.Now.AddHours(2), Text = "Meeting with client" },
+            new Appointment { Start = DateTime.Now.AddHours(3), End = DateTime.Now.AddHours(4), Text = "Team meeting" }
+        };
+    }
+}
