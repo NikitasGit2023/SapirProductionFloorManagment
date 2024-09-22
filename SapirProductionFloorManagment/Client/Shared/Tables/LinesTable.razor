@@ -54,8 +54,6 @@
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-
-                {
                     @*from here crud buttons*@
                     <RadzenDataGridColumn Width="150px"  TItem="Line" Context="line" Filterable="false" Sortable="false"
                                       TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
@@ -73,16 +71,12 @@
                             <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(line))">
                             </RadzenButton>
                         </EditTemplate>
-                    </RadzenDataGridColumn>
-                }
+                    </RadzenDataGridColumn>                
 
             </Columns>
         </RadzenDataGrid>
 
-
-
     </div>
-
 </div>
 
 

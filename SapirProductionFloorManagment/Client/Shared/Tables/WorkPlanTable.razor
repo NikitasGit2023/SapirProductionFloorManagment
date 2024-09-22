@@ -34,6 +34,12 @@
             <Columns>
                 <RadzenDataGridColumn Visible="false" TItem="LineWorkPlan" Property="Id" Title="Id" Width="100px" />
 
+                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="RelatedToLine" Title="Line" Frozen="true">
+                    <EditTemplate Context="schedule">
+                        <RadzenTextBox  @bind-Value="schedule.RelatedToLine" Style="width:200px; display: block" Name="StartWork" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="StartWork" Title="Start Work" Frozen="IsCrudFrozen">
                     <EditTemplate Context="schedule">
                         <RadzenDatePicker  @bind-Value="schedule.StartWork" Style="width:200px; display: block" Name="StartWork"  />
@@ -46,11 +52,25 @@
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
+                
+                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="Priority" Title="Priority" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenNumeric @bind-Value="schedule.Priority" Style="width:200px; display: block" Name="EndWork" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="Priority" Title="DeadLineDateTime" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="schedule">
+                        <RadzenDatePicker @bind-Value="schedule.DeadLineDateTime" Style="width:200px; display: block" Name="EndWork" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="FormatedWorkDuration" Title="Work Duration" Frozen="IsCrudFrozen">
                     <EditTemplate Context="schedule" >
                         <RadzenTextBox  @bind-Value="schedule.FormatedWorkDuration" Style="width:200px; display: block" Name="FormatedWorkDuration"  />
                     </EditTemplate>
                 </RadzenDataGridColumn>
+
 
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="QuantityInKg" Title="Quantity (Kg)" Frozen="IsCrudFrozen">
                     <EditTemplate Context="schedule">

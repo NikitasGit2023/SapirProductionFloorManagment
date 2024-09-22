@@ -228,7 +228,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                var lines = dbcon.LinseWorkHours.ToList();
+                var lines = dbcon.LinesWorkHours.ToList();
                 dbcon.SaveChanges();
 
                 return lines;
@@ -247,7 +247,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                dbcon.LinseWorkHours.Add(workHours);
+                dbcon.LinesWorkHours.Add(workHours);
                 dbcon.SaveChanges();
 
             }
@@ -268,7 +268,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                dbcon.LinseWorkHours.Update(workHours);
+                dbcon.LinesWorkHours.Update(workHours);
                 dbcon.SaveChanges();
                 return "המידע עודכן בהצלחה";
             }
@@ -287,7 +287,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                dbcon.LinseWorkHours.Remove(workHours);
+                dbcon.LinesWorkHours.Remove(workHours);
                 dbcon.SaveChanges();
                 return "המידע הוסר בהצלחה";
 

@@ -26,10 +26,5 @@
     <ProjectReference Include="..\Shared\SapirProductionFloorManagment.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="LogicHelpers\" />
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 
 </Project>

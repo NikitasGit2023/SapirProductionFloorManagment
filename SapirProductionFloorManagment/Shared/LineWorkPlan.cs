@@ -9,16 +9,19 @@ namespace SapirProductionFloorManagment.Shared
     public record LineWorkPlan
     {
         public int Id { get; set; }
-        public string RelatedToLine { get; set; } = "";     
-        public DateTime StartWork { get; set; } = DateTime.Now; 
-        public DateTime EndWork { get; set; } = DateTime.Now;   
+        public string RelatedToLine { get; set; } = "";
+        public DateTime? StartWork { get; set; } = null;
+        public DateTime? EndWork { get; set; } = null;
+        public int Priority { get; set;}
+        public  DateTime? DeadLineDateTime {  get; set; } = null;       
         public double WorkDuraion { get; set; }
-        public string FormatedWorkDuration { get; set; } = "";      
+        public string FormatedWorkDuration { get; set; } = "";            
+        public double LeftToFinish { get; set; }
+        public string FormatedLeftToFinish { get; set; } = "";   
         public int QuantityInKg { get; set; }
         public string Description { get; set; } = "";
         public string WorkOrderSN { get; set; } = "";
         public string Comments { get; set; } = "";
-        public  DateTime TimeToFinish { get; set; } = DateTime.Now;
         public int SizeInMicron {get; set;}       
         public bool IsCalculted { get; set;}
 

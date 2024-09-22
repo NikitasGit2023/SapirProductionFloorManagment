@@ -10,7 +10,7 @@ PM> Update-Database
 implementation of authentication and authrization:
 https://www.youtube.com/watch?v=7P_eyz4mEmA
 
-LineTable Structure:
-1)Name
-2)Production Rate
-3)Operating Hours
+
+How to drop a data base:
+ alter database [MyDatbase] set single_user with rollback immediate
+ drop database [MyDatabase]

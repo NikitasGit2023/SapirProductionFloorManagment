@@ -93,10 +93,10 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LinseWorkHours");
+                    b.ToTable("LinesWorkHours");
                 });
 
-            modelBuilder.Entity("SapirProductionFloorManagment.Shared.LinesSchedule", b =>
+            modelBuilder.Entity("SapirProductionFloorManagment.Shared.LineWorkPlan", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,14 +105,22 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comments")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeadLineDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndWork")
+                    b.Property<DateTime?>("EndWork")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FormatedLeftToFinish")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FormatedWorkDuration")
                         .IsRequired()
@@ -120,6 +128,12 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     b.Property<bool>("IsCalculted")
                         .HasColumnType("bit");
+
+                    b.Property<double>("LeftToFinish")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
 
                     b.Property<int>("QuantityInKg")
                         .HasColumnType("int");
@@ -131,10 +145,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<int>("SizeInMicron")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("StartWork")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("TimeToFinish")
+                    b.Property<DateTime?>("StartWork")
                         .HasColumnType("datetime2");
 
                     b.Property<double>("WorkDuraion")
@@ -146,7 +157,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LinesWorkSchedule");
+                    b.ToTable("ActiveWorkPlans");
                 });
 
             modelBuilder.Entity("SapirProductionFloorManagment.Shared.Product", b =>

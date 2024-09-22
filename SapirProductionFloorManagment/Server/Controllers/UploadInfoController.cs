@@ -167,7 +167,17 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                var scheduleToDb = new List<LineWorkPlan>();         
+                var scheduleToDb = new List<LineWorkPlan>();
+
+                //cleaning db and setting new work orders
+                //var oldOrders = dbcon.WorkOrdersFromXL.ToList();
+                //dbcon.WorkOrdersFromXL.RemoveRange(oldOrders);
+                //dbcon.SaveChanges();
+                //var oldWorkPlans = dbcon.
+                //.ToList();
+                //dbcon.ActiveWorkPlans.RemoveRange(oldWorkPlans);
+                //dbcon.SaveChanges();    
+
 
                 // Putting work orders inside a lines schedule dictionary
                 Dictionary<WorkOrder, bool> workOrdersDictionary = new();
@@ -190,9 +200,12 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
                             if (workOrdersDictionary[workOrder] == false)
                             {
-                                dbcon.LinesWorkSchedule.Add(new LineWorkPlan
+                                dbcon.ActiveWorkPlans.Add(new LineWorkPlan
                                 {
                                     RelatedToLine = lineName,
+                                    Priority = workOrder.Priority,
+                                    DeadLineDateTime = workOrder.CompletionDate,
+                                    Description = workOrder.ProductDesc,    
                                     QuantityInKg = workOrder.Quantity,
                                     WorkOrderSN = workOrder.WorkOrderSN,
                                     Comments = workOrder.Comments,

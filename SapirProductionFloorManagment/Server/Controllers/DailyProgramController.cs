@@ -22,7 +22,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             
             try
             {
-                weeklyProgram = dbcon.LinesWorkSchedule.ToList();
+                weeklyProgram = dbcon.ActiveWorkPlans.ToList();
 
             }
             catch (Exception ex) 
@@ -39,7 +39,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                var schedule = dbcon.LinesWorkSchedule.Where(e => e.IsCalculted == false).ToList(); // bugged
+                var schedule = dbcon.ActiveWorkPlans.Where(e => e.IsCalculted == false).ToList(); // bugged
                 return await Task.FromResult(schedule);
             }
             catch (Exception ex)

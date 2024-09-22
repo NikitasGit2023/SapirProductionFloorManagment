@@ -12,8 +12,10 @@ namespace SapirProductionFloorManagment.Server
         public DbSet<Line> Lines { get; set; }
         public DbSet<Product> Products { get; set; }        
         public DbSet<WorkOrder> WorkOrdersFromXL { get; set; }    
-        public DbSet<LineWorkPlan> LinesWorkSchedule { get; set;}
-        public DbSet<LineWorkHours> LinseWorkHours { get; set; }
+        public DbSet<LineWorkPlan> ActiveWorkPlans { get; set;}
+
+        //public DbSet<LineWorkPlan> RecheduledWorkPlans { get; set; }    
+        public DbSet<LineWorkHours> LinesWorkHours { get; set; }
         public DbSet<AppGeneralData> AppGeneralData { get; set; }
         public string _ConnectionString { get; }
         public ILogger? Logger { get; set; } 
@@ -21,7 +23,7 @@ namespace SapirProductionFloorManagment.Server
         public MainDbContext()
         {
          
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductsManagment9;User ID=account;Password=3194murkin;Encrypt=False";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagment;User ID=account;Password=3194murkin;Encrypt=False";
             _ConnectionString = ConnectionString; 
 
         }
@@ -41,6 +43,7 @@ namespace SapirProductionFloorManagment.Server
             
         }
 
+
         public void CreateDefaultDataForAppFunctionallity()
         {
             try
@@ -52,7 +55,7 @@ namespace SapirProductionFloorManagment.Server
                 Lines.ExecuteDelete();
                 SaveChanges();
 
-                LinseWorkHours.ExecuteDelete();
+                LinesWorkHours.ExecuteDelete();
                 SaveChanges();
 
                 Lines.Add(new Line { Name = "1", ProductionRate = 200 });
@@ -63,53 +66,53 @@ namespace SapirProductionFloorManagment.Server
                 SaveChanges();
 
                 // Sunday - Shift 08:00 to 16:00, Break 12:00 to 12:30
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Sunday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Sunday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Sunday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Sunday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Sunday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Sunday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Sunday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Sunday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Sunday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Sunday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Monday - Shift 08:00 to 16:00, Break 12:00 to 12:30
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Monday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Monday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Monday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Monday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Monday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Monday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Monday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Monday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Monday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Monday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Tuesday - Shift 08:00 to 16:00, Break 12:00 to 12:30
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Tuesday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Tuesday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Tuesday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Tuesday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Tuesday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Tuesday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Tuesday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Tuesday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Tuesday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Tuesday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Wednesday - Shift 08:00 to 16:00, Break 12:00 to 12:30
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Wednesday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Wednesday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Wednesday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Wednesday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Wednesday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Wednesday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Wednesday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Wednesday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Wednesday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Wednesday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Thursday - Shift 08:00 to 16:00, Break 12:00 to 12:30
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Thursday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Thursday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Thursday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Thursday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Thursday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Thursday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Thursday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Thursday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Thursday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Thursday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Friday - Shift 08:00 to 16:00, Break 12:00 to 12:30
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Friday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Friday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Friday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Friday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Friday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Friday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Friday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Friday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Friday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Friday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Saturday - Shift 08:00 to 16:00, Break 12:00 to 12:30
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Saturday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Saturday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Saturday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Saturday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
-                LinseWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Saturday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Saturday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "2", WorkDay = "Saturday", ShiftStartWork = "08:30", ShiftEndWork = "16:30", BreakStart = "12:30", BreakEnd = "13:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Saturday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Saturday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Saturday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 SaveChanges();
 
