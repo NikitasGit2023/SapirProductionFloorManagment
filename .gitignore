@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/SapirProductionFloorManagment/Server/Migrations/20240919160214_MainDbContextMigration.cs
+/SapirProductionFloorManagment/Server/Migrations/20240919160214_MainDbContextMigration.Designer.cs
