@@ -1,9 +1,11 @@
-﻿using SapirProductionFloorManagment.Shared;
+﻿using Microsoft.Extensions.Logging;
+using SapirProductionFloorManagment.Shared;
 
 namespace SapirProductionFloorManagment.Server.BackgroundTasks
 {
     public class TimeSchedulerHelper
     {
+        public ILogger? Logger { get; set; }
 
         public Dictionary<string, TimeSpan> BuildBreakDictionary(List<LineWorkHours> linesWorkHours)
         {
@@ -30,13 +32,15 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
         public DateTime AdjustForBreaks(DateTime workStart, TimeSpan workDuration, LineWorkHours workHours, Dictionary<string, TimeSpan> breaks)
         {
-            DateTime workEnd = workStart.Add(workDuration);
+            DateTime workEnd = DateTime.MaxValue;
 
-            // Parse the break start and end times
+            workEnd = workStart.Add(workDuration);
+
+
             DateTime breakStart = string.IsNullOrEmpty(workHours.BreakStart) ? DateTime.MaxValue : DateTime.Parse(workHours.BreakStart);
             DateTime breakEnd = string.IsNullOrEmpty(workHours.BreakEnd) ? DateTime.MaxValue : DateTime.Parse(workHours.BreakEnd);
 
-            // If break occurs during work hours, extend the work end time by the break duration
+
             if (workStart < breakStart && workEnd > breakStart)
             {
                 TimeSpan breakDuration = breakEnd - breakStart;
@@ -65,12 +69,15 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
             using var dbcon = new MainDbContext();
 
-            var prodRateAnother = dbcon.Lines.Where(e => e.Name == lineSchedule.RelatedToLine).Select(e => e.ProductionRate).First();
+            var prodRateAnother = dbcon.Lines.Where(e => e.Name == lineSchedule.RelatedToLine)
+                                              .Select(e => e.ProductionRate)
+                                              .First();
+
             duration = (double)quantityInKg / prodRateAnother / 24;
             return duration;
         }
 
-         public int SetProductionRate(int lineNum, int sizeInMicron)
+        public int SetProductionRate(int lineNum, int sizeInMicron)
         {
             var productRate = 0;
 
@@ -235,40 +242,39 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             return productRate;
         }
 
-        public int FindAvailableLine(WorkOrder workOrder, List<LineWorkHours> lineWorkHours, List<LineWorkPlan> lineWorkPlans)
+        public int FindAvailableLine()
         {
-            // Check if OptionalLine1 or OptionalLine2 are available.
-            var linesToCheck = new List<string?> { workOrder.OptionalLine1, workOrder.OptionalLine2 }.Where(l => l != null);
+            //TODO 
 
-            foreach (var line in linesToCheck)
-            {
-                var lineWorkHour = lineWorkHours.FirstOrDefault(l => l.Id.ToString() == line
-                                    && l.ShiftStartWork != "Unspecified" && l.ShiftEndWork != "Unspecified");
-                if (lineWorkHour != null)
-                {
-                    return lineWorkHour.Id;
-                }
-            }
-
-            return -1; // No available line found.
+            return -1; 
         }
 
         public void RecheduleWorkPlan(LineWorkPlan workPlan)
         {
             using var dbcon = new MainDbContext();
-            var converter  = new DataConverter();   
+            try
+            {
+                var converter = new DataConverter();
 
-            workPlan.StartWork = null;
-            workPlan.EndWork = null;
-            workPlan.WorkDuraion = workPlan.LeftToFinish;
-            workPlan.FormatedWorkDuration = converter.ConvertToTimeString(workPlan.WorkDuraion);
-            //dbcon.RecheduledWorkPlans.Add(workPlan);
-            dbcon.SaveChanges();
+                workPlan.StartWork = null;
+                workPlan.EndWork = null;
+                workPlan.WorkDuraion = workPlan.LeftToFinish;
+                workPlan.FormatedWorkDuration = converter.ConvertToTimeString(workPlan.WorkDuraion);
+                //dbcon.RecheduledWorkPlans.Add(workPlan);
+                dbcon.SaveChanges();
+
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("RecheduleWorkPlan: ex.Message", ex.Message);
+            }
+
+
+
+
         }
 
 
-        
     }
-
-    
 }

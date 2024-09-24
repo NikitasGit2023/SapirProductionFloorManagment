@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
-using NPOI.SS.Formula.Functions;
-using OfficeOpenXml.Export.ToCollection;
+﻿
 using SapirProductionFloorManagment.Shared;
+using System.Linq.Dynamic.Core;
 
 namespace SapirProductionFloorManagment.Server.BackgroundTasks
 {
@@ -12,190 +11,243 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
         private DataConverter _converter;
         private TimeSchedulerHelper _schedulerHelper;
         private List<WorkOrder> _workOrders;
-        private List<LineWorkPlan> _workPlans;     
-        private List<LineWorkHours> _linesWorkHours;
-        private MainDbContext _dbcon;   
+        private List<LineWorkHours> _workHours;
 
 
         public ProductionTimeScheduler(ILogger logger)
         {
             Logger = logger;
             _converter = new DataConverter();
-            _schedulerHelper = new TimeSchedulerHelper();
-            _dbcon = new MainDbContext();   
+            _schedulerHelper = new TimeSchedulerHelper 
+            {
+                Logger = Logger
+            };
         }
 
-        private void FetchRelatedTables()
-        {
-            try
-            {
-                using var dbcon = new MainDbContext();
-                _workOrders = dbcon.WorkOrdersFromXL.ToList();
-                _workPlans = dbcon.ActiveWorkPlans.ToList();
-                _linesWorkHours = dbcon.LinesWorkHours.ToList();
-
-            }
-            catch (Exception ex)
-            {
-                Logger?.LogError("FetchRelatedTables: {ex.Message}", ex.Message);
-            }       
-        }
+        //relevant
         public void WakeUpBackGroundService()
         {
             var lineNum = 0;
-            FetchRelatedTables();
+            using var dbcon = new MainDbContext();
+            var workPlans = dbcon.ActiveWorkPlans.ToList();
+            _workOrders = dbcon.WorkOrdersFromXL.ToList();
+            _workHours = dbcon.LinesWorkHours.ToList();
 
-            try
+
+            for (int i = 0; i < workPlans.Count(); i++)
             {
-            
-                using var dbcon = new MainDbContext();
-   
-                for (int i = 0; i < _workPlans.Count(); i++)
+
+                int.TryParse(workPlans[i].RelatedToLine.ToString(), out lineNum);
+
+                var productionRate = _schedulerHelper.SetProductionRate(lineNum, workPlans[i].SizeInMicron);
+
+                workPlans[i].WorkDuraion = _schedulerHelper.SetWorkDuration(workPlans[i].QuantityInKg, workPlans[i]);
+
+                workPlans[i].FormatedWorkDuration = _converter.ConvertToTimeString(workPlans[i].WorkDuraion);
+
+                var workOrder = dbcon.WorkOrdersFromXL.Where(e => e.WorkOrderSN == workPlans[i].WorkOrderSN).First();
+
+                workPlans[i].DeadLineDateTime = workOrder.CompletionDate;
+
+                workPlans[i].LeftToFinish = workPlans[i].WorkDuraion;
+
+                try
                 {
-
-                    var lineWorkPlan = _workPlans[i];
-
-
-                    int.TryParse(lineWorkPlan.RelatedToLine, out lineNum);
-
-                    var productionRate = _schedulerHelper.SetProductionRate(lineNum, lineWorkPlan.SizeInMicron);
-    
-                    lineWorkPlan.WorkDuraion = _schedulerHelper.SetWorkDuration(lineWorkPlan.QuantityInKg, lineWorkPlan);
-              
-                    lineWorkPlan.FormatedWorkDuration = _converter.ConvertToTimeString(lineWorkPlan.WorkDuraion);
-
-                    lineWorkPlan.LeftToFinish = lineWorkPlan.WorkDuraion;
-
-                    var workOrder = _workOrders.Where(e => e.WorkOrderSN == lineWorkPlan.WorkOrderSN).First();
-                    lineWorkPlan.DeadLineDateTime = workOrder.CompletionDate; 
-
-                    dbcon.ActiveWorkPlans.Update(lineWorkPlan);
+                    dbcon.ActiveWorkPlans.Update(workPlans[i]);
                     dbcon.SaveChanges();
 
+                    
+                   
+                }
+                catch (Exception ex)
+                {
+                    Logger?.LogError("WakeUpBackGroundService: {ex.Message}", ex.Message);
                 }
 
-                //generating a work plan after , so how can I inject a dictionary of breaks here? 
-                var breaksDictionary = _schedulerHelper.BuildBreakDictionary(_linesWorkHours);
-                GenerateWorkPlan(breaksDictionary);
-
             }
-            catch (Exception ex)
-            {
-                Logger?.LogError("WakeUpBackGroundService: {ex.Message}", ex.Message);
-            }
-
+            var breaksDictionary = _schedulerHelper.BuildBreakDictionary(_workHours);
+            GenerateWorkPlans(breaksDictionary);
         }
-        private void GenerateWorkPlan(Dictionary<string, TimeSpan> breaks)
+
+
+
+        private void GenerateWorkPlans(Dictionary<string, TimeSpan> breaks)
         {
             using var dbcon = new MainDbContext();
+            //relevant
+            var lines = dbcon.ActiveWorkPlans.Select(e => e.RelatedToLine)
+                                             .Distinct()
+                                             .ToList(); 
 
-            var sortedWorkOrders = _workOrders.OrderByDescending(w => w.Priority).ThenBy(w => w.CompletionDate).ToList();
+
+            var sortedWO = _workOrders.OrderBy(w => w.Priority)
+                                      .ThenBy(w => w.CompletionDate)
+                                      .ToList(); 
+
             var workPlans = dbcon.ActiveWorkPlans.ToList();
-     
-            foreach (var workOrder in sortedWorkOrders)
+
+            for (var i = 0; i < workPlans.Count(); i++)
             {
-                
-                int availibleLine = _schedulerHelper.FindAvailableLine(workOrder, _linesWorkHours, workPlans);
-                 if (availibleLine != -1)
+
+                foreach (var workOrder in sortedWO)
                 {
-                    var workDuration = dbcon.ActiveWorkPlans.Where(e => e.WorkOrderSN == workOrder.WorkOrderSN)
-                                                              .First().WorkDuraion;
+                        //relevant
+                        var revelantPlans = dbcon.ActiveWorkPlans.Where(e=> e.WorkOrderSN == workOrder.WorkOrderSN).ToArray(); 
 
-                    var workHours = _linesWorkHours.First(e => e.ReferencedToLine == availibleLine.ToString() 
-                                      && e.WorkDay == DateTime.Now.DayOfWeek.ToString());
+                        if (revelantPlans.Count() != 0)
+                        {    
+                           SetWorkStartAndEndTime(revelantPlans, breaks);
+                        }
 
-                 
-                    var workPlan = dbcon.ActiveWorkPlans.Where(e => e.WorkOrderSN == workOrder.WorkOrderSN 
-                                        && e.RelatedToLine == availibleLine.ToString()).First();
 
-                    if (workPlan.LeftToFinish == 0)//means that compleated
-                        continue;
-
-                    var workBreaks = _schedulerHelper.BuildBreakDictionary(dbcon.LinesWorkHours.ToList());
-                    SetWorkStartAndEndTime(workPlan, workDuration, workPlans, workHours, workBreaks);
-                    dbcon.Update(workPlan);
-                    dbcon.SaveChanges();                     
-                   
+                    }
                 }
             }
 
-        }
-        private void RegenerateWorkPlan(Dictionary<string, TimeSpan> breaks)
+        //relevant
+        private void SetWorkStartAndEndTime(LineWorkPlan[] relevantPlans, Dictionary<string, TimeSpan> breaks)
         {
-            //TODO
-        }        
-        private void SetWorkStartAndEndTime(LineWorkPlan workPlan, double workDurationHours, List<LineWorkPlan> lineWorkPlans, LineWorkHours workHours, Dictionary<string, TimeSpan> breaks)
-        {
+            if (relevantPlans.Length == 0) return;
+
+            using var dbcon = new MainDbContext { Logger = Logger };
+
             try
             {
-                // Parse the shift's start and end time
-                DateTime shiftStart = DateTime.Parse(workHours.ShiftStartWork);
-                DateTime shiftEnd = DateTime.Parse(workHours.ShiftEndWork);
-                TimeSpan workDuration = TimeSpan.FromHours(workDurationHours);
+                // Fetch work hours for the first and second plans
+                var firstWorkHours = GetWorkHours(relevantPlans[0], dbcon);
+                var secondWorkHours = relevantPlans.Length == 2 ? GetWorkHours(relevantPlans[1], dbcon) : null;
 
-                // Find the last work plan for the line and determine the next available start time
-                var lastPlan = lineWorkPlans
-                    .Where(l => l.RelatedToLine == workPlan.RelatedToLine.ToString())
-                    .OrderByDescending(l => l.EndWork)
-                    .FirstOrDefault();
+                if (firstWorkHours == null || (relevantPlans.Length == 2 && secondWorkHours == null)) return;
 
-                // Default to shift start if no prior plan exists
-                DateTime nextAvailableStart = lastPlan != null && lastPlan.EndWork != null ? (DateTime)lastPlan.EndWork : shiftStart;
+                // Get next available start times
+                var firstNextStart = GetNextAvailableStart(relevantPlans[0], firstWorkHours, dbcon);
+                var secondNextStart = relevantPlans.Length == 2 ? GetNextAvailableStart(relevantPlans[1], secondWorkHours, dbcon) : null;
 
-                // Ensure the work starts within the shift
-                if (nextAvailableStart >= shiftEnd)
+                if (firstNextStart == null && secondNextStart == null) return;
+
+                // Determine earliest plan
+                var earliestPlan = DetermineEarliestPlan(relevantPlans, firstNextStart, secondNextStart);
+
+                if (earliestPlan == null) return;
+
+                // Calculate work duration and shift end
+                var shiftEnd = earliestPlan.RelatedToLine == relevantPlans[0].RelatedToLine ? DateTime.Parse(firstWorkHours.ShiftEndWork) : DateTime.Parse(secondWorkHours.ShiftEndWork);
+                DateTime earliestStart = earliestPlan.RelatedToLine == relevantPlans[0].RelatedToLine ? (DateTime)firstNextStart : (DateTime)secondNextStart;
+
+                // Adjust for breaks and set work times 
+                 earliestPlan =  CalculateAndSetWorkTimes(earliestPlan, earliestStart, shiftEnd, firstWorkHours, secondWorkHours, breaks, dbcon);
+
+                if(earliestPlan.StartWork == null && relevantPlans[0] != null)
                 {
-                    Console.WriteLine("Work cannot be scheduled after the shift ends.");
-                    return; // Do nothing if work starts after the shift end
+                    earliestPlan = relevantPlans[0];
+                    earliestPlan.StartWork = secondNextStart;
+                    CalculateAndSetWorkTimes(earliestPlan, earliestStart, shiftEnd, firstWorkHours, secondWorkHours, breaks, dbcon);
                 }
 
-                // Calculate the available time until the shift ends
-                TimeSpan availableShiftTime = shiftEnd - nextAvailableStart;
+                // if shift start is null try adjust work on second work plan 
 
-                // Adjust for breaks
-                DateTime adjustedEndForBreaks = _schedulerHelper.AdjustForBreaks(nextAvailableStart, availableShiftTime, workHours, breaks);
-                availableShiftTime = adjustedEndForBreaks - nextAvailableStart; // Recalculate available shift time after breaks
-
-                // Determine if work can be completed within the available shift time
-                if (availableShiftTime >= workDuration)
+                var forRemoving = dbcon.ActiveWorkPlans.Where(e => e.WorkOrderSN == earliestPlan.WorkOrderSN && e.Id != earliestPlan.Id).FirstOrDefault();
+                if (forRemoving == null)
                 {
-                    // Full work duration can be scheduled within this shift
-                    workPlan.StartWork = nextAvailableStart;
-                    workPlan.EndWork = _schedulerHelper.AdjustForBreaks(nextAvailableStart, workDuration, workHours, breaks);
-                    workPlan.LeftToFinish = 0; // No remaining work
+
+                    return;
                 }
+
                 else
                 {
-                    // Partial work will be scheduled in the current shift
-                    workPlan.StartWork = nextAvailableStart;
-
-                    // Calculate the remaining work that will be left for the next shift
-                    TimeSpan remainingWorkTime = workDuration - availableShiftTime;
-
-                    // Set end time for this shift, adjusted for any breaks
-                    DateTime shiftEndWithBreaks = _schedulerHelper.AdjustForBreaks(nextAvailableStart, availableShiftTime, workHours, breaks);
-                    workPlan.EndWork = shiftEndWithBreaks;
-
-                    // Save remaining hours for the next shift
-                    workPlan.LeftToFinish = remainingWorkTime.TotalHours;
-
-                    //add uncompleated work plans to recheaduled work plans table
-                    _schedulerHelper.RecheduleWorkPlan(workPlan);
-
-                    _dbcon.SaveChanges();
-                   
-                    
+                    dbcon.ActiveWorkPlans.Remove(forRemoving);
+                    dbcon.SaveChanges();
                 }
-
-
+                  
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error calculating start and end time with breaks: {ex.Message}");
+                Logger?.LogError("SetWorkStartAndEndTime: {0}", ex.Message);
             }
         }
 
-        
+        private LineWorkHours GetWorkHours(LineWorkPlan plan, MainDbContext dbcon)
+        {
+            return _workHours.FirstOrDefault(e => e.ReferencedToLine == plan.RelatedToLine && e.WorkDay == DateTime.Now.DayOfWeek.ToString());
+        }
+
+        private DateTime? GetNextAvailableStart(LineWorkPlan plan, LineWorkHours workHours, MainDbContext dbcon)
+        {
+            var lastCompletedPlan = dbcon.ActiveWorkPlans.Where(e => e.RelatedToLine == plan.RelatedToLine && e.EndWork != null)
+                                          .OrderByDescending(e => e.EndWork)
+                                          .FirstOrDefault();
+
+            if (lastCompletedPlan == null)
+            {
+                lastCompletedPlan = dbcon.ActiveWorkPlans.Where(e => e.RelatedToLine == plan.RelatedToLine && e.EndWork == null)
+                                                         .OrderByDescending(e => e.EndWork)
+                                                         .FirstOrDefault();
+            }
+
+            return lastCompletedPlan?.EndWork ?? DateTime.Parse(workHours.ShiftStartWork);
+        }
+
+        private LineWorkPlan DetermineEarliestPlan(LineWorkPlan[] plans, DateTime? firstNextStart, DateTime? secondNextStart)
+        {
+            if (firstNextStart <= secondNextStart) return plans[0];
+            return plans.Length == 2 && secondNextStart < firstNextStart ? plans[1] : null;
+        }
+
+        private LineWorkPlan CalculateAndSetWorkTimes(LineWorkPlan plan, DateTime start, DateTime shiftEnd, LineWorkHours firstWorkHours,
+                                                      LineWorkHours secondWorkHours, Dictionary<string, TimeSpan> breaks, MainDbContext dbcon)
+        {
+            LineWorkHours selectedWorkHours = plan.RelatedToLine == firstWorkHours.ReferencedToLine ? firstWorkHours : secondWorkHours;
+
+            TimeSpan availableShiftTime = shiftEnd - start;
+            DateTime adjustedEndForBreaks = _schedulerHelper.AdjustForBreaks(start, availableShiftTime, selectedWorkHours, breaks);  // Original signature preserved
+            availableShiftTime = adjustedEndForBreaks - start;
+
+            if (availableShiftTime >= TimeSpan.FromHours(plan.WorkDuraion))
+            {
+                plan.StartWork = start;
+                plan.EndWork = _schedulerHelper.AdjustForBreaks(start, TimeSpan.FromHours(plan.WorkDuraion), selectedWorkHours, breaks);
+                plan.LeftToFinish = 0;
+            }
+            else
+            {
+                plan.StartWork = null;
+                TimeSpan remainingWorkTime = TimeSpan.FromHours(plan.WorkDuraion) - availableShiftTime;
+                plan.EndWork = null;
+                //plan.LeftToFinish = plan.LeftToFinish ;
+            }
+
+            // Update or insert the plan
+            var existingPlan = dbcon.ActiveWorkPlans.FirstOrDefault(e => e.Id == plan.Id);
+            if (existingPlan != null)
+            {
+                existingPlan.StartWork = plan.StartWork;
+                existingPlan.EndWork = plan.EndWork;
+                existingPlan.LeftToFinish = plan.LeftToFinish;
+                dbcon.ActiveWorkPlans.Update(existingPlan);
+            }
+            else
+            {
+                dbcon.ActiveWorkPlans.Add(plan);
+                dbcon.SaveChanges();
+            }
+            return existingPlan;
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

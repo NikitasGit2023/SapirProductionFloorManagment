@@ -23,7 +23,7 @@ namespace SapirProductionFloorManagment.Server
         public MainDbContext()
         {
          
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductsManagment9;User ID=account;Password=3194murkin;Encrypt=False";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagment;User ID=account;Password=3194murkin;Encrypt=False";
             _ConnectionString = ConnectionString; 
 
         }
@@ -71,6 +71,7 @@ namespace SapirProductionFloorManagment.Server
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Sunday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Sunday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Sunday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "6", WorkDay = "Sunday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Monday - Shift 08:00 to 16:00, Break 12:00 to 12:30
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Monday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
@@ -78,6 +79,8 @@ namespace SapirProductionFloorManagment.Server
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Monday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Monday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Monday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "6", WorkDay = "Monday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+
 
                 // Tuesday - Shift 08:00 to 16:00, Break 12:00 to 12:30
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Tuesday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
@@ -85,6 +88,7 @@ namespace SapirProductionFloorManagment.Server
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Tuesday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Tuesday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Tuesday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "6", WorkDay = "Tuesday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Wednesday - Shift 08:00 to 16:00, Break 12:00 to 12:30
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Wednesday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
@@ -92,6 +96,7 @@ namespace SapirProductionFloorManagment.Server
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Wednesday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Wednesday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Wednesday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "6", WorkDay = "Wednesday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Thursday - Shift 08:00 to 16:00, Break 12:00 to 12:30
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Thursday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
@@ -99,6 +104,7 @@ namespace SapirProductionFloorManagment.Server
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Thursday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Thursday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Thursday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "6", WorkDay = "Thursday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Friday - Shift 08:00 to 16:00, Break 12:00 to 12:30
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Friday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
@@ -106,6 +112,7 @@ namespace SapirProductionFloorManagment.Server
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Friday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Friday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Friday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "6", WorkDay = "Friday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 // Saturday - Shift 08:00 to 16:00, Break 12:00 to 12:30
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "1", WorkDay = "Saturday", ShiftStartWork = "08:00", ShiftEndWork = "16:00", BreakStart = "12:00", BreakEnd = "12:30" });
@@ -113,9 +120,9 @@ namespace SapirProductionFloorManagment.Server
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "3", WorkDay = "Saturday", ShiftStartWork = "09:00", ShiftEndWork = "17:00", BreakStart = "13:00", BreakEnd = "13:30" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "4", WorkDay = "Saturday", ShiftStartWork = "09:30", ShiftEndWork = "17:30", BreakStart = "13:30", BreakEnd = "14:00" });
                 LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "5", WorkDay = "Saturday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
+                LinesWorkHours.Add(new LineWorkHours { ReferencedToLine = "6", WorkDay = "Saturday", ShiftStartWork = "10:00", ShiftEndWork = "18:00", BreakStart = "14:00", BreakEnd = "14:30" });
 
                 SaveChanges();
-
 
             }
             catch(Exception ex)
@@ -126,8 +133,105 @@ namespace SapirProductionFloorManagment.Server
 
 
 
+        public void InjectNewWorkPlans(List<WorkOrder> uploadedWO, List<string> existdLines)
+        {
+            try
+            {
+
+                var workPlan = new List<LineWorkPlan>();
+
+                // Putting work orders inside a work plans dictionary
+                Dictionary<WorkOrder, bool> workOrdersDictionary = new();
+
+                foreach (var wo in uploadedWO)
+                {
+                    workOrdersDictionary.Add(wo, false);
+                }
 
 
+                foreach (var lineName in existdLines)
+                {
+                    foreach (var workOrder in workOrdersDictionary.Keys)
+                    {
+                        if ((workOrder.OptionalLine1 == lineName && !string.IsNullOrEmpty(workOrder.OptionalLine1) && workOrder.OptionalLine1 != "")
+                            || (workOrder.OptionalLine2 == lineName && !string.IsNullOrEmpty(workOrder.OptionalLine2) && workOrder.OptionalLine2 != ""))
+                        {
+                            //relevant
+                            if (workOrdersDictionary[workOrder] == false)
+                            {
+                        
+                                if (workOrder.OptionalLine2 == string.Empty)
+                                {
+
+                                    ActiveWorkPlans.Add(new LineWorkPlan
+                                    {
+
+                                        RelatedToLine = workOrder.OptionalLine1,
+                                        Priority = workOrder.Priority,
+                                        DeadLineDateTime = workOrder.CompletionDate,
+                                        Description = workOrder.ProductDesc,
+                                        QuantityInKg = workOrder.Quantity,
+                                        WorkOrderSN = workOrder.WorkOrderSN,
+                                        Comments = workOrder.Comments,
+                                        SizeInMicron = workOrder.SizeInMicron,
+
+                                    }); ;
+                                    SaveChanges();
+
+                                }
+                                else
+                                {
+
+                                    ActiveWorkPlans.Add(new LineWorkPlan
+                                    {
+
+                                        RelatedToLine = workOrder.OptionalLine1,
+                                        Priority = workOrder.Priority,
+                                        DeadLineDateTime = workOrder.CompletionDate,
+                                        Description = workOrder.ProductDesc,
+                                        QuantityInKg = workOrder.Quantity,
+                                        WorkOrderSN = workOrder.WorkOrderSN,
+                                        Comments = workOrder.Comments,
+                                        SizeInMicron = workOrder.SizeInMicron,
+
+                                    }); ;
+                                    SaveChanges();
+
+                                    ActiveWorkPlans.Add(new LineWorkPlan
+                                    {
+
+                                        RelatedToLine = workOrder.OptionalLine2,
+                                        Priority = workOrder.Priority,
+                                        DeadLineDateTime = workOrder.CompletionDate,
+                                        Description = workOrder.ProductDesc,
+                                        QuantityInKg = workOrder.Quantity,
+                                        WorkOrderSN = workOrder.WorkOrderSN,
+                                        Comments = workOrder.Comments,
+                                        SizeInMicron = workOrder.SizeInMicron,
+
+                                    }); ;
+                                    SaveChanges();
+
+
+                                }
+
+                                //changing to true inside dictionaty for sign that a specific workOrder is added and avoiding from duplictions
+                                workOrdersDictionary[workOrder] = true;
+
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch(Exception ex) 
+            {
+                Logger?.LogError("InjectNewWorkPlans: {ex.Message}", ex.Message);
+
+            }
+
+
+        }
 
 
 

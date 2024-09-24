@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Identity.Client;
 using Org.BouncyCastle.Crypto;
@@ -162,76 +163,29 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
         [HttpPost]
-        public async Task PostDataToRelatedTables(List<WorkOrder> linesSchedule)
+        public async Task PostDataToRelatedTables(List<WorkOrder> newWorkOrders)
         {
-            try
-            {
-                using var dbcon = new MainDbContext();
-                var scheduleToDb = new List<LineWorkPlan>();
+            using var dbcon = new MainDbContext();
 
-                //cleaning db and setting new work orders
-                //var oldOrders = dbcon.WorkOrdersFromXL.ToList();
-                //dbcon.WorkOrdersFromXL.RemoveRange(oldOrders);
-                //dbcon.SaveChanges();
-                //var oldWorkPlans = dbcon.
-                //.ToList();
-                //dbcon.ActiveWorkPlans.RemoveRange(oldWorkPlans);
-                //dbcon.SaveChanges();    
+            var existedLines = GetLinesName().Result;
+            dbcon.InjectNewWorkPlans(newWorkOrders, existedLines);
+                   
+           //waking up background task for system calculations
+           var productionTimeCalculator = new ProductionTimeScheduler(_logger);   
+           productionTimeCalculator.WakeUpBackGroundService();
 
+        }
 
-                // Putting work orders inside a lines schedule dictionary
-                Dictionary<WorkOrder, bool> workOrdersDictionary = new();
+        [HttpGet]
+        public async Task RecreateOrders()
+        {
+            using var dbcon = new MainDbContext();
+            var tempPlans = dbcon.ActiveWorkPlans.ToList();
+            dbcon.ActiveWorkPlans.RemoveRange(tempPlans);
+            dbcon.SaveChanges(true);
 
-                foreach (var lineSchedule in linesSchedule) 
-                {
-                    workOrdersDictionary.Add(lineSchedule, false);
-                }
-
-                // Fetching lines name
-                var linesName = await GetLinesName();
-
-                foreach (var lineName in linesName)
-                {
-                    foreach (var workOrder in workOrdersDictionary.Keys)
-                    {
-                        if ((workOrder.OptionalLine1 == lineName && !string.IsNullOrEmpty(workOrder.OptionalLine1) && workOrder.OptionalLine1 != "0")
-                            || (workOrder.OptionalLine2 == lineName && !string.IsNullOrEmpty(workOrder.OptionalLine2) && workOrder.OptionalLine2 != "0"))
-                        {
-
-                            if (workOrdersDictionary[workOrder] == false)
-                            {
-                                dbcon.ActiveWorkPlans.Add(new LineWorkPlan
-                                {
-                                    RelatedToLine = lineName,
-                                    Priority = workOrder.Priority,
-                                    DeadLineDateTime = workOrder.CompletionDate,
-                                    Description = workOrder.ProductDesc,    
-                                    QuantityInKg = workOrder.Quantity,
-                                    WorkOrderSN = workOrder.WorkOrderSN,
-                                    Comments = workOrder.Comments,
-                                    SizeInMicron = workOrder.SizeInMicron,
-
-                                });
-                                dbcon.SaveChanges();  
-                                
-                                //changing to true inside dictionaty for sign that a specific workOrder is added and avoiding from duplictions
-                                workOrdersDictionary[workOrder] = true;
-
-                            }
-                        }
-                    }
-                }
-
-                //waking up background task for system calculations
-                var productionTimeCalculator = new ProductionTimeScheduler(_logger);
-               
-
-                productionTimeCalculator.WakeUpBackGroundService();
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError("PostDataToRelatedTables: {ex.Message}", ex.Message);
-            }
+            var workOrders = dbcon.WorkOrdersFromXL.ToList();         
+            await PostDataToRelatedTables(workOrders);                        
         }
 
         }
