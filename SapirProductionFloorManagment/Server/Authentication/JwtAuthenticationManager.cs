@@ -15,7 +15,7 @@ namespace SapirProductionFloorManagment.Server.Authentication
 
         public const string JWT_SECURITY_KEY = "NikitaDanielLiliaYuriMurkinRijick1234567890";
 
-        public const int JWT_VALIDITY_TIME_IN_MINS = 20;
+        public const int JWT_VALIDITY_TIME_IN_MINS = 580;
 
         private User _user { get; set; }        
 
