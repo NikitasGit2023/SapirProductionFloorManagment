@@ -3,6 +3,7 @@
 @inject HttpClient Http
 @inherits TableBase
 
+<BlazoredToasts></BlazoredToasts>
 
 <div class="d-flex flex-column mb-3">
     <div class="p-2">
@@ -64,7 +65,6 @@
     protected override async Task OnInitializedAsync()
     {
         await AskForLineNames();
-        await AskForLinesScedule();
         await RefreshDailyProgram();
 
         unfilteredWorkPlan = linesWorkPlan;
@@ -91,9 +91,9 @@
     {
         try
         {
-            using var request = await Http.GetAsync("dailyprogram/getexistedlinesscedule");
-            var json = request.Content.ReadFromJsonAsync<List<LineWorkPlan>>();
-            linesWorkPlan = json.Result;
+            using var request = await Http.GetAsync("dailyprogram/getworkplans");
+            var json = await request.Content.ReadFromJsonAsync<List<LineWorkPlan>>();
+            linesWorkPlan = json;
             linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null).ToList();
 
         }

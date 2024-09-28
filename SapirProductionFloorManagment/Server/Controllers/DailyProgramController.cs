@@ -15,7 +15,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
         [HttpGet]
-        public Task<List<LineWorkPlan>> GetWeeklyProgram()
+        public Task<List<LineWorkPlan>> GetWorkPlans()
         {
             using var dbcon = new MainDbContext();
             var weeklyProgram = new List<LineWorkPlan>();  
@@ -27,28 +27,28 @@ namespace SapirProductionFloorManagment.Server.Controllers
             }
             catch (Exception ex) 
             {
-                _logger.LogError("GetWeeklyProgram: {ex.Message}", ex.Message);
+                _logger.LogError("GetWorkPlans: {ex.Message}", ex.Message);
             }
-            return Task.FromResult(weeklyProgram);
+            return  Task.FromResult(weeklyProgram);
           
         }
 
-        [HttpGet]
-        public async Task<List<LineWorkPlan>> GetExistedLinesScedule()
-        {
-            try
-            {
-                using var dbcon = new MainDbContext();
-                var schedule = dbcon.ActiveWorkPlans.Where(e => e.IsCalculted == false).ToList(); // bugged
-                return await Task.FromResult(schedule);
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError("GetExistedLinesScedule: {ex.Message}", ex.Message);
+        //[HttpGet]
+        //public async Task<List<LineWorkPlan>> GetWorkPlans()
+        //{
+        //    try
+        //    {
+        //        using var dbcon = new MainDbContext();
+        //        var schedule = dbcon.ActiveWorkPlans.Where(e => e.IsCalculted == false).ToList(); // bugged
+        //        return await Task.FromResult(schedule);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger?.LogError("GetWorkPlans: {ex.Message}", ex.Message);
 
-            }
-            return new List<LineWorkPlan> { }; //check if null can be returned
-        }
+        //    }
+        //    return new List<LineWorkPlan> { }; //check if null can be returned
+        //}
 
         [HttpGet]
         public async Task<List<string>> GetLinesName()

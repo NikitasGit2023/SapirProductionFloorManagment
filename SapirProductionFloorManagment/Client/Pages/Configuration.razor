@@ -4,12 +4,12 @@
 
 <h3>Configuration</h3>
 
+<div style="margin-top:40px">
+    <TablesSwitcher @ref="tablesSwitcher"
+                    OnClick="()=>SwitchToTable()"
+                    Switchers="keyValuePairs" />
+</div>
 
-<TablesSwitcher 
-    @ref="tablesSwitcher" 
-    OnClick="()=>SwitchToTable()" 
-    Switchers="keyValuePairs"/>
-<br/>
 
 <LinesWorkHoursTable IsCrudFrozen="false" IsVisible="@keyValuePairs["Lines Work Days"]" />
 

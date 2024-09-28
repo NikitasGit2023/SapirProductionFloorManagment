@@ -63,7 +63,7 @@
                 <RadzenDataGridColumn TItem="LineWorkHours" Property="ShiftStartWork"
                                       Title="Start Work" Frozen="IsCrudFrozen" Width="150px">
                     <EditTemplate Context="line">
-                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.ShiftStartWork" Style="width:100%; display: block;" />
+                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.ShiftStartWork" Style="width:100%; color:green; display: block;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
@@ -71,21 +71,21 @@
                 <RadzenDataGridColumn TItem="LineWorkHours" Property="ShiftEndWork"
                                       Title="End Work" Frozen="IsCrudFrozen" Width="150px">
                     <EditTemplate Context="line">
-                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.ShiftEndWork" Style="width:100%; display: block;" />
+                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.ShiftEndWork" Style="width:100%; color:red; display: block;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LineWorkHours" Property="BreakStart"
-                                      Title="Start Break" Frozen="IsCrudFrozen" Width="150px">
+                                      Title="Break Start" Frozen="IsCrudFrozen" Width="150px">
                     <EditTemplate Context="line">
-                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.BreakStart" Style="width:100%; display: block;" />
+                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.BreakStart" Style="width:100%; color:green; display: block;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LineWorkHours" Property="BreakEnd"
-                                      Title="Start End" Frozen="IsCrudFrozen" Width="150px">
+                                      Title="Break End" Frozen="IsCrudFrozen" Width="150px">
                     <EditTemplate Context="line">
-                        <RadzenDropDown Data="@hourOptions" @bind-Value="line.BreakEnd" Style="width:100%; display: block;" />
+                        <RadzenDropDown  Data="@hourOptions" @bind-Value="line.BreakEnd" Style="width:100%; color:red; display: block;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
