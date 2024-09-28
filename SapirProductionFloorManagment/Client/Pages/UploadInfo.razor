@@ -13,25 +13,23 @@
 <h3>Upload Information</h3>
 <BlazoredToasts></BlazoredToasts>
 
-<AuthorizeView Roles="Developer">
-    <Authorized>
-        <button @onclick="AskForRecreateTable" class="btn-danger">Restart</button>
-    </Authorized>
-    <NotAuthorized>
-    </NotAuthorized>
-</AuthorizeView>
 
-
-<div class="d-flex align-items-end flex-column mb-3" style="height: 20px;">
-    <div class="p-2">
         <div class="d-flex flex-row mb-3">
             <div class="p-2">
                 <InputFile OnChange="@ImportXlsxFile"></InputFile>
             </div>
+            <div class="p-2">
+                <AuthorizeView Roles="Developer">
+                    <Authorized>
+                        <RadzenButton Click="AskForRecreateTable" ButtonStyle="ButtonStyle.Danger" Text="Reset" />
+                    </Authorized>
+                    <NotAuthorized>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
           @*   <div class="p-2"><RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="grid_on" Text="Export XLS" /></div> *@
         </div>
-    </div>
-</div>
+
 
 
 
