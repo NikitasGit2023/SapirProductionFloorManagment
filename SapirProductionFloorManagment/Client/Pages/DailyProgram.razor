@@ -20,7 +20,7 @@
 
             <div class="d-flex flex-row mb-3">
                 <div class="p-2">
-                    <button @onclick="() => RefreshWeeklyProgram()" class="btn btn-primary">Calc Program</button>
+                    <RadzenButton Click="RefreshDailyProgram" Text="Recalculate" Icon="refresh" ButtonStyle="ButtonStyle.Primary" />
                 </div>
                 <div class="p-2" style="font-weight:bolder; margin-top:10px;">
                     Last Update: @lastUpdatedAt
@@ -65,7 +65,7 @@
     {
         await AskForLineNames();
         await AskForLinesScedule();
-        await RefreshWeeklyProgram();
+        await RefreshDailyProgram();
 
         unfilteredWorkPlan = linesWorkPlan;
         StateHasChanged();
@@ -120,7 +120,7 @@
         
     }
 
-    private async Task RefreshWeeklyProgram()
+    private async Task RefreshDailyProgram()
     {
         lastUpdatedAt = DateTime.Now.ToString();
         await AskForLinesScedule();
