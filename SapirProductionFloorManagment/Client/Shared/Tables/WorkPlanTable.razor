@@ -18,100 +18,98 @@
                                     <AddRowButton OnClick="InsertRow" Text="Add Line" Disabled="false" />
                                 </div>
                             </div>
-                        }
-                            
-                        }
-                     
+                        }       
+                    }
                 </div>
             </div>
         </RadzenHtml>
     </div>
     <div class="p-2">
-        <RadzenDataGrid Visible="IsVisible" @ref="scheduleGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+        <RadzenDataGrid Visible="IsVisible" @ref="workPlansGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20" 
                         AllowSorting="true" Data="@Data" TItem="LineWorkPlan" SelectionMode="DataGridSelectionMode.Single">
                         
             <Columns>
                 <RadzenDataGridColumn Visible="false" TItem="LineWorkPlan" Property="Id" Title="Id" Width="100px" />
 
-                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="RelatedToLine" Title="Line" Frozen="true">
-                    <EditTemplate Context="schedule">
-                        <RadzenTextBox  @bind-Value="schedule.RelatedToLine" Style="width:200px; display: block" Name="StartWork" />
+                <RadzenDataGridColumn TItem="LineWorkPlan" Width="100px" Property="RelatedToLine" Title="Line" Frozen="true">
+                    <EditTemplate Context="workPlan">
+                        <RadzenTextBox  @bind-Value="workPlan.RelatedToLine" Style="width:200px; display: block" Name="StartWork" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="StartWork" Title="Start Work" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule">
-                        <RadzenDatePicker  @bind-Value="schedule.StartWork" Style="width:200px; display: block" Name="StartWork"  />
+                    <EditTemplate Context="workPlan">
+                        <RadzenDatePicker  @bind-Value="workPlan.StartWork" Style="width:200px; display: block" Name="StartWork"  />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="EndWork" Title="End Work" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule">
-                        <RadzenDatePicker @bind-Value="schedule.EndWork" Style="width:200px; display: block" Name="EndWork"  />
+                    <EditTemplate Context="workPlan">
+                        <RadzenDatePicker @bind-Value="workPlan.EndWork" Style="width:200px; display: block" Name="EndWork"  />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 
-                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="Priority" Title="Priority" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule">
-                        <RadzenNumeric @bind-Value="schedule.Priority" Style="width:200px; display: block" Name="EndWork" />
+                <RadzenDataGridColumn TItem="LineWorkPlan" Width="px" Property="Priority" Title="Priority" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="workPlan">
+                        <RadzenNumeric @bind-Value="workPlan.Priority" Style="width:100px; display: block" Name="EndWork" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="Priority" Title="DeadLineDateTime" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule">
-                        <RadzenDatePicker @bind-Value="schedule.DeadLineDateTime" Style="width:200px; display: block" Name="EndWork" />
+                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="DeadLineDateTime" Title="DueDate" Frozen="IsCrudFrozen">
+                    <EditTemplate Context="workPlan">
+                        <RadzenDatePicker @bind-Value="workPlan.DeadLineDateTime" Style="width:200px; display: block" Name="EndWork" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="FormatedWorkDuration" Title="Work Duration" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule" >
-                        <RadzenTextBox  @bind-Value="schedule.FormatedWorkDuration" Style="width:200px; display: block" Name="FormatedWorkDuration"  />
+                    <EditTemplate Context="workPlan" >
+                        <RadzenTextBox  @bind-Value="workPlan.FormatedWorkDuration" Style="width:200px; display: block" Name="FormatedWorkDuration"  />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
 
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="QuantityInKg" Title="Quantity (Kg)" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule">
-                        <RadzenNumeric @bind-Value="schedule.QuantityInKg" Style="width:100%; display: block;" Name="QuantityInKg" />
+                    <EditTemplate Context="workPlan">
+                        <RadzenNumeric @bind-Value="workPlan.QuantityInKg" Style="width:100%; display: block;" Name="QuantityInKg" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="Description" Title="Description" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule">
-                        <RadzenTextBox @bind-Value="schedule.Description" Style="width:200px; display: block" Name="Description" />
+                    <EditTemplate Context="workPlan">
+                        <RadzenTextBox @bind-Value="workPlan.Description" Style="width:200px; display: block" Name="Description" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="WorkOrderSN" Title="Work Order SN" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule">
-                        <RadzenTextBox @bind-Value="schedule.WorkOrderSN" Style="width:200px; display: block" Name="WorkOrderSN" />
+                    <EditTemplate Context="workPlan">
+                        <RadzenTextBox @bind-Value="workPlan.WorkOrderSN" Style="width:200px; display: block" Name="WorkOrderSN" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="Comments" Title="Comments" Frozen="IsCrudFrozen">
-                    <EditTemplate Context="schedule">
-                        <RadzenTextBox @bind-Value="schedule.Comments" Style="width:200px; display: block" Name="Comments" />
+                    <EditTemplate Context="workPlan">
+                        <RadzenTextBox @bind-Value="workPlan.Comments" Style="width:200px; display: block" Name="Comments" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
                 @if (!IsCrudFrozen)
                 {
-                    <RadzenDataGridColumn Width="150px" TItem="LineWorkPlan" Context="schedule" Filterable="false" Sortable="false"
+                    <RadzenDataGridColumn Width="150px" TItem="LineWorkPlan" Context="workPlan" Filterable="false" Sortable="false"
                                           TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
-                        <Template Context="schedule">
-                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(schedule))" @onclick:stopPropagation="true">
+                        <Template Context="workPlan">
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(workPlan))" @onclick:stopPropagation="true">
                             </RadzenButton>
-                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(schedule))" @onclick:stopPropagation="true">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(workPlan))" @onclick:stopPropagation="true">
                             </RadzenButton>
                         </Template>
-                        <EditTemplate Context="schedule">
-                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(schedule))">
+                        <EditTemplate Context="workPlan">
+                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(workPlan))">
                             </RadzenButton>
-                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(schedule))">
+                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(workPlan))">
                             </RadzenButton>
-                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(schedule))">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(workPlan))">
                             </RadzenButton>
                         </EditTemplate>
                     </RadzenDataGridColumn>
@@ -128,10 +126,10 @@
     public List<LineWorkPlan>? Data { get; set; } = new();
 
     private DataGridEditMode editMode = DataGridEditMode.Single;
-    private RadzenDataGrid<LineWorkPlan>? scheduleGrid = new();
-    private List<LineWorkPlan> schedulesToInsert = new List<LineWorkPlan>();
-    private List<LineWorkPlan> schedulesToUpdate = new List<LineWorkPlan>();
-    private List<LineWorkPlan>? fetchedSchedules;
+    private RadzenDataGrid<LineWorkPlan>? workPlansGrid = new();
+    private List<LineWorkPlan> workPlansToInsert = new List<LineWorkPlan>();
+    private List<LineWorkPlan> workPlansToUpdate = new List<LineWorkPlan>();
+    private List<LineWorkPlan>? fetchedworkPlans;
     private LineWorkPlan selectedOne = new();
 
     protected override async Task OnInitializedAsync()
@@ -140,11 +138,11 @@
     }
 
 
-    private async Task AddSchedule(LineWorkPlan schedule)
+    private async Task AddWorkPlan(LineWorkPlan workPlan)
     {
         try
         {
-            using var data = await Http.PostAsJsonAsync("configuration/postnewschedule", schedule);
+            using var data = await Http.PostAsJsonAsync("configuration/postnewworkPlan", workPlan);
             var message = data.Content.ReadFromJsonAsync<string>();
             toastService.ShowSuccess("The data is added successfully");
         }
@@ -154,11 +152,11 @@
         }
     }
 
-    private async Task UpdateSchedule(LineWorkPlan schedule)
+    private async Task UpdateWorkPlan(LineWorkPlan workPlan)
     {
         try
         {
-            using var data = await Http.PostAsJsonAsync("configuration/updateschedule", schedule);
+            using var data = await Http.PostAsJsonAsync("configuration/updateworkplan", workPlan);
             var message = data.Content.ReadFromJsonAsync<string>();
             toastService.ShowSuccess("The data is updated successfully");
         }
@@ -168,11 +166,11 @@
         }
     }
 
-    private async Task RemoveSchedule(LineWorkPlan schedule)
+    private async Task RemoveWorkPlan(LineWorkPlan workPlan)
     {
         try
         {
-            using var data = await Http.PostAsJsonAsync("configuration/removeschedule", schedule);
+            using var data = await Http.PostAsJsonAsync("configuration/removeworkplan", workPlan);
             var message = data.Content.ReadFromJsonAsync<string>();
             toastService.ShowSuccess(message.Result);
         }
@@ -184,63 +182,63 @@
 
     private void Reset()
     {
-        schedulesToInsert.Clear();
-        schedulesToUpdate.Clear();
+        workPlansToInsert.Clear();
+        workPlansToUpdate.Clear();
     }
 
-    private void Reset(LineWorkPlan schedule)
+    private void Reset(LineWorkPlan workPlan)
     {
-        schedulesToInsert.Remove(schedule);
-        schedulesToUpdate.Remove(schedule);
+        workPlansToInsert.Remove(workPlan);
+        workPlansToUpdate.Remove(workPlan);
     }
 
-    private async Task EditRow(LineWorkPlan schedule)
+    private async Task EditRow(LineWorkPlan workPlan)
     {
-        if (editMode == DataGridEditMode.Single && schedulesToInsert.Count() > 0)
+        if (editMode == DataGridEditMode.Single && workPlansToInsert.Count() > 0)
         {
             Reset();
         }
 
-        schedulesToUpdate.Add(schedule);
-        await scheduleGrid.EditRow(schedule);
+        workPlansToUpdate.Add(workPlan);
+        await workPlansGrid.EditRow(workPlan);
     }
 
-    private void OnUpdateRow(LineWorkPlan schedule)
+    private void OnUpdateRow(LineWorkPlan workPlan)
     {
-        Reset(schedule);
+        Reset(workPlan);
     }
 
-    private async Task SaveRow(LineWorkPlan schedule)
+    private async Task SaveRow(LineWorkPlan workPlan)
     {
-        if (schedule.Id == 0)
+        if (workPlan.Id == 0)
         {
-            await scheduleGrid.UpdateRow(schedule);
-            await AddSchedule(schedule);
+            await workPlansGrid.UpdateRow(workPlan);
+            await AddWorkPlan(workPlan);
             return;
         }
 
-        await scheduleGrid.UpdateRow(schedule);
-        await UpdateSchedule(schedule);
+        await workPlansGrid.UpdateRow(workPlan);
+        await UpdateWorkPlan(workPlan);
     }
 
-    private void CancelEdit(LineWorkPlan schedule)
+    private void CancelEdit(LineWorkPlan workPlan)
     {
-        Reset(schedule);
-        scheduleGrid.CancelEditRow(schedule);
+        Reset(workPlan);
+        workPlansGrid.CancelEditRow(workPlan);
     }
 
-    private async Task DeleteRow(LineWorkPlan schedule)
+    private async Task DeleteRow(LineWorkPlan workPlan)
     {
-        Reset(schedule);
+        Reset(workPlan);
 
-        if (Data.Contains(schedule))
+        if (Data.Contains(workPlan))
         {
-            Data.Remove(schedule);
+            Data.Remove(workPlan);
 
-            if(schedule.Id != 0)
-                await RemoveSchedule(schedule);
+            if (workPlan.Id != 0)
+                await RemoveWorkPlan(workPlan);
         }
-        await scheduleGrid.Reload();
+        await workPlansGrid.Reload();
     }
 
     private async Task InsertRow()
@@ -250,21 +248,21 @@
             Reset();
         }
 
-        var schedule = new LineWorkPlan();
-        selectedOne = schedule;
-        // schedulesToInsert.Add(selectedOne);
-        //await scheduleGrid.InsertRow(selectedOne);
-        // await scheduleGrid.Reload();
+        var workPlan = new LineWorkPlan();
+        selectedOne = workPlan;
+        // workPlansToInsert.Add(selectedOne);
+        //await workPlanGrid.InsertRow(selectedOne);
+        // await workPlanGrid.Reload();
     }
 
-    private void OnCreateRow(LineWorkPlan schedule)
+    private void OnCreateRow(LineWorkPlan workPlan)
     {
-        schedulesToInsert.Remove(schedule);
+        workPlansToInsert.Remove(workPlan);
     }
 
     // public void RefreshTable()
     // {
-    //     scheduleGrid?.Reload();
+    //     workPlanGrid?.Reload();
     // }
 
     public string ConvertDoubleToTimeFormat(double time)

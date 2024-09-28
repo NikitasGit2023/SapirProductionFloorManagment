@@ -1,7 +1,6 @@
 ﻿@page "/config"
 @inject HttpClient Http
-@using SapirProductionFloorManagment.Client.Shared
-@using SapirProductionFloorManagment.Client.Shared.Tables
+
 
 <h3>Configuration</h3>
 
@@ -17,8 +16,10 @@
     </div>
 </div>
 
-<TablesSwitcher @ref="tablesSwitcher" OnClick="()=>SwitchToTable()" Switchers="keyValuePairs"/>
-
+<TablesSwitcher 
+    @ref="tablesSwitcher" 
+    OnClick="()=>SwitchToTable()" 
+    Switchers="keyValuePairs"/>
 <br/>
 
 
@@ -49,12 +50,11 @@
         keyValuePairs.Add("Lines Work Days", false);
 
         linesData = await AskForLinesData();
-
         StateHasChanged();
     }
 
 
-
+    // asking for lines data
     public async Task<List<Line>> AskForLinesData()
     {
         try

@@ -28,6 +28,7 @@ namespace SapirProductionFloorManagment.Server
 
         }
 
+        //Configuring data connection with SQL Server
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             try
@@ -130,7 +131,6 @@ namespace SapirProductionFloorManagment.Server
                 Logger?.LogError("CreateDefaultDataForAppFunctionallity: {ex.Messsage}", ex.Message);
             }  
         }
-
 
 
         public void InjectNewWorkPlans(List<WorkOrder> uploadedWO, List<string> existdLines)
