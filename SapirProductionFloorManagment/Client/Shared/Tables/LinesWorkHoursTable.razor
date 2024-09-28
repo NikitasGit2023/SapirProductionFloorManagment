@@ -19,9 +19,9 @@
                     {
                         @if (IsNewRowCanAdded)
                         {
-                            <div class="d-flex flex-row-reverse">
+                            <div class="d-flex flex-row-mb3">
                                 <div class="p-2">
-                                    <AddRowButton OnClick="InsertRow" Text="Add Line" Disabled="false" />
+                                    <AddRowButton OnClick="InsertRow" Text="Add Work Hours" Disabled="false" />
                                 </div>
                             </div>
 
@@ -31,7 +31,7 @@
             </div>
         </RadzenHtml>
 
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+        <RadzenStack Visible="IsVisible" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenLabel Text="Select Line" Component="LinesFilter" />
             <RadzenDropDown @bind-Value="selectedLine" Data="unfilteredWorkHours.Select(e=> e.ReferencedToLine).Distinct().ToList()" TValue="string" Change="OnLineChange" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
         </RadzenStack>
