@@ -67,7 +67,7 @@
         await AskForLineNames();
         await RefreshDailyProgram();
 
-        unfilteredWorkPlan = linesWorkPlan;
+        unfilteredWorkPlan = linesWorkPlan.OrderBy(e => e.StartWork).ToList();
         StateHasChanged();
     }
 
@@ -83,7 +83,7 @@
         }
 
         filteredWorkPlan = linesWorkPlan.Where(e => e.RelatedToLine == lineNum).ToList();
-        linesWorkPlan = filteredWorkPlan;
+        linesWorkPlan = filteredWorkPlan.OrderBy(e => e.StartWork).ToList();
         StateHasChanged();
     }
 
