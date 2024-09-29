@@ -148,19 +148,19 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
                 // if shift start is null try adjust work on second work plan 
 
-                var forRemoving = dbcon.ActiveWorkPlans.Where(e => e.WorkOrderSN == earliestPlan.WorkOrderSN && e.Id != earliestPlan.Id).FirstOrDefault();
+                var forRemoving = dbcon.ActiveWorkPlans.Where(e => e.WorkOrderSN == earliestPlan.WorkOrderSN
+                                            && e.Id != earliestPlan.Id && e.Status == null).FirstOrDefault();
+
                 if (forRemoving == null)
                 {
-
                     return;
                 }
-
                 else
                 {
                     dbcon.ActiveWorkPlans.Remove(forRemoving);
                     dbcon.SaveChanges();
                 }
-                  
+
             }
             catch (Exception ex)
             {
@@ -213,27 +213,28 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
         }
         
 
-        private LineWorkPlan CalculateAndSetWorkTimes(LineWorkPlan plan, DateTime start, DateTime shiftEnd, LineWorkHours firstWorkHours,
-                                                      LineWorkHours secondWorkHours, Dictionary<string, TimeSpan> breaks, MainDbContext dbcon)
+        private LineWorkPlan CalculateAndSetWorkTimes(LineWorkPlan plan, DateTime workStart, DateTime shiftEnd, LineWorkHours firstWorkHours,
+                                                        LineWorkHours secondWorkHours, Dictionary<string, TimeSpan> breaks, MainDbContext dbcon)
         {
             LineWorkHours selectedWorkHours = plan.RelatedToLine == firstWorkHours.ReferencedToLine ? firstWorkHours : secondWorkHours;
 
-            TimeSpan availableShiftTime = shiftEnd - start;
-            DateTime adjustedEndForBreaks = _schedulerHelper.AdjustForBreaks(start, availableShiftTime, selectedWorkHours, breaks);  // Original signature preserved
-            availableShiftTime = adjustedEndForBreaks - start;
+            TimeSpan availableShiftTime = shiftEnd - workStart;
+            DateTime adjustedEndForBreaks = _schedulerHelper.AdjustForBreaks(workStart, availableShiftTime, selectedWorkHours, breaks);  // Original signature preserved
+            availableShiftTime = adjustedEndForBreaks - workStart;
 
-            if (availableShiftTime >= TimeSpan.FromHours(plan.WorkDuraion))
+            if (availableShiftTime >= TimeSpan.FromHours(plan.WorkDuraion)) // still time to complete work
             {
-                plan.StartWork = start;
-                plan.EndWork = _schedulerHelper.AdjustForBreaks(start, TimeSpan.FromHours(plan.WorkDuraion), selectedWorkHours, breaks);
+                plan.EndWork = _schedulerHelper.AdjustForBreaks(workStart, TimeSpan.FromHours(plan.WorkDuraion), selectedWorkHours, breaks);
+                plan.StartWork = workStart;
+                plan.Status = IN_PROGGRESS;
                 plan.LeftToFinish = 0;
             }
             else
             {
                 plan.StartWork = null;
-                TimeSpan remainingWorkTime = TimeSpan.FromHours(plan.WorkDuraion) - availableShiftTime;
                 plan.EndWork = null;
-                //plan.LeftToFinish = plan.LeftToFinish ;
+                TimeSpan remainingWorkTime = TimeSpan.FromHours(plan.WorkDuraion) - availableShiftTime;
+                ReachduleWorkPlan(remainingWorkTime, availableShiftTime, plan, workStart, shiftEnd);
             }
 
             // Update or insert the plan
@@ -243,36 +244,52 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 existingPlan.StartWork = plan.StartWork;
                 existingPlan.EndWork = plan.EndWork;
                 existingPlan.LeftToFinish = plan.LeftToFinish;
+                existingPlan.Status = plan.Status;
                 dbcon.ActiveWorkPlans.Update(existingPlan);
             }
             else
             {
                 dbcon.ActiveWorkPlans.Add(plan);
-                dbcon.SaveChanges();
+                
             }
+            dbcon.SaveChanges();
             return existingPlan;
 
         }
 
-        private void ReachduleWorkPlan(TimeSpan remainingWorkTime, TimeSpan availableShiftTime, LineWorkPlan workPlan, DateTime start, DateTime shiftEnd)
+        private void ReachduleWorkPlan(TimeSpan remainingWorkTime, TimeSpan availableShiftTime, LineWorkPlan workPlan, DateTime startWork, DateTime shiftEnd)
         {
+
+            using var dbcon = new MainDbContext();
             try
             {
-                using var dbcon = new MainDbContext();
-                if (remainingWorkTime > availableShiftTime)
+       
+                if (remainingWorkTime > availableShiftTime && availableShiftTime.TotalMinutes > 0)
                 {
-                    workPlan.StartWork = start;
+                    workPlan.StartWork = startWork;
                     workPlan.EndWork = shiftEnd;
 
-                    var reacheduled = workPlan;
-                    reacheduled.Id = 0;
-                    reacheduled.StartWork = null;
-                    reacheduled.EndWork = null;
+                    var workDuration = remainingWorkTime.TotalHours - availableShiftTime.TotalHours;
+                    var leftToFinish = remainingWorkTime.TotalHours - availableShiftTime.TotalHours;
 
-                    reacheduled.LeftToFinish = remainingWorkTime.TotalMinutes - availableShiftTime.TotalMinutes;
-                    reacheduled.FormatedLeftToFinish = _converter.ConvertToTimeString(reacheduled.LeftToFinish);
-
-                    dbcon.ActiveWorkPlans.Add(reacheduled);
+                    dbcon.ActiveWorkPlans.Add(new LineWorkPlan
+                    {
+                        FormatedLeftToFinish = _converter.ConvertToTimeString(leftToFinish),
+                        FormatedWorkDuration = _converter.ConvertToTimeString(leftToFinish),
+                        LeftToFinish = leftToFinish,
+                        WorkDuraion = workDuration,
+                        WorkOrderSN = workPlan.WorkOrderSN,
+                        EndWork = null,
+                        StartWork = null,
+                        Comments = workPlan.Comments,
+                        DeadLineDateTime = workPlan.DeadLineDateTime,
+                        Description = workPlan.Description,
+                        Priority = workPlan.Priority,   
+                        QuantityInKg = workPlan.QuantityInKg,
+                        RelatedToLine = workPlan.RelatedToLine,
+                        SizeInMicron = workPlan.SizeInMicron,
+                        Status = REACHEDULED
+                    });
                     dbcon.SaveChanges();
 
                 }
