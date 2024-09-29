@@ -57,7 +57,7 @@
     {
         if (firstRender)
         {
-            // Async code to run after the first render      
+            // Async code to run after the first render
         }
     }
 
@@ -67,7 +67,7 @@
         {
             using var request = await Http.GetAsync("uploadinfo/getexistedworkorders");
             var response = await request.Content.ReadFromJsonAsync<List<WorkOrder>>();
-            workOrders = response;
+            workOrders = response.OrderBy(e => e.Priority).ThenBy(e => e.CompletionDate).ToList();
 
         }
         catch (Exception ex)
