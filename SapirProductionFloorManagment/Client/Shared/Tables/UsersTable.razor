@@ -35,15 +35,10 @@
             </EditTemplate>
             </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="User" Property="JobTitle" Title="Job Title" >
-            <EditTemplate Context="user">
-                <RadzenTextBox @bind-Value="user.JobTitle" Style="width:200px; display: block" Name="Job Title" />
-            </EditTemplate>     
-        </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn  TItem="User" Property="Role" Title="Permission" >
+        <RadzenDataGridColumn  TItem="User" Property="Role" Title="Role" >
             <EditTemplate Context="user">
-                <RadzenTextBox @bind-Value="user.Role" Style="width:200px; display: block" Name="Permission" />
+                <RadzenDropDown TValue="string" Data="@permissions" Change="@(args => user.Role = args.ToString())" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
@@ -72,14 +67,14 @@
 @code 
 {
 
-
+    private List<string> permissions = new List<string> {"Developer","Admin", "Basic"};
     private DataGridEditMode editMode = DataGridEditMode.Single;
-    RadzenDataGrid<User>? usersGrid = new();
     private List<User> usersToInsert = new List<User>();
     private List<User> usersToUpdate = new List<User>();
     private IList<User>? usersData;
-
     private bool IsAddButtonDisabled = true;
+
+    public RadzenDataGrid<User>? usersGrid = new();
 
 
 
@@ -192,16 +187,16 @@
     {
         // if (usersData.Contains(user))
         // {
-            
-            if (user.UserId is 0)
-            {
-                await usersGrid.UpdateRow(user);
-                await AddUser(user);
-                return;
-            }
 
+        if (user.UserId is 0)
+        {
             await usersGrid.UpdateRow(user);
-            await UpdateUser(user);
+            await AddUser(user);
+            return;
+        }
+
+        await usersGrid.UpdateRow(user);
+        await UpdateUser(user);
 
         // }
 
@@ -261,7 +256,11 @@
     }
 
 
-    //to do a vocabulary to hours
+    private void ChangeUserRole(ChangeEventArgs e)
+    {
+
+        
+    }
 
 
 }
