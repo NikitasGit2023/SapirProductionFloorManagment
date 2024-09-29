@@ -82,6 +82,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await AskForStayLoggedIn();
         await AskForDefaultUser();
     }
 
@@ -109,6 +110,30 @@
             toastService.ShowError(ex.Message);
             Message = "Username or Password are incorrected please try again!";
         }
+    }
+
+    //Reads user session if still existed
+    private async  Task AskForStayLoggedIn()
+    {
+        var custAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
+        var token = custAuthStateProvider.GetToken();
+        if(token.IsCompletedSuccessfully)
+        {
+            var claims =  await custAuthStateProvider.GetAuthenticationStateAsync();
+            
+            if (!String.IsNullOrEmpty(token.Result.UserName))
+            {               
+                var loginResponse = await http.PostAsJsonAsync("login/stayloggedin",token);
+                var userSession = await loginResponse.Content.ReadFromJsonAsync<UserSession>();
+                await custAuthStateProvider.UpdateAuthenticationState(userSession);
+                navigatonManager.NavigateTo("/");
+            }
+         
+           
+            
+        }
+        
+        
     }
 
     private async Task AskForDefaultUser()

@@ -33,7 +33,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
             var userSession = _sessionStorageService.ReadEncryptedItemAsync("UserSession");
 
 
-            if (userSession == null)
+            if (!userSession.IsCompletedSuccessfully)
             {
                 return await Task.FromResult(new AuthenticationState(_anonymous));
             }
@@ -61,7 +61,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         }
     }
     
-
+    //update
     public async Task UpdateAuthenticationState(UserSession userSession)
     {
         try
@@ -95,15 +95,15 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     }
 
-
-    public async Task<string> GetToken()
+    //get token
+    public async Task<UserSession> GetToken()
     {
-        var result = string.Empty;
+        UserSession? result = null;
         try
         {
             var userSession = await _sessionStorageService.ReadEncryptedItemAsync("UserSession");
             if (userSession != null && DateTime.Now < userSession.ExpityTimeStamp)
-                result = userSession.Token;
+                result = userSession;
         }
         catch (Exception ex)
         {

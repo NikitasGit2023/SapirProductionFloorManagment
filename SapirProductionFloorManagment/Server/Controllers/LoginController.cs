@@ -51,13 +51,23 @@ namespace SapirProductionFloorManagment.Server.Controllers
             return null;
         }
 
-
-        //optional
+        [AllowAnonymous]
         [HttpPost]
-        public bool RegisterUser(User user)
+        public UserSession StayLoggedIn(UserSession session)
         {
-            return false;
-        }
+            using var dbcon = new MainDbContext();
+            var user = dbcon.Users.Where(e => e.FullName == session.UserName).FirstOrDefault(); 
+
+            if(user != null)
+            {
+                return session;
+
+            }
+            Unauthorized();
+            return null;
+
+        }  
+
 
 
         [HttpGet]
