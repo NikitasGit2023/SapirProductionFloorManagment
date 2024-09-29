@@ -22,8 +22,9 @@ namespace SapirProductionFloorManagment.Shared
         public string Description { get; set; } = "";
         public string WorkOrderSN { get; set; } = "";
         public string Comments { get; set; } = "";
-        public int SizeInMicron {get; set;}       
-        public bool IsCalculted { get; set;}
+        public int SizeInMicron {get; set;} 
+        public string? Status { get; set; }
+
 
 
         public override int GetHashCode()

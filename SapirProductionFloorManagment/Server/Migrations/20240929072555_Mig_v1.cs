@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class dbcon1 : Migration
+    public partial class Mig_v1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,7 +31,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     WorkOrderSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SizeInMicron = table.Column<int>(type: "int", nullable: false),
-                    IsCalculted = table.Column<bool>(type: "bit", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

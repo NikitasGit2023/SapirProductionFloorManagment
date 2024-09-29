@@ -126,9 +126,6 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsCalculted")
-                        .HasColumnType("bit");
-
                     b.Property<double>("LeftToFinish")
                         .HasColumnType("float");
 
@@ -147,6 +144,9 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     b.Property<DateTime?>("StartWork")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("WorkDuraion")
                         .HasColumnType("float");
