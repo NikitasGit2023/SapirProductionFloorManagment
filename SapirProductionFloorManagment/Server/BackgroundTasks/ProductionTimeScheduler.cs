@@ -12,6 +12,8 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
         private TimeSchedulerHelper _schedulerHelper;
         private List<WorkOrder> _workOrders;
         private List<LineWorkHours> _workHours;
+        private const string REACHEDULED = "REACHEDULED";
+        private const string IN_PROGGRESS = "IN PROGRESS";
 
 
         public ProductionTimeScheduler(ILogger logger)
@@ -189,9 +191,27 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
         private LineWorkPlan DetermineEarliestPlan(LineWorkPlan[] plans, DateTime? firstNextStart, DateTime? secondNextStart)
         {
-            if (firstNextStart <= secondNextStart) return plans[0];
-            return plans.Length == 2 && secondNextStart < firstNextStart ? plans[1] : null;
+            LineWorkPlan? earliestPlan = null;
+            switch (plans.Length) 
+            {
+                case 0:
+                    return earliestPlan;
+                case 1: 
+                    earliestPlan = plans[0];
+                    return earliestPlan;
+                case 2:
+                    if (firstNextStart <= secondNextStart)
+                    {
+                        earliestPlan = plans[0];
+                        return earliestPlan;
+
+                    }
+                    earliestPlan = plans[1];
+                    return earliestPlan;
+            }
+            return earliestPlan;
         }
+        
 
         private LineWorkPlan CalculateAndSetWorkTimes(LineWorkPlan plan, DateTime start, DateTime shiftEnd, LineWorkHours firstWorkHours,
                                                       LineWorkHours secondWorkHours, Dictionary<string, TimeSpan> breaks, MainDbContext dbcon)
@@ -231,6 +251,44 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 dbcon.SaveChanges();
             }
             return existingPlan;
+
+        }
+
+        private void ReachduleWorkPlan(TimeSpan remainingWorkTime, TimeSpan availableShiftTime, LineWorkPlan workPlan, DateTime start, DateTime shiftEnd)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                if (remainingWorkTime > availableShiftTime)
+                {
+                    workPlan.StartWork = start;
+                    workPlan.EndWork = shiftEnd;
+
+                    var reacheduled = workPlan;
+                    reacheduled.Id = 0;
+                    reacheduled.StartWork = null;
+                    reacheduled.EndWork = null;
+
+                    reacheduled.LeftToFinish = remainingWorkTime.TotalMinutes - availableShiftTime.TotalMinutes;
+                    reacheduled.FormatedLeftToFinish = _converter.ConvertToTimeString(reacheduled.LeftToFinish);
+
+                    dbcon.ActiveWorkPlans.Add(reacheduled);
+                    dbcon.SaveChanges();
+
+                }
+                else
+                {
+                    workPlan.StartWork = null;
+                    workPlan.EndWork = null;
+                    workPlan.Status = REACHEDULED;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError("ReachduleWorkPlan: {ex.Message}", ex.Message);
+            }
 
         }
 
