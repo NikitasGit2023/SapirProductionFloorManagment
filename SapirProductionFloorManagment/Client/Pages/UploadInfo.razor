@@ -145,8 +145,10 @@
                 }
 
                 workOrdersTable.RefreshTable();
+                StateHasChanged();
                 await AskForUploadInfoRequset(workOrders);
                 await AskForSettigDataToRelatedTables(workOrders);
+
             }
         }
         catch (Exception ex)
@@ -154,7 +156,7 @@
             toastService.ShowError(ex.Message);
 
         }
-        StateHasChanged();
+        
     }
 
     private async Task AskForUploadInfoRequset(List<WorkOrder> info)
@@ -188,6 +190,9 @@
     private async Task AskForRecreateTable()
     {
         using var requset = await Http.GetAsync("uploadinfo/recreateorders");
+        await AskForGetExistedOrders();
+        workOrdersTable.RefreshTable();
+        StateHasChanged();
     }
 
     

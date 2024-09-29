@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Org.BouncyCastle.Crypto;
 using SapirProductionFloorManagment.Client.Shared.Tables;
@@ -180,12 +181,12 @@ namespace SapirProductionFloorManagment.Server.Controllers
         public async Task RecreateOrders()
         {
             using var dbcon = new MainDbContext();
-            var tempPlans = dbcon.ActiveWorkPlans.ToList();
-            dbcon.ActiveWorkPlans.RemoveRange(tempPlans);
+            dbcon.WorkOrdersFromXL.ExecuteDelete();
+            dbcon.ActiveWorkPlans.ExecuteDelete();  
             dbcon.SaveChanges(true);
 
-            var workOrders = dbcon.WorkOrdersFromXL.ToList();         
-            await PostDataToRelatedTables(workOrders);                        
+            //var workOrders = dbcon.WorkOrdersFromXL.ToList();         
+            //await PostDataToRelatedTables(workOrders);                        
         }
 
         }
