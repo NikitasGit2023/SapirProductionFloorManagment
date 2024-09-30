@@ -21,7 +21,7 @@
             <div class="p-2">
                 <AuthorizeView Roles="Developer">
                     <Authorized>
-                        <RadzenButton Click="AskForRecreateTable" ButtonStyle="ButtonStyle.Danger" Text="Reset" />
+                        <RadzenButton Click="DropOrdersTable" ButtonStyle="ButtonStyle.Danger" Text="Reset" />
                     </Authorized>
                     <NotAuthorized>
                     </NotAuthorized>
@@ -187,9 +187,9 @@
 
 
     //for developers only
-    private async Task AskForRecreateTable()
+    private async Task DropOrdersTable()
     {
-        using var requset = await Http.GetAsync("uploadinfo/recreateorders");
+        using var requset = await Http.GetAsync("uploadinfo/dropallorders");
         await AskForGetExistedOrders();
         workOrdersTable.RefreshTable();
         StateHasChanged();

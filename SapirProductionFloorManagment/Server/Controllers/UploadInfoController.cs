@@ -42,12 +42,12 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 _logger?.LogError("UpdateOrder: {ex.Message}", ex.Message);
                 return await Task.FromResult(ex.Message);   
             }
-            return await Task.FromResult("המידע עודכן בהצלחה");
+            return await Task.FromResult("המידע נמחק בהצלחה");
 
         }
 
         [HttpPost]
-        public async Task<string> DeleteOrder(WorkOrder wo)
+        public async Task<string> RemoveOrder(WorkOrder wo)
         {
             if (wo == null)
             {
@@ -56,8 +56,17 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                dbcon.Remove(wo);
+                dbcon.WorkOrdersFromXL.Remove(wo);
                 dbcon.SaveChanges();
+
+                var workPlansToRemove = dbcon.ActiveWorkPlans.Where(e => e.WorkOrderSN == wo.WorkOrderSN).ToList();
+                foreach(var workPlan in workPlansToRemove) 
+                {
+                    dbcon.ActiveWorkPlans.Remove(workPlan);
+                    dbcon.SaveChanges();
+                }
+                var productionTimeCalculator = new ProductionTimeScheduler(_logger);
+                productionTimeCalculator.RegenerateWorkPlans(wo);
 
             }
             catch
@@ -80,8 +89,18 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                dbcon.Add(wo);
-                dbcon.SaveChanges();
+                var workPlan = dbcon.WorkOrdersFromXL.Where(e => e.WorkOrderSN == wo.WorkOrderSN).FirstOrDefault(); 
+                if(workPlan == null)
+                {
+                    dbcon.Add(wo);
+                    dbcon.SaveChanges();
+
+                }
+                else
+                {
+                    return "לא ניתן להוסיף פקודת עבודה עם אותו מספר סריאלי";
+                }
+                await RecreateOrdersTable(wo);
 
             }
             catch
@@ -164,7 +183,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
         [HttpPost]
-        public async Task PostDataToRelatedTables(List<WorkOrder> newWorkOrders)
+        public Task PostDataToRelatedTables(List<WorkOrder> newWorkOrders)
         {
             using var dbcon = new MainDbContext();
 
@@ -173,20 +192,34 @@ namespace SapirProductionFloorManagment.Server.Controllers
                    
            //waking up background task for system calculations
            var productionTimeCalculator = new ProductionTimeScheduler(_logger);   
-           productionTimeCalculator.WakeUpBackGroundService();
-
+           productionTimeCalculator.GenerateWorkPlans();
+            return Task.CompletedTask;
         }
 
         [HttpGet]
-        public async Task RecreateOrders()
+        public Task DropAllOrders()
         {
             using var dbcon = new MainDbContext();
             dbcon.WorkOrdersFromXL.ExecuteDelete();
             dbcon.ActiveWorkPlans.ExecuteDelete();  
             dbcon.SaveChanges(true);
+            return Task.CompletedTask;
+        }
 
-            //var workOrders = dbcon.WorkOrdersFromXL.ToList();         
-            //await PostDataToRelatedTables(workOrders);                        
+        public Task RecreateOrdersTable(WorkOrder wo)
+        {
+            using var dbcon = new MainDbContext();
+            var productionTimeCalculator = new ProductionTimeScheduler(_logger);
+
+            List<WorkOrder> workOrders = new List<WorkOrder>
+            {
+                wo
+            };
+
+            PostDataToRelatedTables(workOrders);
+            productionTimeCalculator.RegenerateWorkPlans(wo);
+            return Task.CompletedTask;
+
         }
 
         }

@@ -1,10 +1,11 @@
 ﻿
+using ICSharpCode.SharpZipLib;
 using SapirProductionFloorManagment.Shared;
 using System.Linq.Dynamic.Core;
 
 namespace SapirProductionFloorManagment.Server.BackgroundTasks
 {
-    public class ProductionTimeScheduler
+    public class ProductionTimeScheduler 
     {
         public ILogger? Logger { get; set; }
 
@@ -26,12 +27,10 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             };
         }
 
-        //relevant
-        public void WakeUpBackGroundService()
+        private void SetBasicDataToWorkPlans(List<LineWorkPlan> workPlans)
         {
             var lineNum = 0;
             using var dbcon = new MainDbContext();
-            var workPlans = dbcon.ActiveWorkPlans.ToList();
             _workOrders = dbcon.WorkOrdersFromXL.ToList();
             _workHours = dbcon.LinesWorkHours.ToList();
 
@@ -40,26 +39,19 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             {
 
                 int.TryParse(workPlans[i].RelatedToLine.ToString(), out lineNum);
-
                 var productionRate = _schedulerHelper.SetProductionRate(lineNum, workPlans[i].SizeInMicron);
-
                 workPlans[i].WorkDuraion = _schedulerHelper.SetWorkDuration(workPlans[i].QuantityInKg, workPlans[i]);
-
                 workPlans[i].FormatedWorkDuration = _converter.ConvertToTimeString(workPlans[i].WorkDuraion);
-
                 var workOrder = dbcon.WorkOrdersFromXL.Where(e => e.WorkOrderSN == workPlans[i].WorkOrderSN).First();
-
                 workPlans[i].DeadLineDateTime = workOrder.CompletionDate;
-
                 workPlans[i].LeftToFinish = workPlans[i].WorkDuraion;
+                workPlans[i].StartWork = null;
+                workPlans[i].EndWork = null;
 
                 try
                 {
                     dbcon.ActiveWorkPlans.Update(workPlans[i]);
                     dbcon.SaveChanges();
-
-                    
-                   
                 }
                 catch (Exception ex)
                 {
@@ -67,15 +59,16 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 }
 
             }
-            var breaksDictionary = _schedulerHelper.BuildBreakDictionary(_workHours);
-            GenerateWorkPlans(breaksDictionary);
+
         }
 
 
-
-        private void GenerateWorkPlans(Dictionary<string, TimeSpan> breaks)
+        public void GenerateWorkPlans()
         {
             using var dbcon = new MainDbContext();
+            SetBasicDataToWorkPlans(dbcon.ActiveWorkPlans.ToList());
+            var breaksDictionary = _schedulerHelper.BuildBreakDictionary(_workHours);
+
             //relevant
             var lines = dbcon.ActiveWorkPlans.Select(e => e.RelatedToLine)
                                              .Distinct()
@@ -98,7 +91,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
                         if (revelantPlans.Count() != 0)
                         {    
-                           SetWorkStartAndEndTime(revelantPlans, breaks);
+                           SetWorkStartAndEndTime(revelantPlans, breaksDictionary);
                         }
 
 
@@ -106,7 +99,53 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 }
             }
 
-        //relevant
+
+        public void RegenerateWorkPlans(WorkOrder wo)
+        {
+            
+            using var dbcon = new MainDbContext();
+            
+
+            var relatedWorkPlans = dbcon.ActiveWorkPlans.Where(e => e.RelatedToLine == wo.OptionalLine1).ToList();
+            var relatedWorkPlansOther = dbcon.ActiveWorkPlans.Where(e => e.RelatedToLine == wo.OptionalLine2).ToList();
+
+            relatedWorkPlans.AddRange(relatedWorkPlansOther);
+            SetBasicDataToWorkPlans(relatedWorkPlans);
+            
+
+            //relevant
+            var lines = dbcon.ActiveWorkPlans.Select(e => e.RelatedToLine)
+                                             .Distinct()
+                                             .ToList();
+
+          
+            var  sortedWO = _workOrders
+                .Where(w => relatedWorkPlans.Any(r => r.WorkOrderSN == w.WorkOrderSN))  
+                .OrderBy(w => w.Priority)  
+                .ThenBy(w => w.CompletionDate)  
+                .ToList();
+
+
+            var breaksDictionary = _schedulerHelper.BuildBreakDictionary(_workHours);
+
+
+                foreach (var workOrder in sortedWO)
+                {
+                    
+                    var revelantPlans = dbcon.ActiveWorkPlans.Where(e => e.WorkOrderSN == workOrder.WorkOrderSN).ToArray();
+                    
+                    if (revelantPlans.Count() != 0)
+                    {
+                        SetWorkStartAndEndTime(revelantPlans, breaksDictionary);
+                    }
+
+
+            }
+
+
+        }
+
+      
         private void SetWorkStartAndEndTime(LineWorkPlan[] relevantPlans, Dictionary<string, TimeSpan> breaks)
         {
             if (relevantPlans.Length == 0) return;
@@ -309,29 +348,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
     }
 }
 
