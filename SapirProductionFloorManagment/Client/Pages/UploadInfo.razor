@@ -67,7 +67,7 @@
         {
             using var request = await Http.GetAsync("uploadinfo/getexistedworkorders");
             var response = await request.Content.ReadFromJsonAsync<List<WorkOrder>>();
-            workOrders = response.OrderBy(e => e.Priority).ThenBy(e => e.CompletionDate).ToList();
+            workOrders = response.OrderBy(e => e.Priority).ThenBy(e => e.DeadLineDateTime).ToList();
 
         }
         catch (Exception ex)
@@ -121,12 +121,12 @@
                             case CellType.Numeric:
                                 if (DateUtil.IsCellDateFormatted(cell))
                                 {
-                                    workOrder.CompletionDate = (DateTime)cell.DateCellValue;
+                                    workOrder.DeadLineDateTime = (DateTime)cell.DateCellValue;
                                 }
                                 else
                                 {
                                     // if numeric
-                                    if (j == 2) workOrder.Quantity = (int)cell.NumericCellValue;
+                                    if (j == 2) workOrder.QuantityInKg = (int)cell.NumericCellValue;
                                     else if (j == 4) workOrder.OptionalLine1 = cell.ToString();
                                     else if (j == 5) workOrder.OptionalLine2 = cell.ToString();
                                     else if (j == 6) workOrder.Priority = (int)cell.NumericCellValue;

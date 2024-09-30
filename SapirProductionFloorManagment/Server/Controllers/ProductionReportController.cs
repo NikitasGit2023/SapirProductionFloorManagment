@@ -23,11 +23,11 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
                     
                     workOrder.ProducedQuantity =+ wo.ProducedQuantity;
-                    workOrder.QuantityLeft = workOrder.Quantity - workOrder.ProducedQuantity;   
+                    workOrder.QuantityLeft = workOrder.QuantityInKg - workOrder.ProducedQuantity;   
 
-                    if(workOrder.ProducedQuantity > workOrder.Quantity) 
+                    if(workOrder.ProducedQuantity > workOrder.QuantityInKg) 
                     {
-                        workOrder.ProducedQuantity = workOrder.Quantity;
+                        workOrder.ProducedQuantity = workOrder.QuantityInKg;
                         workOrder.QuantityLeft = 0;
                     }
                     dbcon.Update(workOrder);

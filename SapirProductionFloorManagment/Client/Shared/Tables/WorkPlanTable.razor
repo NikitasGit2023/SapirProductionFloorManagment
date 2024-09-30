@@ -76,9 +76,9 @@
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="Description" Title="Description" Frozen="IsCrudFrozen">
+                <RadzenDataGridColumn TItem="LineWorkPlan" Width="150px" Property="ProductDesc" Title="ProductDesc" Frozen="IsCrudFrozen">
                     <EditTemplate Context="workPlan">
-                        <RadzenTextBox @bind-Value="workPlan.Description" Style="width:200px; display: block" Name="Description" />
+                        <RadzenTextBox @bind-Value="workPlan.ProductDesc" Style="width:200px; display: block" Name="ProductDesc" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
@@ -137,12 +137,12 @@
         await base.OnInitializedAsync();
     }
 
-
+    //not used 
     private async Task AddWorkPlan(LineWorkPlan workPlan)
     {
         try
         {
-            using var data = await Http.PostAsJsonAsync("configuration/postnewworkPlan", workPlan);
+            using var data = await Http.PostAsJsonAsync("uploadinfo/postnewworkPlan", workPlan);
             var message = data.Content.ReadFromJsonAsync<string>();
             toastService.ShowSuccess("The data is added successfully");
         }
@@ -156,7 +156,7 @@
     {
         try
         {
-            using var data = await Http.PostAsJsonAsync("configuration/updateworkplan", workPlan);
+            using var data = await Http.PostAsJsonAsync("uploadinfo/updateworkplan", workPlan);
             var message = data.Content.ReadFromJsonAsync<string>();
             toastService.ShowSuccess("The data is updated successfully");
         }
@@ -170,7 +170,7 @@
     {
         try
         {
-            using var data = await Http.PostAsJsonAsync("configuration/removeworkplan", workPlan);
+            using var data = await Http.PostAsJsonAsync("uploadinfo/removeworkplan", workPlan);
             var message = data.Content.ReadFromJsonAsync<string>();
             toastService.ShowSuccess(message.Result);
         }

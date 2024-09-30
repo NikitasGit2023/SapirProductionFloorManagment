@@ -33,8 +33,13 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
+
                 dbcon.Update(wo);
                 dbcon.SaveChanges();
+                var productionTimeScheduler = new ProductionTimeScheduler(_logger);
+
+                //from here
+                productionTimeScheduler.RegenerateWorkPlans(wo);
             }
             catch
             (Exception ex)
@@ -163,6 +168,65 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
         }
 
+        [HttpPost]
+        public Task<string> UpdateWorkPlan(LineWorkPlan wp)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.ActiveWorkPlans.Update(wp);
+                dbcon.SaveChanges();
+
+                var forUpdating =  dbcon.UpdateWorkOrdersRelatedToWorkPlan(wp);
+                
+                    var scheduler = new ProductionTimeScheduler(_logger);
+                    scheduler.RegenerateWorkPlans(forUpdating);
+                    return Task.FromResult("המידע עודכן בהצלחה");
+
+            }
+            catch(Exception ex)
+            {
+                _logger?.LogError("UpdateWorkPlan: {ex.Message} ", ex.Message);
+                return Task.FromResult(ex.Message);
+            }
+
+
+        }
+
+        [HttpPost]
+        public Task<string> RemoveWorkPlan(LineWorkPlan wp)
+        {
+            try
+            {
+                using var dbcon = new MainDbContext();
+                dbcon.ActiveWorkPlans.Remove(wp);
+                dbcon.SaveChanges();
+
+                var OrderToRemove = dbcon.WorkOrdersFromXL.Where(e => e.WorkOrderSN == wp.WorkOrderSN).FirstOrDefault();
+                if(OrderToRemove != null) 
+                {
+                    dbcon.WorkOrdersFromXL.Remove(OrderToRemove);
+                    dbcon.SaveChanges();
+
+                    var productionTimeCalculator = new ProductionTimeScheduler(_logger);
+                    productionTimeCalculator.RegenerateWorkPlans(OrderToRemove);
+                    return  Task.FromResult("המידע נמחק בהצלחה");
+
+                }
+               
+
+            }
+            catch(Exception ex)
+            {
+                _logger?.LogError("RemoveWorkPlan: {ex.Message}", ex.Message);
+                return Task.FromResult(ex.Message);
+
+            }
+            return Task.FromResult(string.Empty);
+            
+
+        }
+
 
         [HttpGet]
         public async Task<List<string>> GetLinesName()
@@ -196,15 +260,6 @@ namespace SapirProductionFloorManagment.Server.Controllers
             return Task.CompletedTask;
         }
 
-        [HttpGet]
-        public Task DropAllOrders()
-        {
-            using var dbcon = new MainDbContext();
-            dbcon.WorkOrdersFromXL.ExecuteDelete();
-            dbcon.ActiveWorkPlans.ExecuteDelete();  
-            dbcon.SaveChanges(true);
-            return Task.CompletedTask;
-        }
 
         public Task RecreateOrdersTable(WorkOrder wo)
         {
@@ -222,7 +277,16 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
         }
 
+        [HttpGet]
+        public Task DropAllOrders()
+        {
+            using var dbcon = new MainDbContext();
+            dbcon.WorkOrdersFromXL.ExecuteDelete();
+            dbcon.ActiveWorkPlans.ExecuteDelete();
+            dbcon.SaveChanges(true);
+            return Task.CompletedTask;
         }
+    }
     }
 
 

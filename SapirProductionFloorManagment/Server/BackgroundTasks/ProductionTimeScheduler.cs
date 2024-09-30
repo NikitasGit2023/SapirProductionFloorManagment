@@ -43,7 +43,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 workPlans[i].WorkDuraion = _schedulerHelper.SetWorkDuration(workPlans[i].QuantityInKg, workPlans[i]);
                 workPlans[i].FormatedWorkDuration = _converter.ConvertToTimeString(workPlans[i].WorkDuraion);
                 var workOrder = dbcon.WorkOrdersFromXL.Where(e => e.WorkOrderSN == workPlans[i].WorkOrderSN).First();
-                workPlans[i].DeadLineDateTime = workOrder.CompletionDate;
+                workPlans[i].DeadLineDateTime = workOrder.DeadLineDateTime;
                 workPlans[i].LeftToFinish = workPlans[i].WorkDuraion;
                 workPlans[i].StartWork = null;
                 workPlans[i].EndWork = null;
@@ -66,27 +66,26 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
         public void GenerateWorkPlans()
         {
             using var dbcon = new MainDbContext();
-            SetBasicDataToWorkPlans(dbcon.ActiveWorkPlans.ToList());
+            var plansFromDb = dbcon.ActiveWorkPlans.ToList();
+            SetBasicDataToWorkPlans(plansFromDb);
             var breaksDictionary = _schedulerHelper.BuildBreakDictionary(_workHours);
 
-            //relevant
+          
             var lines = dbcon.ActiveWorkPlans.Select(e => e.RelatedToLine)
                                              .Distinct()
                                              .ToList(); 
 
 
             var sortedWO = _workOrders.OrderBy(w => w.Priority)
-                                      .ThenBy(w => w.CompletionDate)
+                                      .ThenBy(w => w.DeadLineDateTime)
                                       .ToList(); 
 
             var workPlans = dbcon.ActiveWorkPlans.ToList();
 
-            for (var i = 0; i < workPlans.Count(); i++)
-            {
 
                 foreach (var workOrder in sortedWO)
                 {
-                        //relevant
+                        
                         var revelantPlans = dbcon.ActiveWorkPlans.Where(e=> e.WorkOrderSN == workOrder.WorkOrderSN).ToArray(); 
 
                         if (revelantPlans.Count() != 0)
@@ -97,7 +96,6 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
                     }
                 }
-            }
 
 
         public void RegenerateWorkPlans(WorkOrder wo)
@@ -122,7 +120,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             var  sortedWO = _workOrders
                 .Where(w => relatedWorkPlans.Any(r => r.WorkOrderSN == w.WorkOrderSN))  
                 .OrderBy(w => w.Priority)  
-                .ThenBy(w => w.CompletionDate)  
+                .ThenBy(w => w.DeadLineDateTime)  
                 .ToList();
 
 
@@ -141,6 +139,8 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
 
             }
+            Console.WriteLine("Regeneration work plans in compleated sucsesfully");
+            Logger?.LogInformation("Regeneration work plans in compleated sucsesfully");
 
 
         }
@@ -188,7 +188,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 // if shift start is null try adjust work on second work plan 
 
                 var forRemoving = dbcon.ActiveWorkPlans.Where(e => e.WorkOrderSN == earliestPlan.WorkOrderSN
-                                            && e.Id != earliestPlan.Id && e.Status == null).FirstOrDefault();
+                                            && e.Id != earliestPlan.Id).FirstOrDefault();
 
                 if (forRemoving == null)
                 {
@@ -273,7 +273,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 plan.StartWork = null;
                 plan.EndWork = null;
                 TimeSpan remainingWorkTime = TimeSpan.FromHours(plan.WorkDuraion) - availableShiftTime;
-                ReachduleWorkPlan(remainingWorkTime, availableShiftTime, plan, workStart, shiftEnd);
+                //ReachduleWorkPlan(remainingWorkTime, availableShiftTime, plan, workStart, shiftEnd);
             }
 
             // Update or insert the plan
@@ -322,7 +322,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                         StartWork = null,
                         Comments = workPlan.Comments,
                         DeadLineDateTime = workPlan.DeadLineDateTime,
-                        Description = workPlan.Description,
+                        ProductDesc = workPlan.ProductDesc,
                         Priority = workPlan.Priority,   
                         QuantityInKg = workPlan.QuantityInKg,
                         RelatedToLine = workPlan.RelatedToLine,

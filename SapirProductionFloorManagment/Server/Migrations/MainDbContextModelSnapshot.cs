@@ -111,10 +111,6 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<DateTime?>("DeadLineDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("EndWork")
                         .HasColumnType("datetime2");
 
@@ -131,6 +127,10 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProductDesc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("QuantityInKg")
                         .HasColumnType("int");
@@ -219,7 +219,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CompletionDate")
+                    b.Property<DateTime>("DeadLineDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OptionalLine1")
@@ -240,7 +240,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("QuantityInKg")
                         .HasColumnType("int");
 
                     b.Property<int>("QuantityLeft")

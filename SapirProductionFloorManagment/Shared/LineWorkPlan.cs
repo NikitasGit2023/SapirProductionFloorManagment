@@ -19,7 +19,7 @@ namespace SapirProductionFloorManagment.Shared
         public double LeftToFinish { get; set; }
         public string FormatedLeftToFinish { get; set; } = "";   
         public int QuantityInKg { get; set; }
-        public string Description { get; set; } = "";
+        public string ProductDesc { get; set; } = "";
         public string WorkOrderSN { get; set; } = "";
         public string Comments { get; set; } = "";
         public int SizeInMicron {get; set;} 

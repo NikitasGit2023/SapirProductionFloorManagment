@@ -242,13 +242,6 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             return productRate;
         }
 
-        public int FindAvailableLine()
-        {
-            //TODO 
-
-            return -1; 
-        }
-
         public void RecheduleWorkPlan(LineWorkPlan workPlan)
         {
             using var dbcon = new MainDbContext();

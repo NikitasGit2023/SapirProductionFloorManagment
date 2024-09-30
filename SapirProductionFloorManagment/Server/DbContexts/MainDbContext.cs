@@ -13,8 +13,6 @@ namespace SapirProductionFloorManagment.Server
         public DbSet<Product> Products { get; set; }        
         public DbSet<WorkOrder> WorkOrdersFromXL { get; set; }    
         public DbSet<LineWorkPlan> ActiveWorkPlans { get; set;}
-
-        //public DbSet<LineWorkPlan> RecheduledWorkPlans { get; set; }    
         public DbSet<LineWorkHours> LinesWorkHours { get; set; }
         public DbSet<AppGeneralData> AppGeneralData { get; set; }
         public string _ConnectionString { get; }
@@ -23,7 +21,7 @@ namespace SapirProductionFloorManagment.Server
         public MainDbContext()
         {
 
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagmentTemp;User ID=account;Password=3194murkin;Encrypt=False;Connection Timeout=60;";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagmentTemp2;User ID=account;Password=3194murkin;Encrypt=False;Connection Timeout=60;";
 
             _ConnectionString = ConnectionString; 
 
@@ -169,9 +167,9 @@ namespace SapirProductionFloorManagment.Server
 
                                         RelatedToLine = workOrder.OptionalLine1,
                                         Priority = workOrder.Priority,
-                                        DeadLineDateTime = workOrder.CompletionDate,
-                                        Description = workOrder.ProductDesc,
-                                        QuantityInKg = workOrder.Quantity,
+                                        DeadLineDateTime = workOrder.DeadLineDateTime,
+                                        ProductDesc = workOrder.ProductDesc,
+                                        QuantityInKg = workOrder.QuantityInKg,
                                         WorkOrderSN = workOrder.WorkOrderSN,
                                         Comments = workOrder.Comments,
                                         SizeInMicron = workOrder.SizeInMicron,
@@ -188,9 +186,9 @@ namespace SapirProductionFloorManagment.Server
 
                                         RelatedToLine = workOrder.OptionalLine1,
                                         Priority = workOrder.Priority,
-                                        DeadLineDateTime = workOrder.CompletionDate,
-                                        Description = workOrder.ProductDesc,
-                                        QuantityInKg = workOrder.Quantity,
+                                        DeadLineDateTime = workOrder.DeadLineDateTime,
+                                        ProductDesc = workOrder.ProductDesc,
+                                        QuantityInKg = workOrder.QuantityInKg,
                                         WorkOrderSN = workOrder.WorkOrderSN,
                                         Comments = workOrder.Comments,
                                         SizeInMicron = workOrder.SizeInMicron,
@@ -203,9 +201,9 @@ namespace SapirProductionFloorManagment.Server
 
                                         RelatedToLine = workOrder.OptionalLine2,
                                         Priority = workOrder.Priority,
-                                        DeadLineDateTime = workOrder.CompletionDate,
-                                        Description = workOrder.ProductDesc,
-                                        QuantityInKg = workOrder.Quantity,
+                                        DeadLineDateTime = workOrder.DeadLineDateTime,
+                                        ProductDesc = workOrder.ProductDesc,
+                                        QuantityInKg = workOrder.QuantityInKg,
                                         WorkOrderSN = workOrder.WorkOrderSN,
                                         Comments = workOrder.Comments,
                                         SizeInMicron = workOrder.SizeInMicron,
@@ -235,6 +233,26 @@ namespace SapirProductionFloorManagment.Server
         }
 
 
+        public WorkOrder UpdateWorkOrdersRelatedToWorkPlan(LineWorkPlan workPlan)
+        {
+            var forUpdating = WorkOrdersFromXL.Where(e => e.WorkOrderSN == workPlan.WorkOrderSN).FirstOrDefault();
+            if( forUpdating != null ) 
+            {
+                forUpdating.DeadLineDateTime =(DateTime)workPlan.DeadLineDateTime;
+                forUpdating.ProductDesc = workPlan.ProductDesc;
+                forUpdating.Priority = workPlan.Priority;
+                forUpdating.QuantityInKg = workPlan.QuantityInKg;
+                forUpdating.Comments = workPlan.Comments;
+                
+                WorkOrdersFromXL.Update(forUpdating);
+                SaveChanges();
+                return forUpdating;
+            }
+            return null;
+
+        }
+
+      
 
     }
 }

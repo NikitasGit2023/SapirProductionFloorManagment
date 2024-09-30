@@ -12,8 +12,8 @@ using SapirProductionFloorManagment.Server;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20240929072555_Mig_v1")]
-    partial class Mig_v1
+    [Migration("20240930125004_MainDbContextMigration-v1")]
+    partial class MainDbContextMigrationv1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,10 +114,6 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     b.Property<DateTime?>("DeadLineDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("EndWork")
                         .HasColumnType("datetime2");
 
@@ -134,6 +130,10 @@ namespace SapirProductionFloorManagment.Server.Migrations
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProductDesc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("QuantityInKg")
                         .HasColumnType("int");
@@ -222,7 +222,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CompletionDate")
+                    b.Property<DateTime>("DeadLineDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OptionalLine1")
@@ -243,7 +243,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("QuantityInKg")
                         .HasColumnType("int");
 
                     b.Property<int>("QuantityLeft")

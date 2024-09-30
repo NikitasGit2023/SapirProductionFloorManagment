@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SapirProductionFloorManagment.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Mig_v1 : Migration
+    public partial class MainDbContextMigrationv1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,7 +27,7 @@ namespace SapirProductionFloorManagment.Server.Migrations
                     LeftToFinish = table.Column<double>(type: "float", nullable: false),
                     FormatedLeftToFinish = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuantityInKg = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductDesc = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WorkOrderSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SizeInMicron = table.Column<int>(type: "int", nullable: false),
@@ -121,12 +121,12 @@ namespace SapirProductionFloorManagment.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     WorkOrderSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductDesc = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    QuantityInKg = table.Column<int>(type: "int", nullable: false),
                     OptionalLine1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OptionalLine2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Priority = table.Column<int>(type: "int", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CompletionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeadLineDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SizeInMicron = table.Column<int>(type: "int", nullable: false),
                     ProducedQuantity = table.Column<int>(type: "int", nullable: false),
                     QuantityLeft = table.Column<int>(type: "int", nullable: false)

@@ -64,7 +64,7 @@
                             case CellType.Numeric:
                                 if (DateUtil.IsCellDateFormatted(cell))
                                 {
-                                    workOrder.CompletionDate = (DateTime)cell.DateCellValue;
+                                    workOrder.DeadLineDateTime = (DateTime)cell.DateCellValue;
                                 }
                                 else
                                 {

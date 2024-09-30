@@ -44,9 +44,9 @@
         </RadzenDataGridColumn>
 
 
-        <RadzenDataGridColumn TItem="WorkOrder" Property="Quantity" Title="Qt" Frozen="IsCrudFrozen" Width="80px">
+        <RadzenDataGridColumn TItem="WorkOrder" Property="QuantityInKg" Title="Qt" Frozen="IsCrudFrozen" Width="80px">
             <EditTemplate Context="order">
-                 <RadzenNumeric @bind-Value="order.Quantity" Style="width:100%; display: block;"/>
+                <RadzenNumeric @bind-Value="order.QuantityInKg" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
@@ -76,9 +76,9 @@
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="CompletionDate" Frozen="IsCrudFrozen" Title="Completion Date" Width="150px">
+        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="DeadLineDateTime" Frozen="IsCrudFrozen" Title="Completion Date" Width="150px">
            <EditTemplate>
-                <RadzenDatePicker @bind-Value="order.CompletionDate"/>
+                <RadzenDatePicker @bind-Value="order.DeadLineDateTime"/>
            </EditTemplate>
         </RadzenDataGridColumn>
 
