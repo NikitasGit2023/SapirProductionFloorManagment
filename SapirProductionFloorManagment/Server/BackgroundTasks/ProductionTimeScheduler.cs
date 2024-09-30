@@ -95,6 +95,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
 
                     }
+             Logger?.LogInformation("Generation of work plans is compleated sucsesfully");
                 }
 
 
@@ -111,7 +112,6 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             SetBasicDataToWorkPlans(relatedWorkPlans);
             
 
-            //relevant
             var lines = dbcon.ActiveWorkPlans.Select(e => e.RelatedToLine)
                                              .Distinct()
                                              .ToList();
@@ -139,10 +139,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
 
             }
-            Console.WriteLine("Regeneration work plans in compleated sucsesfully");
             Logger?.LogInformation("Regeneration work plans in compleated sucsesfully");
-
-
         }
 
       
