@@ -143,7 +143,7 @@
         try
         {
             using var data = await Http.PostAsJsonAsync("uploadinfo/postnewworkPlan", workPlan);
-            var message = data.Content.ReadFromJsonAsync<string>();
+            var message = data.Content.ReadAsStringAsync();
             toastService.ShowSuccess("The data is added successfully");
         }
         catch (Exception ex)
@@ -152,12 +152,13 @@
         }
     }
 
+
     private async Task UpdateWorkPlan(LineWorkPlan workPlan)
     {
         try
         {
             using var data = await Http.PostAsJsonAsync("uploadinfo/updateworkplan", workPlan);
-            var message = data.Content.ReadFromJsonAsync<string>();
+            var message = data.Content.ReadAsStringAsync();
             toastService.ShowSuccess("The data is updated successfully");
         }
         catch (Exception ex)
@@ -166,12 +167,13 @@
         }
     }
 
+
     private async Task RemoveWorkPlan(LineWorkPlan workPlan)
     {
         try
         {
             using var data = await Http.PostAsJsonAsync("uploadinfo/removeworkplan", workPlan);
-            var message = data.Content.ReadFromJsonAsync<string>();
+            var message = data.Content.ReadAsStringAsync();
             toastService.ShowSuccess(message.Result);
         }
         catch (Exception ex)
@@ -180,17 +182,20 @@
         }
     }
 
+
     private void Reset()
     {
         workPlansToInsert.Clear();
         workPlansToUpdate.Clear();
     }
 
+
     private void Reset(LineWorkPlan workPlan)
     {
         workPlansToInsert.Remove(workPlan);
         workPlansToUpdate.Remove(workPlan);
     }
+
 
     private async Task EditRow(LineWorkPlan workPlan)
     {
@@ -203,10 +208,12 @@
         await workPlansGrid.EditRow(workPlan);
     }
 
+
     private void OnUpdateRow(LineWorkPlan workPlan)
     {
         Reset(workPlan);
     }
+
 
     private async Task SaveRow(LineWorkPlan workPlan)
     {
@@ -221,11 +228,13 @@
         await UpdateWorkPlan(workPlan);
     }
 
+
     private void CancelEdit(LineWorkPlan workPlan)
     {
         Reset(workPlan);
         workPlansGrid.CancelEditRow(workPlan);
     }
+
 
     private async Task DeleteRow(LineWorkPlan workPlan)
     {
@@ -241,6 +250,7 @@
         await workPlansGrid.Reload();
     }
 
+
     private async Task InsertRow()
     {
         if (editMode == DataGridEditMode.Single)
@@ -255,6 +265,7 @@
         // await workPlanGrid.Reload();
     }
 
+
     private void OnCreateRow(LineWorkPlan workPlan)
     {
         workPlansToInsert.Remove(workPlan);
@@ -264,6 +275,7 @@
     // {
     //     workPlanGrid?.Reload();
     // }
+
 
     public string ConvertDoubleToTimeFormat(double time)
     {

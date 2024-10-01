@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SapirProductionFloorManagment.Server.BackgroundTasks;
 using SapirProductionFloorManagment.Shared;
 
 
@@ -91,6 +92,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             } 
         }
 
+
         [HttpGet]
         public List<User> GetUsersData()
         {
@@ -109,12 +111,17 @@ namespace SapirProductionFloorManagment.Server.Controllers
             return new List<User>();
         }
 
+
         [HttpPost]
         public string PostNewUser(User user)
         {
             try
             {
                 using var dbcon = new MainDbContext();
+                if (dbcon.IsPasswordOrUserNameExisted(user))
+                {
+                    return "שם משתמש או סיסמא קיימים במערכת";
+                }
                 dbcon.Users.Add(user);
                 dbcon.SaveChanges();
 
@@ -127,6 +134,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
             return "המידע הוסף בהצלחה";
         }
+
 
         [HttpPost]
         public string UpdateUser(User user)
@@ -145,6 +153,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 return ex.Message;
             }
         }
+
 
         [HttpPost]
         public string RemoveUser(User user)
@@ -183,42 +192,6 @@ namespace SapirProductionFloorManagment.Server.Controllers
             return new List<Product>();
         }
 
-        [HttpPost]
-        public string PostNewProduct(Product product)
-        {
-            try
-            {
-                using var dbcon = new MainDbContext();
-                dbcon.Products.Add(product);
-                dbcon.SaveChanges();
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("PostNewProduct: {ex.Message}", ex.Message);
-                return ex.Message;
-            }
-
-            return "המידע הוסף בהצלחה";
-        }
-
-        [HttpPost]
-        public string UpdateProduct(Product product)
-        {
-            try
-            {
-                using var dbcon = new MainDbContext();
-                dbcon.Update(product);
-                dbcon.SaveChanges();
-                return "המידע עודכן בהצלחה";
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("UpdateProduct: {ex.Message}", ex.Message);
-                return ex.Message;
-            }
-        }
 
 
         [HttpGet]
@@ -269,7 +242,17 @@ namespace SapirProductionFloorManagment.Server.Controllers
             {
                 using var dbcon = new MainDbContext();
                 dbcon.LinesWorkHours.Update(workHours);
-                dbcon.SaveChanges();
+
+                var productionTimeScheduler = new ProductionTimeScheduler(_logger);
+                var workOrder = dbcon.WorkOrdersFromXL.Where(e => e.OptionalLine1 == workHours.ReferencedToLine || 
+                                                            e.OptionalLine2 == workHours.ReferencedToLine).FirstOrDefault(); 
+                //if (workOrder != null)
+                //{
+                //    productionTimeScheduler.RegenerateWorkPlans(workOrder);
+                //    dbcon.SaveChanges();
+
+                //}
+
                 return "המידע עודכן בהצלחה";
             }
             catch (Exception ex)
@@ -298,6 +281,8 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 return ex.Message;
             }
         }
+
+        
 
 
 

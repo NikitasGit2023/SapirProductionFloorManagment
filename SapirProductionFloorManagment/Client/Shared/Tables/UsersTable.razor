@@ -85,6 +85,7 @@
     }
 
 
+
     //get users data from db
     private async Task<List<User>> GetUsersData()
     {
@@ -103,19 +104,20 @@
         return null;
     }
 
+
+
     //add user to db
     protected async Task AddUser(User user)
     {
         try
         {
             using var data = await Http.PostAsJsonAsync("configuration/postnewuser", user);
-            var message = data.Content.ReadFromJsonAsync<string>();
-            toastService.ShowSuccess(message.Result);
+            var message = await data.Content.ReadAsStringAsync();
+            toastService.ShowSuccess(message);
         }
         catch (Exception ex)
         {
             toastService.ShowError(ex.Message);
-
         }
 
     }
@@ -127,8 +129,8 @@
         try
         {
             using var data = await Http.PostAsJsonAsync("configuration/updateuser", user);
-            var message = data.Content.ReadFromJsonAsync<string>();
-            toastService.ShowSuccess(message.Result);
+            var message = await data.Content.ReadAsStringAsync();
+            toastService.ShowSuccess(message);
         }
         catch (Exception ex)
         {
@@ -144,8 +146,8 @@
         try
         {
             using var data = await Http.PostAsJsonAsync("configuration/removeuser", user);
-            var message = data.Content.ReadFromJsonAsync<string>();
-            toastService.ShowSuccess(message.Result);
+            var message = await data.Content.ReadAsStringAsync();
+            toastService.ShowSuccess(message);
         }
         catch (Exception ex)
         {
@@ -153,17 +155,23 @@
         }
     }
 
+
+
     private void Reset()
     {
         usersToInsert.Clear();
         usersToUpdate.Clear();
     }
 
+
+
     private void Reset(User user)
     {
         usersToInsert.Remove(user);
         usersToUpdate.Remove(user);
     }
+
+
 
     private async Task EditRow(User user)
     {
@@ -176,17 +184,17 @@
         await usersGrid.EditRow(user);
     }
 
+
+
     private void OnUpdateRow(User user)
     {
         Reset(user);
-        //update
     }
 
-    //the green button
+   
     private async Task SaveRow(User user)
     {
-        // if (usersData.Contains(user))
-        // {
+   
 
         if (user.UserId is 0)
         {
@@ -198,7 +206,7 @@
         await usersGrid.UpdateRow(user);
         await UpdateUser(user);
 
-        // }
+    
 
     }
 
@@ -234,6 +242,7 @@
         await usersGrid.Reload();
     }
 
+
     //add user 
     private async Task InsertRow()
     {
@@ -249,6 +258,8 @@
 
     }
 
+
+
     private void OnCreateRow(User user)
     {
 
@@ -256,11 +267,6 @@
     }
 
 
-    private void ChangeUserRole(ChangeEventArgs e)
-    {
-
-        
-    }
 
 
 }

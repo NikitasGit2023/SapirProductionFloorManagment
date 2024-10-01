@@ -102,18 +102,19 @@
 
     }
 
+
     private void Reset()
     {
         productsToInsert.Clear();
         productsToUpdate.Clear();
     }
 
+
     private void Reset(Product product)
     {
         productsToInsert.Remove(product);
         productsToUpdate.Remove(product);
     }
-
 
 
     private async Task EditRow(Product product)
@@ -128,10 +129,11 @@
     }
 
 
-    void OnUpdateRow(Product product)
+    private void OnUpdateRow(Product product)
     {
         Reset(product);
     }
+
 
     private async Task SaveRow(Product product)
     {
@@ -148,40 +150,6 @@
     }
 
 
-
-    private async Task AddProduct(Product product)
-    {
-        try
-        {
-            using var json = await Http.PostAsJsonAsync("configuration/postnewproduct", product);
-            var message = await json.Content.ReadFromJsonAsync<string>();
-            toastService.ShowError(message);
-
-
-
-        }catch(Exception ex)
-        {
-            toastService.ShowError(ex.Message);
-        }
-    }
-
-    private async Task UpdateProduct(Product product)
-    {
-        try
-        {
-            using var json = await Http.PostAsJsonAsync("configuration/updateproduct", product);
-            var message = await json.Content.ReadFromJsonAsync<string>();
-            toastService.ShowError(message);
-
-
-
-        }catch(Exception ex)
-        {
-            toastService.ShowError(ex.Message);
-        }
-
-        
-    }
 
     private void CancelEdit(Product product)
     {
@@ -234,13 +202,12 @@
         await productsGrid.InsertRow(selectedProduct);
     }
 
+
     private void OnCreateRow(Product product)
     {
         productsToInsert.Remove(product);
     }
 
-
-    //to do a vocabulary to hours
 
 
 }

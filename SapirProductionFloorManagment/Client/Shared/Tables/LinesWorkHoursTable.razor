@@ -170,6 +170,7 @@
         await base.OnInitializedAsync();
     }
 
+
     public async Task<List<LineWorkHours>> AskForLinesWorkHoursData()
     {
         try
@@ -187,13 +188,14 @@
         return null;
     }
 
+
     protected async Task AddLine(LineWorkHours line)
     {
         try
         {
             using var data = await Http.PostAsJsonAsync("configuration/postlineworkhours", line);
-            var message = data.Content.ReadFromJsonAsync<string>();
-            toastService.ShowSuccess(message.Result);
+            var message = await data.Content.ReadAsStringAsync();
+            toastService.ShowSuccess(message);
         }
         catch (Exception ex)
         {
@@ -202,36 +204,39 @@
         }
 
     }
+
 
     protected async Task UpdateLine(LineWorkHours line)
     {
         try
         {
-            using var data = await Http.PostAsJsonAsync("configuration/updatelineworkgours", line);
-            var message = data.Content.ReadFromJsonAsync<string>();
-            toastService.ShowSuccess(message.Result);
+            using var data = await Http.PostAsJsonAsync("configuration/updatelineworkhours", line);
+            var message = await data.Content.ReadAsStringAsync();
+            toastService.ShowSuccess(message);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
 
         }
     }
+
 
     private async Task RemoveLine(LineWorkHours line)
     {
         try
         {
             using var data = await Http.PostAsJsonAsync("configuration/removelineworkhours", line);
-            var message = data.Content.ReadFromJsonAsync<string>();
-            toastService.ShowSuccess(message.Result);
+            var message = await data.Content.ReadAsStringAsync();
+            toastService.ShowSuccess(message);
 
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            toastService.ShowError(ex.Message);
         }
     }
+
 
     private void Reset()
     {
@@ -239,11 +244,13 @@
         linesToUpdate.Clear();
     }
 
+
     private void Reset(LineWorkHours line)
     {
         linesToInsert.Remove(line);
         linesToUpdate.Remove(line);
     }
+
 
     private async Task EditRow(LineWorkHours line)
     {
@@ -256,10 +263,12 @@
         await linesGrid.EditRow(line);
     }
 
+
     private void OnUpdateRow(LineWorkHours line)
     {
         Reset(line);
     }
+
 
     //green button
     private async Task SaveRow(LineWorkHours line)
@@ -276,15 +285,16 @@
         await UpdateLine(line);
     }
 
+
     private void CancelEdit(LineWorkHours line)
     {
         Reset(line);
         linesGrid.CancelEditRow(line);
     }
 
+
     private async Task DeleteRow(LineWorkHours line)
     {
-        //cleaning linesToInsert and LinesToUpdate
         Reset(line);
 
         if (Data.Contains(line))
@@ -296,6 +306,7 @@
         }
         await linesGrid.Reload();
     }
+
 
     private async Task InsertRow()
     {
@@ -310,16 +321,19 @@
         await linesGrid.InsertRow(selectedOne);
     }
 
+
     private void OnCreateRow(LineWorkHours line)
     {
         linesToInsert.Remove(line);
     }
+
 
     private void OnLineChange(object value)
     {
         selectedLine = value.ToString();
         FilterLinesData();
     }
+
 
     private void FilterLinesData()
     {

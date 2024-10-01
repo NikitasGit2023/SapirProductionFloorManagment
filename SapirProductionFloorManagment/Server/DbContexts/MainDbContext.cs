@@ -44,6 +44,17 @@ namespace SapirProductionFloorManagment.Server
         }
 
 
+        public bool IsPasswordOrUserNameExisted(User user)
+        {
+           var userFromDb =  Users.Where(e => e.FullName == user.FullName && e.Password == user.Password).FirstOrDefault();
+            if (userFromDb != null) 
+            {
+                return true;
+            } 
+            return false;   
+        }
+
+
         public void CreateDefaultDataForAppFunctionallity()
         {
             try

@@ -35,7 +35,7 @@
 
          <RadzenStack Visible="true" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
             <RadzenLabel Text="Select Line" Component="LinesFilter" />
-            <RadzenDropDown Placeholder="General" Change="FilterLinesTable" TValue="string" Data="linesName" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
+            <RadzenDropDown @bind-Value="selectedLineName" Placeholder="General" Change="FilterLinesTable" TValue="string" Data="linesName" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
         </RadzenStack>
 
         <div class="lines-table" style="width:100%">
@@ -94,7 +94,13 @@
             using var request = await Http.GetAsync("dailyprogram/getworkplans");
             var json = await request.Content.ReadFromJsonAsync<List<LineWorkPlan>>();
             linesWorkPlan = json;
-            linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null).ToList();
+            if(selectedLineName == string.Empty)
+            {
+                linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null).ToList();
+                return;
+            }
+            linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null && e.RelatedToLine == selectedLineName).ToList();
+            
 
         }
         catch (Exception ex)
