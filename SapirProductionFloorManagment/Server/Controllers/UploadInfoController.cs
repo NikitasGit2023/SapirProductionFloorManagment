@@ -122,33 +122,22 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
 
         [HttpPost]
-        public  Task PostWorkOrdersTable(List<WorkOrder> table)
+        public async Task PostWorkOrdersTable(List<WorkOrder> table)
         {
             try
             {
                 using var dbcon = new MainDbContext();
-                for (var i = 0; i < table.Count; i++)
-                {
-                    var row = table[i];
-                    var rowFromDb = dbcon.WorkOrdersFromXL.FirstOrDefault(e => e.WorkOrderSN == row.WorkOrderSN);       
 
-                    if (rowFromDb != null)
-                    {
-                        continue;
-                    }
-                    row.QuantityLeft = row.QuantityInKg;
-                    dbcon.WorkOrdersFromXL.Add(row);
-                    dbcon.SaveChanges();
-               
-
-                }
+                await dbcon.InjectWorkOrdersAsync(table);    
+                dbcon.InjectcCustomers();
+                dbcon.InjectProducts();
                 _logger?.LogInformation("Work orders table filled with new data from XL file");
             }
             catch (Exception ex)
             {
                 _logger?.LogError("PostWorkOrdersTable: {ex.Message}", ex.Message );
             }
-            return Task.CompletedTask;
+           
         }
 
 

@@ -1,7 +1,9 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SapirProductionFloorManagment.Shared;
+using System.Drawing;
 
 
 namespace SapirProductionFloorManagment.Server
@@ -11,6 +13,7 @@ namespace SapirProductionFloorManagment.Server
         public DbSet<User> Users { get; set; }
         public DbSet<Line> Lines { get; set; }
         public DbSet<Product> Products { get; set; }        
+        public DbSet<Customer> Customers { get; set; }      
         public DbSet<WorkOrder> WorkOrdersFromXL { get; set; }    
         public DbSet<LineWorkPlan> ActiveWorkPlans { get; set;}
         public DbSet<LineWorkHours> LinesWorkHours { get; set; }
@@ -140,6 +143,96 @@ namespace SapirProductionFloorManagment.Server
             {
                 Logger?.LogError("CreateDefaultDataForAppFunctionallity: {ex.Messsage}", ex.Message);
             }  
+        }
+
+        public Task InjectWorkOrdersAsync(List<WorkOrder> workOrders)
+        {
+            try
+            {
+                for (var i = 0; i < workOrders.Count; i++)
+                {
+                    var row = workOrders[i];
+                    var rowFromDb = WorkOrdersFromXL.FirstOrDefault(e => e.WorkOrderSN == row.WorkOrderSN);
+
+                    if (rowFromDb != null)
+                    {
+                        continue;
+                    }
+                    row.QuantityLeft = row.QuantityInKg;
+                    WorkOrdersFromXL.Add(row);
+                    SaveChanges();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("InjectWorkOrdersAsync: {ex.Message}", ex.Message);
+            }
+            return Task.CompletedTask;
+    
+        }
+
+        //public Task UpdateWorkOrderStatus(LineWorkPlan workPaln)
+        //{
+            
+        //}
+
+        public Task InjectProducts()
+        {
+            try 
+            {
+                var productsToInject = WorkOrdersFromXL.Select(e => e.ProductDesc).ToList();
+                foreach (var productName in productsToInject)
+                {
+                    var p =  Products.Where(e => e.ProductName == productName).FirstOrDefault();
+                    if (p != null) 
+                    {
+                        
+                    }
+                     Products.AddAsync(new Product
+                    {
+                        ProductName = productName
+                    });
+                    
+                }
+                SaveChanges();
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return Task.CompletedTask;
+        }
+
+
+        public Task InjectcCustomers()
+        {
+            try
+            {
+                var productsToInject = WorkOrdersFromXL.Select(e => e.Comments).ToList();
+                foreach (var customerName in productsToInject)
+                {
+                    var p = Customers.Where(e => e.Name == customerName).FirstOrDefault();
+                    if (p != null)
+                    {
+
+                    }
+                    Customers.AddAsync(new Customer
+                    {
+                        Name = customerName
+                    });
+
+                }
+                SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return Task.CompletedTask;
         }
 
 

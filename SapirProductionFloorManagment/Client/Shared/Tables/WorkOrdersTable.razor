@@ -88,6 +88,12 @@
             </EditTemplate>
         </RadzenDataGridColumn>
 
+        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="Status" Title="Status" Width="120px">
+            <EditTemplate>
+                <RadzenText @bind-Value="order.Status" Style="width:100%; display: block;" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
 
 
         @*crud buttons*@

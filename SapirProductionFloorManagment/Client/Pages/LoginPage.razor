@@ -122,8 +122,7 @@
         var token = await custAuthStateProvider.GetToken();
         if(token != null)
         {
-            // var claims =  await custAuthStateProvider.GetAuthenticationStateAsync();
-
+            
             if (!String.IsNullOrEmpty(token.UserName))
             {               
                 var loginResponse = await http.PostAsJsonAsync("login/stayloggedin",token);

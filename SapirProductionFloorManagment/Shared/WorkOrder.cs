@@ -21,6 +21,8 @@ namespace SapirProductionFloorManagment.Shared
             public int SizeInMicron { get; set; }
             public int ProducedQuantity { get; set; }
             public int QuantityLeft { get; set;}
+            public string? Status { get; set; } = null;
+
 
 
             public override int GetHashCode()
