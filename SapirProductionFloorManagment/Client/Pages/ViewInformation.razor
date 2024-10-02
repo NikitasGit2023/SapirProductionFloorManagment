@@ -19,11 +19,6 @@
     IsVisible="@keyValuePairs["Products"]"
                IsCrudFrozen="true" />
   
-@* 
-<LinesTable 
-    IsVisible="@keyValuePairs["Lines"]"
-            IsCrudFrozen="true" /> *@
-
 
 <CustomersTable IsVisible="@keyValuePairs["Customers"]" />
 
@@ -39,7 +34,6 @@
         keyValuePairs.Add("Orders", true);
         keyValuePairs.Add("Products", false);
         keyValuePairs.Add("Customers", false);
-        keyValuePairs.Add("Lines", false);
 
         return base.OnInitializedAsync();
     }

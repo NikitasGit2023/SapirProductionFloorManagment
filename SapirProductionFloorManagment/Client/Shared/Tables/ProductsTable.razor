@@ -80,7 +80,7 @@
         {
             using var json = await Http.GetAsync("viewinformation/getexistedproducts");
             var data = await json.Content.ReadFromJsonAsync<List<Product>>();
-            return data;
+            return data.OrderByDescending(e => e.ProductName.Length).Distinct().ToList();
 
         }catch(Exception ex)
         {

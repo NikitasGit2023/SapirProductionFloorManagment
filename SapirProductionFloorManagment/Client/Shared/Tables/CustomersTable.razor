@@ -42,7 +42,7 @@
         {
             using var json = await Http.GetAsync("viewinformation/getexistedcustomers");
             var data = await json.Content.ReadFromJsonAsync<List<Customer>>();
-            return data;
+            return data.OrderByDescending(e => e.Name.Length).Distinct().ToList(); ;
 
         }
         catch (Exception ex)
