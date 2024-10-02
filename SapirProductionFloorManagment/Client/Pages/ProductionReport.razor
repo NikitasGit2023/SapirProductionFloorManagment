@@ -10,7 +10,7 @@
 <BlazoredToasts></BlazoredToasts>
 
 
-<RadzenTemplateForm TItem="WorkOrder" Data="wo" Submit=@UpdateWorkOrderQuantity>
+<RadzenTemplateForm TItem="WorkOrder" Data="wo">
     <RadzenCard class="my-5 mx-auto" Style="max-width: 400px;">
 
         <RadzenDropDown @bind-Value="selectedWorkOrderSN"
@@ -58,7 +58,7 @@
         try
         {
             using var workOrder = await Http.PostAsJsonAsync("productionreport/postworkorderquantity", wo);
-            var response = await workOrder.Content.ReadFromJsonAsync<string>();
+            var response = await workOrder.Content.ReadAsStringAsync();
             toastService.ShowSuccess(response);
 
         }catch(Exception ex)
