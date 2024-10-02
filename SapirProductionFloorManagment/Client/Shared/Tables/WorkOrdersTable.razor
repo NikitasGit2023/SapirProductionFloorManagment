@@ -324,6 +324,7 @@
     {
         if (wo.QuantityLeft == 0)
         {
+            wo.Status = "FINISHED";
             return "background-color: green; color: black; padding: 5px; font-weight: bold;";
         }
         else if (wo.Status == "REACHEDULED")
