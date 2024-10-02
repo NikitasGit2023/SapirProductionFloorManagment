@@ -48,7 +48,6 @@ namespace SapirProductionFloorManagment.Server.Controllers
             {
                 using var dbcon = new MainDbContext();  
                 var workOrders = dbcon.WorkOrdersFromXL.ToList();
-                dbcon.SaveChanges();
                 return workOrders;  
 
             }catch(Exception ex) 

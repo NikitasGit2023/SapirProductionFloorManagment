@@ -7,6 +7,8 @@ namespace SapirProductionFloorManagment.Client.Logic
 {
     public static class SessionStorageServiceExtension
     {
+
+        //Saving the token
         public static async Task SaveEncryptedItemAsync<T>(this ISessionStorageService sessionServiceStorage, string key, T item)
         {
             var jsonItem = JsonSerializer.Serialize(item);
@@ -16,6 +18,7 @@ namespace SapirProductionFloorManagment.Client.Logic
         }
         
        
+        //Reading token and encypt then 
         public static async Task<UserSession?> ReadEncryptedItemAsync(this ISessionStorageService sessionServiceStorage, string key)
         {
       

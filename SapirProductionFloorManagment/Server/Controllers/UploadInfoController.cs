@@ -51,6 +51,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
         }
 
+
         [HttpPost]
         public async Task<string> RemoveOrder(WorkOrder wo)
         {
@@ -83,6 +84,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             return await Task.FromResult("המידע עודכן בהצלחה");
 
         }
+
 
         [HttpPost]
         public async Task<string> AddOrder(WorkOrder wo)
@@ -120,7 +122,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
 
         [HttpPost]
-        public void PostWorkOrdersTable(List<WorkOrder> table)
+        public  Task PostWorkOrdersTable(List<WorkOrder> table)
         {
             try
             {
@@ -134,8 +136,10 @@ namespace SapirProductionFloorManagment.Server.Controllers
                     {
                         continue;
                     }
+                    row.QuantityLeft = row.QuantityInKg;
                     dbcon.WorkOrdersFromXL.Add(row);
                     dbcon.SaveChanges();
+               
 
                 }
                 _logger?.LogInformation("Work orders table filled with new data from XL file");
@@ -144,8 +148,9 @@ namespace SapirProductionFloorManagment.Server.Controllers
             {
                 _logger?.LogError("PostWorkOrdersTable: {ex.Message}", ex.Message );
             }
+            return Task.CompletedTask;
+        }
 
-            }
 
         [HttpGet]
         public async Task<List<WorkOrder>> GetExistedWorkOrders()
@@ -167,6 +172,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             return new List<WorkOrder>();
 
         }
+
 
         [HttpPost]
         public Task<string> UpdateWorkPlan(LineWorkPlan wp)
@@ -192,6 +198,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
 
         }
+
 
         [HttpPost]
         public Task<string> RemoveWorkPlan(LineWorkPlan wp)
@@ -246,6 +253,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             return new List<string>();
         }
 
+
         [HttpPost]
         public Task PostDataToRelatedTables(List<WorkOrder> newWorkOrders)
         {
@@ -277,6 +285,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
 
         }
 
+
         [HttpGet]
         public Task DropAllOrders()
         {
@@ -286,7 +295,8 @@ namespace SapirProductionFloorManagment.Server.Controllers
             dbcon.SaveChanges(true);
             return Task.CompletedTask;
         }
-    }
+
+        }
     }
 
 

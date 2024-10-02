@@ -17,7 +17,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             _logger = logger;
         }
 
-        // Получение расписания работы линий
+     
         [HttpGet]
         public async Task<List<LineWorkPlan>> GetWorkSchedule()
         {
@@ -25,18 +25,18 @@ namespace SapirProductionFloorManagment.Server.Controllers
             {
                 using (var dbcon = new MainDbContext())
                 {
-                    var workSchedule = await dbcon.ActiveWorkPlans.ToListAsync(); // Берем данные из ActiveWorkPlans
+                    var workSchedule = await dbcon.ActiveWorkPlans.ToListAsync(); 
                     return workSchedule;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError("Error fetching work schedule: {Message}", ex.Message);
-                return new List<LineWorkPlan>();  // если произошла ошибка, вернем пустой список
+                return new List<LineWorkPlan>();  
             }
         }
 
-        // Получение списка всех линий
+      
         [HttpGet]
         public async Task<List<Line>> GetLines()
         {
@@ -51,7 +51,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("Error fetching lines data: {Message}", ex.Message);
-                return new List<Line>();  // если произошла ошибка, вернем пустой список
+                return new List<Line>();  
             }
         }
     }

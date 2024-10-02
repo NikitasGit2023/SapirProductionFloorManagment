@@ -57,14 +57,14 @@
         </RadzenDataGridColumn>
     
        
-        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="OptionalLine1" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
+        <RadzenDataGridColumn Visible="@FullMode" Context="order" TItem="WorkOrder" Property="OptionalLine1" Frozen="IsCrudFrozen" Title="Line Op 1" Width="120px">
             <EditTemplate>
                 <RadzenTextBox @bind-Value="order.OptionalLine1" Style="width:100%; display: block;" />
             </EditTemplate>
         </RadzenDataGridColumn>
 
 
-        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="OptionalLine2" Frozen="IsCrudFrozen" Title="Line Op 2" Width="120px">
+        <RadzenDataGridColumn Visible="@FullMode" Context="order" TItem="WorkOrder" Property="OptionalLine2" Frozen="IsCrudFrozen" Title="Line Op 2" Width="120px">
             <EditTemplate>
                 <RadzenTextBox @bind-Value="order.OptionalLine2" Style="width:100%; display: block;" />
             </EditTemplate>
@@ -82,7 +82,7 @@
            </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="SizeInMicron" Title="Size(Micron)" Width="120px">
+        <RadzenDataGridColumn Visible="@FullMode" Context="order" TItem="WorkOrder" Property="SizeInMicron" Title="Size(Micron)" Width="120px">
             <EditTemplate>
                 <RadzenNumeric @bind-Value="order.SizeInMicron" Style="width:100%; display: block;" />
             </EditTemplate>
@@ -123,8 +123,13 @@
 
 @code 
 {
+
+
     [Parameter]
     public List<WorkOrder>? Data { get; set; }
+
+    [Parameter]
+    public bool FullMode { get; set; } = true;
 
     private DataGridEditMode editMode = DataGridEditMode.Single;
     private RadzenDataGrid<WorkOrder>? ordersGrid;
@@ -136,7 +141,7 @@
     protected override async Task OnInitializedAsync()
     {
         await AskForGetExistedOrders();
-        orders = Data;
+        orders = Data.OrderBy( e => e.DeadLineDateTime).ToList();
 
         await base.OnInitializedAsync();
     }

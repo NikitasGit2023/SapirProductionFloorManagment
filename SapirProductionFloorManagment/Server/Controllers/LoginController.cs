@@ -61,7 +61,6 @@ namespace SapirProductionFloorManagment.Server.Controllers
             if(user != null)
             {
                 return session;
-
             }
             Unauthorized();
             return null;

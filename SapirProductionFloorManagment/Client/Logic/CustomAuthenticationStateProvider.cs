@@ -25,6 +25,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         
     }
 
+    //Checking authentication state - who is the user and how much time remaining for token.
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
        
@@ -61,7 +62,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         }
     }
     
-    //update
+    //Updating authentication state.
     public async Task UpdateAuthenticationState(UserSession userSession)
     {
         try
@@ -95,8 +96,8 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     }
 
-    //get token
-    public async Task<UserSession> GetToken()
+    //Getting user token.
+    public async Task<UserSession> GetToken() //relevant
     {
         UserSession? result = null;
         try

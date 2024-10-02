@@ -82,8 +82,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //await AskForStayLoggedIn();
+
+        await AskForStayLoggedIn();
         await AskForDefaultUser();
+
     }
 
 
@@ -115,25 +117,23 @@
     //Reads user session if still existed
     private async  Task AskForStayLoggedIn()
     {
+        Visible = !Visible;
         var custAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
-        var token = custAuthStateProvider.GetToken();
-        if(token.IsCompletedSuccessfully)
+        var token = await custAuthStateProvider.GetToken();
+        if(token != null)
         {
-            var claims =  await custAuthStateProvider.GetAuthenticationStateAsync();
-            
-            if (!String.IsNullOrEmpty(token.Result.UserName))
+            // var claims =  await custAuthStateProvider.GetAuthenticationStateAsync();
+
+            if (!String.IsNullOrEmpty(token.UserName))
             {               
                 var loginResponse = await http.PostAsJsonAsync("login/stayloggedin",token);
                 var userSession = await loginResponse.Content.ReadFromJsonAsync<UserSession>();
                 await custAuthStateProvider.UpdateAuthenticationState(userSession);
                 navigatonManager.NavigateTo("/");
-            }
-         
-           
-            
+            }   
         }
-        
-        
+        Visible = true;
+
     }
 
     private async Task AskForDefaultUser()
