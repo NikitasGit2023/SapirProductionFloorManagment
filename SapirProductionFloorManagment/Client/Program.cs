@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Radzen;
 using SapirProductionFloorManagment.Client;
 using SapirProductionFloorManagment.Client.Shared.Tables;
 
@@ -18,5 +19,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStat
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredToast();
+
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<TooltipService>();
 
 await builder.Build().RunAsync();

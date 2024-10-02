@@ -140,12 +140,11 @@
         if (product.ProductId is 0)
         {
             await productsGrid.UpdateRow(product);
-            await AddProduct(product);
+ 
             return;
 
         }
         await productsGrid.UpdateRow(product);
-        await UpdateProduct(product);
 
     }
 

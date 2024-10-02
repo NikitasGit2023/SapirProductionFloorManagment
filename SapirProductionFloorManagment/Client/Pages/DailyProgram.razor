@@ -7,47 +7,67 @@
 
 <div class="d-flex flex-column mb-3">
     <div class="p-2">
-        <h2>Work plan</h2>
+        <h2>Daily Work Plan</h2>
     </div>
 </div>
 
-
- 
-
-
-    <div class="d-flex flex-column mb-3">
-    <div class="p-2">
-        <div class="d-flex flex-row mb-3">
-
-            <div class="d-flex flex-row mb-3">
+<RadzenTabs RenderMode="TabRenderMode.Client" >
+    <Tabs>
+        <RadzenTabsItem Text="Table Mode" > 
+            <div class="d-flex flex-column mb-3">
                 <div class="p-2">
-                    <RadzenButton Click="RefreshDailyProgram" Text="Recalculate" Icon="refresh" ButtonStyle="ButtonStyle.Primary" />
+                    <div class="d-flex flex-row mb-3">
+
+                        <div class="d-flex flex-row mb-3">
+                            <div class="p-2">
+                                <RadzenButton Click="RefreshDailyProgram" Text="Recalculate" Icon="refresh" ButtonStyle="ButtonStyle.Primary" />
+                            </div>
+                            <div class="p-2" style="font-weight:bolder; margin-top:10px;">
+                                Last Update: @lastUpdatedAt
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="p-2" style="font-weight:bolder; margin-top:10px;">
-                    Last Update: @lastUpdatedAt
+
+                <div class="p-2">
+
+                    <RadzenStack Visible="true" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
+                        <RadzenLabel Text="Select Line" Component="LinesFilter" />
+                        <RadzenDropDown @bind-Value="selectedLineName" Placeholder="General" Change="FilterLinesTable" TValue="string" Data="linesName" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
+                    </RadzenStack>
+
+                    <div class="lines-table" style="width:100%">
+                        <WorkPlanTable @ref="workPlanTable"
+                                       Data="linesWorkPlan"
+                                       IsCrudFrozen="false"
+                                       IsNewRowCanAdded="false"
+                                       IsVisible="true" />
+                    </div>
+
                 </div>
             </div>
-        </div>
+        </RadzenTabsItem >
 
-    </div>
+        <RadzenTabsItem Text="Schdeduler Mode">
+            <div class="scheduler-section" style="margin-top:20px;">
+                <h1>Scheduler</h1>
+                <SchedulerComponent @ref="schedulerComponent" />
+            </div>
+
+            <div class="d-flex justify-content-end mb-3">
+                <RadzenButton Text="Refresh Scheduler" Icon="refresh" Click="RefreshScheduler" Style="margin-right:10px;" />
+            </div>
+        </RadzenTabsItem>
+
+       
+    </Tabs>
+</RadzenTabs>
     
-    <div class="p-2">
-
-         <RadzenStack Visible="true" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
-            <RadzenLabel Text="Select Line" Component="LinesFilter" />
-            <RadzenDropDown @bind-Value="selectedLineName" Placeholder="General" Change="FilterLinesTable" TValue="string" Data="linesName" Style="width: 100%; max-width: 400px;" Name="LinesFilter" />
-        </RadzenStack>
-
-        <div class="lines-table" style="width:100%">
-            <WorkPlanTable @ref="workPlanTable"
-                                Data="linesWorkPlan"
-                                IsCrudFrozen="false"
-                                IsNewRowCanAdded="false"
-                                IsVisible="true" />
-        </div>
  
-    </div>
-</div>
+
+
+    
 
 
 @code 
@@ -131,6 +151,18 @@
         lastUpdatedAt = DateTime.Now.ToString();
         await AskForLinesScedule();
         StateHasChanged();
+    }
+
+
+    private SchedulerComponent? schedulerComponent;
+
+
+    private void RefreshScheduler()
+    {
+        if (schedulerComponent != null)
+        {
+            //schedulerComponent.RefreshAppointments();  // Вызываем метод только если компонент инициализирован
+        }
     }
 
 }
