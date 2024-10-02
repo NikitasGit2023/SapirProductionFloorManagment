@@ -174,10 +174,24 @@ namespace SapirProductionFloorManagment.Server
     
         }
 
-        //public Task UpdateWorkOrderStatus(LineWorkPlan workPaln)
-        //{
-            
-        //}
+
+        public Task UpdateWorkOrderStatus(LineWorkPlan workPaln)
+        {
+            try
+            {
+                var workOrder = WorkOrdersFromXL.Where(e => e.WorkOrderSN == workPaln.WorkOrderSN).FirstOrDefault(); 
+                if (workOrder != null) 
+                {
+                    workOrder.Status = workPaln.Status;
+                }
+            }catch (Exception ex)
+            {
+                Logger?.LogError("UpdateWorkOrderStatus: {ex.Message}", ex.Message);
+            }
+            return Task.CompletedTask;  
+
+        }
+
 
         public Task InjectProducts()
         {

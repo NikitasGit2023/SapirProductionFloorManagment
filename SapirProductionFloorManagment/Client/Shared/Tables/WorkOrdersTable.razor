@@ -25,11 +25,19 @@
 </div>
 
 
-<RadzenDataGrid Visible="IsVisible" @ref="ordersGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="15"
-                AllowSorting="true" Data="@orders" TItem="WorkOrder" ColumnWidth="200px"
-                SelectionMode="DataGridSelectionMode.Single" >
+<RadzenDataGrid Visible="IsVisible" @ref="ordersGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="15"            
+                AllowSorting="true" Data="@orders" TItem="WorkOrder" ColumnWidth="200px" SelectionMode="DataGridSelectionMode.Single" >
+                
     <Columns>
+
+        <RadzenDataGridColumn TItem="WorkOrder" Property="Status" Title="Status" Width="120px">
+            <Template Context="order">
+                <div style="@SetColumnColor(order)">
+                    @order.Status
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+
          <RadzenDataGridColumn TItem="WorkOrder" Property="WorkOrderSN" Title="WO" Frozen="true" Width="100px" TextAlign="TextAlign.Center">
             <EditTemplate Context="order">
                 <RadzenTextBox @bind-Value="order.WorkOrderSN" Style="width:100%; display: block;" />
@@ -88,13 +96,6 @@
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn Context="order" TItem="WorkOrder" Property="Status" Title="Status" Width="120px">
-            <EditTemplate>
-                <RadzenText @bind-Value="order.Status" Style="width:100%; display: block;" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-
-
 
         @*crud buttons*@
         @if(IsCrudFrozen is false)
@@ -147,7 +148,7 @@
     protected override async Task OnInitializedAsync()
     {
         await AskForGetExistedOrders();
-        orders = Data.OrderBy( e => e.DeadLineDateTime).ToList();
+        orders = Data.OrderBy( e => e.DeadLineDateTime).Where(e => e.Status != null).ToList();
 
         await base.OnInitializedAsync();
     }
@@ -318,7 +319,28 @@
     }
 
 
- 
+    // Method to return conditional style based on Status
+    private string SetColumnColor(WorkOrder wo)
+    {
+        if (wo.QuantityLeft == 0)
+        {
+            return "background-color: green; color: black; padding: 5px; font-weight: bold;";
+        }
+        else if (wo.Status == "REACHEDULED")
+        {
+            return "background-color: red; color: black; padding: 5px; font-weight: bold;";
+        }
+        else if (wo.Status == "IN PROGRESS")
+        {
+            return "background-color: yellow; color: black; padding: 5px; font-weight: bold;";
+        }
+        return string.Empty;
+    }
+
 
 
 }
+
+
+
+ 

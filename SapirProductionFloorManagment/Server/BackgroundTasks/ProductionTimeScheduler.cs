@@ -448,11 +448,13 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
         private LineWorkPlan CalculateAndSetWorkTimes(LineWorkPlan plan, DateTime workStart, DateTime shiftEnd, LineWorkHours firstWorkHours,
                                                         LineWorkHours secondWorkHours, Dictionary<string, TimeSpan> breaks, MainDbContext dbcon)
         {
+
             LineWorkHours selectedWorkHours = plan.RelatedToLine == firstWorkHours.ReferencedToLine ? firstWorkHours : secondWorkHours;
 
             TimeSpan availableShiftTime = shiftEnd - workStart;
             DateTime adjustedEndForBreaks = AdjustForBreaks(workStart, availableShiftTime, selectedWorkHours, breaks);  
             availableShiftTime = adjustedEndForBreaks - workStart;
+
 
             // still time to complete work
             if (availableShiftTime >= TimeSpan.FromHours(plan.WorkDuraion)) 
@@ -461,6 +463,8 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 plan.StartWork = workStart;
                 plan.Status = IN_PROGGRESS;
                 plan.LeftToFinish = 0;
+
+                
             }
             // not enougth time complete work in shift
             else
@@ -469,8 +473,11 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
                 plan.EndWork = null;
                 plan.Status = REACHEDULED;
                 TimeSpan remainingWorkTime = TimeSpan.FromHours(plan.WorkDuraion) - availableShiftTime;
+
+                
                 //ReachduleWorkPlan(remainingWorkTime, availableShiftTime, plan, workStart, shiftEnd);
             }
+            dbcon.UpdateWorkOrderStatus(plan);
 
             // Update or insert the work plan 
             var existingPlan = dbcon.ActiveWorkPlans.FirstOrDefault(e => e.Id == plan.Id);
