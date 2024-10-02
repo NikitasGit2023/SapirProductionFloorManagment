@@ -46,15 +46,30 @@ namespace SapirProductionFloorManagment.Server
             
         }
 
-
-        public bool IsPasswordOrUserNameExisted(User user)
+        public async Task SetInfoAboutLastWorkPlanCalculation(DateTime datetime)
         {
-           var userFromDb =  Users.Where(e => e.FullName == user.FullName && e.Password == user.Password).FirstOrDefault();
-            if (userFromDb != null) 
+            using var dbcon = new MainDbContext();
+
+           
+            var existingEntry = await dbcon.AppGeneralData.FirstOrDefaultAsync();
+
+            if (existingEntry != null)
             {
-                return true;
-            } 
-            return false;   
+            
+                existingEntry.LastWorkPlanCalculation = datetime;
+
+               
+                await dbcon.SaveChangesAsync();
+            }
+        }
+
+        public Task<DateTime?> GetInfoAboutLastWorkPlanCalculation()
+        {
+
+            var lastCalc = AppGeneralData.OrderByDescending(a => a.LastWorkPlanCalculation).FirstOrDefault();
+
+
+            return Task.FromResult(lastCalc?.LastWorkPlanCalculation);
         }
 
 

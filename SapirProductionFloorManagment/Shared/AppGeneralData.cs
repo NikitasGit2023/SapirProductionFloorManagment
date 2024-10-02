@@ -9,7 +9,7 @@ namespace SapirProductionFloorManagment.Shared
     public class AppGeneralData
     {
         public int Id { get; set; } 
-        public string LastSceduleCalculation { get; set; } = "";
+        public DateTime LastWorkPlanCalculation { get; set; }
 
     }
 }

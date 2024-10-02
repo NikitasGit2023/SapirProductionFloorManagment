@@ -292,11 +292,5 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
         
-
-
-
-
-
-
     }
 }

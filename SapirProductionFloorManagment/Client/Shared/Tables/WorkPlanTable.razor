@@ -144,7 +144,7 @@
         {
             using var data = await Http.PostAsJsonAsync("uploadinfo/postnewworkPlan", workPlan);
             var message = data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess("The data is added successfully");
+            toastService.ShowSuccess(message.Result);
         }
         catch (Exception ex)
         {
@@ -159,7 +159,7 @@
         {
             using var data = await Http.PostAsJsonAsync("uploadinfo/updateworkplan", workPlan);
             var message = data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess("The data is updated successfully");
+            toastService.ShowSuccess(message.Result);
         }
         catch (Exception ex)
         {
@@ -270,11 +270,6 @@
     {
         workPlansToInsert.Remove(workPlan);
     }
-
-    // public void RefreshTable()
-    // {
-    //     workPlanGrid?.Reload();
-    // }
 
 
     public string ConvertDoubleToTimeFormat(double time)
