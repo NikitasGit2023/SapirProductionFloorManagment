@@ -24,7 +24,7 @@ namespace SapirProductionFloorManagment.Server
         public MainDbContext()
         {
 
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagmentTemp2;User ID=account;Password=3194murkin;Encrypt=False;Connection Timeout=60;";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagmentTemp3;User ID=account;Password=3194murkin;Encrypt=False;Connection Timeout=60;";
 
             _ConnectionString = ConnectionString; 
 
@@ -144,6 +144,7 @@ namespace SapirProductionFloorManagment.Server
                 Logger?.LogError("CreateDefaultDataForAppFunctionallity: {ex.Messsage}", ex.Message);
             }  
         }
+
 
         public Task InjectWorkOrdersAsync(List<WorkOrder> workOrders)
         {
