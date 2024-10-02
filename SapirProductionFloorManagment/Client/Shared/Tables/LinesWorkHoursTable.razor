@@ -195,7 +195,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/postlineworkhours", line);
             var message = await data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess(message);
+            toastService.ShowInfo(message);
         }
         catch (Exception ex)
         {
@@ -212,7 +212,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/updatelineworkhours", line);
             var message = await data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess(message);
+            toastService.ShowInfo(message);
         }
         catch (Exception ex)
         {
@@ -228,7 +228,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/removelineworkhours", line);
             var message = await data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess(message);
+            toastService.ShowInfo(message);
 
         }
         catch (Exception ex)

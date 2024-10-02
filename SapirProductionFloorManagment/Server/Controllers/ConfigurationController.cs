@@ -16,35 +16,23 @@ namespace SapirProductionFloorManagment.Server.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public List<Line> GetLinesData()
-        {
-           
-            try
-            {
-                using var dbcon = new MainDbContext();
-                var lines =  dbcon.Lines.ToList();
-                dbcon.SaveChanges();         
-
-                return lines;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("GetLinesData: {ex.Message}" ,ex.Message ); 
-            }
-            return new List<Line>();
-        }
-
-        
         [HttpPost]
         public string PostNewLine(Line line)
         {
             try
             {
                 using var dbcon = new MainDbContext();
+
+                var existingLine = dbcon.Lines.FirstOrDefault(l => l.Name == line.Name);
+
+                if (existingLine != null)
+                {
+                 
+                    return "לא ניתן להוסיף קו שכבר קיים במערכת";
+                }
+
                 dbcon.Lines.Add(line);
                 dbcon.SaveChanges();
-
             }
             catch (Exception ex)
             {
@@ -62,8 +50,18 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
+
+           
+                var existingLine = dbcon.Lines.FirstOrDefault(l => l.Name == line.Name && l.LineId != line.LineId);
+
+                if (existingLine != null)
+                {               
+                    return "לא ניתן לעדכן לקו שכבר קיים במערכת";
+                }
+
                 dbcon.Update(line);
                 dbcon.SaveChanges();
+
                 return "המידע עודכן בהצלחה";
             }
             catch (Exception ex)
@@ -72,7 +70,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 return ex.Message;
             }
         }
-        
+
 
         [HttpPost]
         public string RemoveLine(Line line)
@@ -118,13 +116,16 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
-                if (dbcon.IsPasswordOrUserNameExisted(user))
-                {
-                    return "שם משתמש או סיסמא קיימים במערכת";
+
+                var existingUser = dbcon.Users.FirstOrDefault(u => u.FullName == user.FullName || u.Password == user.Password);
+
+                if (existingUser != null)
+                {          
+                    return "שם משתמש או סיסמא תפוסים, אנא בחר שם משתמש וסיסמא ייחודיים";
                 }
+
                 dbcon.Users.Add(user);
                 dbcon.SaveChanges();
-
             }
             catch (Exception ex)
             {
@@ -142,10 +143,18 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbcon = new MainDbContext();
+
+
+                var existingUser = dbcon.Users.FirstOrDefault(u => (u.FullName == user.FullName || u.Password == user.Password) && u.UserId != user.UserId);
+
+                if (existingUser != null)
+                {
+                    return "לא ניתן לעדכן משתמש שכבר קיים במערכת";
+                }
+
                 dbcon.Update(user);
                 dbcon.SaveChanges();
                 return "המידע עודכן בהצלחה";
-
             }
             catch (Exception ex)
             {

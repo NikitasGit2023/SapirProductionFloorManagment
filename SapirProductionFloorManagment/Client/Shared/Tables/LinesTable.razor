@@ -127,7 +127,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/postnewline", line);
             var message = data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess("The data is added succesfully");
+            toastService.ShowInfo(message.Result);
         }
         catch (Exception ex)
         {
@@ -143,7 +143,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/updateline", line);
             var message = data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess("The data is updated succesfully");
+            toastService.ShowInfo(message.Result);
         }
         catch (Exception ex)
         {
@@ -158,7 +158,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/removeline", line);
             var message = data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess(message.Result);
+            toastService.ShowInfo(message.Result);
 
 
         }catch(Exception ex)

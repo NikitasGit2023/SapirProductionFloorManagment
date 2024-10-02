@@ -113,7 +113,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/postnewuser", user);
             var message = await data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess(message);
+            toastService.ShowInfo(message);
         }
         catch (Exception ex)
         {
@@ -130,7 +130,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/updateuser", user);
             var message = await data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess(message);
+            toastService.ShowInfo(message);
         }
         catch (Exception ex)
         {
@@ -147,7 +147,7 @@
         {
             using var data = await Http.PostAsJsonAsync("configuration/removeuser", user);
             var message = await data.Content.ReadAsStringAsync();
-            toastService.ShowSuccess(message);
+            toastService.ShowInfo(message);
         }
         catch (Exception ex)
         {
