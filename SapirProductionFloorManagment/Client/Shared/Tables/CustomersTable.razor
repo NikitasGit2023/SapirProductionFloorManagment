@@ -1,0 +1,56 @@
+﻿@inherits TableBase
+@inject HttpClient Http
+@inject IToastService toastService
+
+
+
+
+
+<BlazoredToasts></BlazoredToasts>
+
+<RadzenDataGrid Visible="IsVisible" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
+                AllowSorting="true" Data="@fetchedcustomers" TItem="Customer" style="width:50%;"
+                SelectionMode="DataGridSelectionMode.Single">
+    <Columns>
+
+        <RadzenDataGridColumn TItem="Customer" Property="Name" Title="Name Of Product" Filterable="false" Frozen="IsCrudFrozen">
+        </RadzenDataGridColumn>
+
+    </Columns>
+
+</RadzenDataGrid>
+
+@code
+    {
+
+
+    private List<Customer> fetchedcustomers;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        fetchedcustomers = await AskForCustomersData();
+        await base.OnInitializedAsync();
+    }
+
+
+    private async Task<List<Customer>> AskForCustomersData()
+    {
+        try
+        {
+            using var json = await Http.GetAsync("viewinformation/getexistedcustomers");
+            var data = await json.Content.ReadFromJsonAsync<List<Customer>>();
+            return data;
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+        }
+        return null;
+    }
+
+
+}

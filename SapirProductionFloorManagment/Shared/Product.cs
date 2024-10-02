@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace  SapirProductionFloorManagment.Shared
 {
-    public class Product
+    public record Product
     {
       public int Id { get; set; }
       public string? ProductName { get; set; }

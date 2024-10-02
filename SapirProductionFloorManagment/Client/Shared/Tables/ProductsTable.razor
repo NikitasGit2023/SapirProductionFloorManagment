@@ -18,20 +18,14 @@
 <BlazoredToasts></BlazoredToasts>
 
 <RadzenDataGrid Visible="IsVisible" @ref="productsGrid" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
-                AllowSorting="true" Data="@fetchedproducts" TItem="Product" ColumnWidth="200px"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
+                AllowSorting="true" Data="@fetchedproducts" TItem="Product" style="width:50%;"
                 SelectionMode="DataGridSelectionMode.Single">
     <Columns>
 
-        <RadzenDataGridColumn TItem="Product" Property="ProductSN" Title="Product SN" Frozen="IsCrudFrozen">
+        <RadzenDataGridColumn TItem="Product" Property="ProductName" Title="Name Of Product" Filterable="false" Frozen="IsCrudFrozen">
             <EditTemplate Context="product">
-                <RadzenText @bind-Value="product.ProductSN" Style="width:200px; display: block" Name="Product SN" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-
-        <RadzenDataGridColumn TItem="Product" Property="ProductName" Title="Product Name" Filterable="false" Frozen="IsCrudFrozen">
-            <EditTemplate Context="product">
-                <RadzenTextBox @bind-Value="product.ProductName" Style="width:200px; display: block" Name="Product Name" />
+                <RadzenText @bind-Value="product.ProductName"  />
             </EditTemplate>
         </RadzenDataGridColumn>
 
@@ -84,7 +78,7 @@
     {
         try
         {
-            using var json = await Http.GetAsync("productionreport/getexistedworkorders");
+            using var json = await Http.GetAsync("viewinformation/getexistedproducts");
             var data = await json.Content.ReadFromJsonAsync<List<Product>>();
             return data;
 
@@ -131,7 +125,7 @@
 
     private async Task SaveRow(Product product)
     {
-        if (product.ProductId is 0)
+        if (product.Id is 0)
         {
             await productsGrid.UpdateRow(product);
  
@@ -168,7 +162,7 @@
             fetchedproducts.Remove(product);
             CancelEdit(product);
 
-            if(product.ProductId != 0);
+            if(product.Id != 0);
             //await remove product
         }
         else
