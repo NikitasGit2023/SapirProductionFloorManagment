@@ -30,13 +30,16 @@
                 
     <Columns>
 
-        <RadzenDataGridColumn TItem="WorkOrder" Property="Status" Title="Status" Width="120px">
-            <Template Context="order">
-                <div style="@SetColumnColor(order)">
-                    @order.Status
-                </div>
-            </Template>
-        </RadzenDataGridColumn>
+        @if(ShowProgressBar){
+            <RadzenDataGridColumn TItem="WorkOrder" Property="Status" Title="Status" Width="120px">
+                <Template Context="order">
+                    <div style="@SetColumnColor(order)">
+                        @order.Status
+                    </div>
+                </Template>
+            </RadzenDataGridColumn>
+        }
+
 
          <RadzenDataGridColumn TItem="WorkOrder" Property="WorkOrderSN" Title="WO" Frozen="true" Width="100px" TextAlign="TextAlign.Center">
             <EditTemplate Context="order">
@@ -138,6 +141,9 @@
     [Parameter]
     public bool FullMode { get; set; } = true;
 
+    [Parameter]
+    public bool ShowProgressBar { get; set; } = false;
+
     private DataGridEditMode editMode = DataGridEditMode.Single;
     private RadzenDataGrid<WorkOrder>? ordersGrid;
     private List<WorkOrder> ordersToInsert = new List<WorkOrder>();
@@ -165,7 +171,7 @@
         }
         catch(Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            //TODO
         }
 
     }
@@ -193,11 +199,11 @@
         {
             using var data = await Http.PostAsJsonAsync("uploadinfo/addorder", order);
             var message = data.Content.ReadFromJsonAsync<string>();
-            // toastService.ShowSuccess("The data is added succesfully");
+            //TODO
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            //TODO
 
         }
 
@@ -213,7 +219,7 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            //TODO
 
         }
     }
@@ -229,7 +235,7 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            //TODO
         }
     }
 
@@ -259,7 +265,6 @@
     private void OnUpdateRow(WorkOrder order)
     {
         Reset(order);
-        //update
     }
 
     //green button
@@ -286,7 +291,7 @@
     //check
     private async Task DeleteRow(WorkOrder order)
     {
-        //cleaning linesToInsert and LinesToUpdate
+     
         Reset(order);
 
         if (orders.Contains(order))
