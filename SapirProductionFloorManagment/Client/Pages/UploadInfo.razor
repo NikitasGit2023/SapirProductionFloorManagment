@@ -19,7 +19,7 @@
                 <InputFile OnChange="@ImportXlsxFile"></InputFile>
             </div>
             <div class="p-2">
-                <AuthorizeView Roles="Developer">
+                <AuthorizeView Roles="Developer,Admin,Manager">
                     <Authorized>
                         <RadzenButton Click="DropOrdersTable" ButtonStyle="ButtonStyle.Danger" Text="Reset" />
                     </Authorized>

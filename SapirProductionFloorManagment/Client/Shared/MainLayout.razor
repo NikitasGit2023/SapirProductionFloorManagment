@@ -5,7 +5,7 @@
 @inherits LayoutComponentBase
 
     <div class="page">
-        <AuthorizeView Roles="Admin,Developer,Basic">
+        <AuthorizeView Roles="Admin,Developer,Basic,Mannager">
             <Authorized>
             <BlazoredToasts />
       <div class="sidebar">
@@ -17,7 +17,7 @@
           </AuthorizeView>
     <main>
         <div class="top-row px-4">
-            <AuthorizeView Roles="Admin,Developer,Basic">
+            <AuthorizeView Roles="Admin,Developer,Basic,Mannager">
                 <Authorized>
                     <a @onclick="Logout" href="/">Logout</a>
                 </Authorized>

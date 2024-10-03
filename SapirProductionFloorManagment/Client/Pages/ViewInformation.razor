@@ -1,6 +1,7 @@
 ﻿@using SapirProductionFloorManagment.Client.Shared.Tables
 @using SapirProductionFloorManagment.Client.Shared
 @inject IToastService toastService
+@inject HttpClient Http
 
 @page "/generaltables"
 
@@ -9,19 +10,15 @@
     Switchers="keyValuePairs"
     OnClick="SwitchToTable"/>
 
-<WorkOrdersTable 
-    IsVisible="@keyValuePairs["Orders"]"
-                 IsCrudFrozen="true"
-                 ShowProgressBar="true"
-                 FullMode="false"/>
-    
+<WorkOrdersTable IsVisible="@keyValuePairs["Orders"]" IsCrudFrozen="true" ShowProgressBar="true" FullMode="false" />
 
-<ProductsTable 
-    IsVisible="@keyValuePairs["Products"]"
-               IsCrudFrozen="true" />
-  
-
+<ProductsTable IsVisible="@keyValuePairs["Products"]" IsCrudFrozen="true" />
+               
 <CustomersTable IsVisible="@keyValuePairs["Customers"]" />
+
+<LinesTable Data="linesData"  IsVisible="@keyValuePairs["Lines"]" IsCrudFrozen="true"/>
+
+
 
     
 
@@ -29,15 +26,20 @@
 
     private Dictionary<string, bool> keyValuePairs = new();
     private TablesSwitcher tablesSwitcher = new();
+    private List<Line> linesData = new List<Line>();
 
-    protected override Task OnInitializedAsync()
+
+    protected override async Task OnInitializedAsync()
     {
         keyValuePairs.Add("Orders", true);
         keyValuePairs.Add("Products", false);
         keyValuePairs.Add("Customers", false);
+        keyValuePairs.Add("Lines", false);
 
-        return base.OnInitializedAsync();
+        linesData = await AskForLinesData();
+        StateHasChanged();
     }
+
 
 
 
@@ -53,6 +55,25 @@
         MakeVisible(outPut);
         StateHasChanged();
 
+    }
+
+
+    // asking for lines data
+    public async Task<List<Line>> AskForLinesData()
+    {
+        try
+        {
+            using var data = await Http.GetAsync("configuration/getlinesdata");
+            var content = data.Content.ReadFromJsonAsync<List<Line>>();
+            if (content.Result != null)
+                return content.Result;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        return null;
     }
 
 

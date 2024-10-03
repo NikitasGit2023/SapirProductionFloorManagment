@@ -12,7 +12,7 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu" style="background-color:ghostwhite">
     <nav class="flex-column">
         <br />
-            <AuthorizeView Roles="Basic,Admin,Developer">
+            <AuthorizeView Roles="Basic,Admin,Developer,Manager">
                 <Authorized>      
             <br />
             <div class="nav-item px-3">
@@ -32,7 +32,7 @@
             </NotAuthorized>
         </AuthorizeView>
 
-        <AuthorizeView Roles="Admin,Developer" >
+        <AuthorizeView Roles="Admin,Developer,Manager" >
             <Authorized>
             <br />
             <div class="nav-item px-3">
@@ -48,7 +48,7 @@
             </NotAuthorized>
         </AuthorizeView>
 
-        <AuthorizeView Roles="Basic,Admin,Developer">
+        <AuthorizeView Roles="Basic,Admin,Developer,Manager">
             <Authorized>
             <br />
             <div class="nav-item px-3">
@@ -64,7 +64,7 @@
             </NotAuthorized>
         </AuthorizeView>
 
-        <AuthorizeView Roles="Admin,Developer,Basic">
+        <AuthorizeView Roles="Admin,Developer,Basic,Manager">
             <Authorized>
                 <br />
                 <div class="nav-item px-3">
@@ -80,7 +80,7 @@
             </NotAuthorized>
         </AuthorizeView>
 
-            <AuthorizeView Roles="Admin,Developer">
+            <AuthorizeView Roles="Admin,Developer,Manager">
                 <Authorized>
                 <br />
                 <div class="nav-item px-3">

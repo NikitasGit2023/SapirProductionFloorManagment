@@ -1,6 +1,6 @@
 ﻿@typeparam T
 
-<AuthorizeView Roles="Developer">
+<AuthorizeView Roles="Developer,Admin,Manager">
     <Authorized>
         <button @onclick="()=>CleanData()" type="button" class="btn btn-danger">Clean</button>
     </Authorized>
