@@ -11,9 +11,7 @@
     </div>
 </div>
 
-<RadzenTabs RenderMode="TabRenderMode.Client" >
-    <Tabs>
-        <RadzenTabsItem Text="Table Mode" > 
+
             <div class="d-flex flex-column mb-3">
                 <div class="p-2">
                     <div class="d-flex flex-row mb-3">
@@ -47,25 +45,8 @@
 
                 </div>
             </div>
-        </RadzenTabsItem >
 
-        <RadzenTabsItem Text="Schdeduler Mode">
-            <div class="scheduler-section" style="margin-top:20px;">
-                <h1>Scheduler</h1>
-                <SchedulerComponent @ref="schedulerComponent" />
-            </div>
-
-            <div class="d-flex justify-content-end mb-3">
-                <RadzenButton Text="Refresh Scheduler" Icon="refresh" Click="RefreshScheduler" Style="margin-right:10px;" />
-            </div>
-        </RadzenTabsItem>
-
-       
-    </Tabs>
-</RadzenTabs>
     
- 
-
 
     
 
@@ -196,16 +177,6 @@
 
 
 
-    private SchedulerComponent? schedulerComponent;
 
-
-
-    private void RefreshScheduler()
-    {
-        if (schedulerComponent != null)
-        {
-            //schedulerComponent.RefreshAppointments();  // Вызываем метод только если компонент инициализирован
-        }
-    }
 
 }

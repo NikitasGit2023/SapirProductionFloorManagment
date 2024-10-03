@@ -1,0 +1,15 @@
+﻿
+<span class="nav-content" style="color:@Color;margin:-13px;">
+    @Content
+</span>
+   
+
+
+@code {
+    [Parameter]
+    public string? Content { get; set; }
+
+    [Parameter]
+    public string? Color { get; set; } = "dimgrey";
+
+}
