@@ -85,6 +85,7 @@
             return;
         }
 
+        // Order by StartWork ascending (lowest to highest)
         filteredWorkPlan = linesWorkPlan.Where(e => e.RelatedToLine == lineNum).ToList();
         linesWorkPlan = filteredWorkPlan.OrderBy(e => e.StartWork).ToList();
         StateHasChanged();
@@ -98,20 +99,23 @@
             using var request = await Http.GetAsync("dailyprogram/getworkplans");
             var json = await request.Content.ReadFromJsonAsync<List<LineWorkPlan>>();
             linesWorkPlan = json;
-            if(selectedLineName == string.Empty)
+
+            if (selectedLineName == string.Empty)
             {
                 linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null).ToList();
                 return;
             }
-            linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null && e.RelatedToLine == selectedLineName).OrderBy(e => e.StartWork).ToList();
 
-
+            // Order by StartWork ascending (lowest to highest)
+            linesWorkPlan = linesWorkPlan
+                .Where(e => e.StartWork != null && e.RelatedToLine == selectedLineName)
+                .OrderBy(e => e.StartWork)
+                .ToList();
         }
         catch (Exception ex)
         {
             toastService.ShowError(ex.Message);
         }
-
     }
 
 
