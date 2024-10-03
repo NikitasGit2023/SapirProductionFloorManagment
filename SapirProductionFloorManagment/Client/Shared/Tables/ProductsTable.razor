@@ -80,14 +80,16 @@
         {
             using var json = await Http.GetAsync("viewinformation/getexistedproducts");
             var data = await json.Content.ReadFromJsonAsync<List<Product>>();
-            return data.OrderByDescending(e => e.ProductName.Length).Distinct().ToList();
 
-        }catch(Exception ex)
+            var distinctProducts = data.DistinctBy(p => p.ProductName).ToList(); // Use distinct by ProductId
+
+            return distinctProducts.OrderByDescending(e => e.ProductName.Length).ToList();
+        }
+        catch (Exception ex)
         {
-            toastService.ShowError(ex.Message);   
+            toastService.ShowError(ex.Message);
         }
         return null;
-
     }
 
 

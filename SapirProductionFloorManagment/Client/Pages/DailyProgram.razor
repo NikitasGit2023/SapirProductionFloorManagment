@@ -103,7 +103,7 @@
                 linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null).ToList();
                 return;
             }
-            linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null && e.RelatedToLine == selectedLineName).ToList();
+            linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null && e.RelatedToLine == selectedLineName).OrderBy(e => e.StartWork).ToList();
 
 
         }
