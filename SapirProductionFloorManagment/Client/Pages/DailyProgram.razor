@@ -86,7 +86,7 @@
     {
         await AskForLineNames();
         await AskForLinesWorkPlan();
-        // await ChekcWhenWorkPlanLastUpdated();
+        await ChekcWhenWorkPlanLastUpdated();
 
         unfilteredWorkPlan = linesWorkPlan.OrderBy(e => e.StartWork).ToList();
         StateHasChanged();
@@ -154,46 +154,50 @@
     private async Task RefreshDailyProgram()
     {
         lastUpdatedAt = DateTime.Now;
-        // await PostLastUpdatedWorkPlansCalculation();
         await AskForLinesWorkPlan();
+        await PostLastUpdatedWorkPlansCalculation(lastUpdatedAt);
         StateHasChanged();
     }
 
 
-    // private async Task ChekcWhenWorkPlanLastUpdated()
-    // {
-    //     try
-    //     {
-    //         lastUpdatedAt = await Http.GetFromJsonAsync<DateTime>("dailyprogram/getlastworkplancalculation");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         toastService.ShowError(ex.Message);
-    //     }
-    // }
+    private async Task ChekcWhenWorkPlanLastUpdated()
+    {
+        try
+        {
+            using var requset = await Http.GetAsync("dailyprogram/getlastworkplancalculation");
+            lastUpdatedAt =  requset.Content.ReadFromJsonAsync<DateTime>().Result;
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+        }
+    }
 
 
-    // private async Task PostLastUpdatedWorkPlansCalculation()
-    // {
-    //     try
-    //     {
-    //         var newUpdateTime = DateTime.Now;
-    //         var response = await Http.PostAsJsonAsync("dailyprogram/setlastWorkplancalculation", newUpdateTime);
+    private async Task PostLastUpdatedWorkPlansCalculation(DateTime newUpdateTime)
+    {
+        try
+        {
+            
+            var formattedDateTime = newUpdateTime.ToString("o");
+            var response = await Http.PostAsJsonAsync("dailyprogram/setlastWorkplancalculation", formattedDateTime);
 
-    //         if (response.IsSuccessStatusCode)
-    //         {
-    //             lastUpdatedAt = newUpdateTime;
-    //         }
+            if (!response.IsSuccessStatusCode)
+            {
+                toastService.ShowError($"Error: {response.ReasonPhrase}");
+            }
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError(ex.Message);
+        }
+    }
 
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         toastService.ShowError(ex.Message);
-    //     }
-    // }
 
 
     private SchedulerComponent? schedulerComponent;
+
 
 
     private void RefreshScheduler()

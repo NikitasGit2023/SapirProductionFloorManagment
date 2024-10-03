@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MathNet.Numerics.Financial;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SapirProductionFloorManagment.Shared;
 
@@ -45,12 +46,12 @@ namespace SapirProductionFloorManagment.Server.Controllers
             {
                 using var dbcon = new MainDbContext();
 
-                 lastCalc = dbcon.AppGeneralData
+                lastCalc = dbcon.AppGeneralData
                                                .Select(a => a.LastWorkPlanCalculation)
                                                .FirstOrDefault();
-                if (lastCalc == null)
+                if (lastCalc != null)
                 {
-                    return Task.FromResult(DateTime.Now);
+                    return Task.FromResult(lastCalc);
                 }
 
             }
@@ -64,23 +65,49 @@ namespace SapirProductionFloorManagment.Server.Controllers
         }
 
 
-        //[HttpPost]
-        //public Task<string> SetLastWorkPlanCalculation(DateTime dateTime)
-        //{
-        //    using var dbcon = new MainDbContext();
+        [HttpPost]
+        public async Task<IActionResult> SetLastWorkPlanCalculation([FromBody] string dateTimeString)
+        {
+            try
+            {
+                if (DateTime.TryParse(dateTimeString, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime parsedDateTime))
+                {
+                    using var dbcon = new MainDbContext();
 
-        //}
+                    var entry = dbcon.AppGeneralData.FirstOrDefault();
+                    if (entry != null)
+                    {
+                        entry.LastWorkPlanCalculation = parsedDateTime;
+                        await dbcon.SaveChangesAsync();
+                        return Ok("LastWorkPlanCalculation updated successfully.");
+                    }
+                    else
+                    {
+                        return NotFound("No record found to update.");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Invalid date format.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SetLastWorkPlanCalculation: Error occurred");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
 
 
         [HttpGet]
-        public async Task<List<string>> GetLinesName()
+        public  Task<List<string>> GetLinesName()
         {
             try
             {
                 using var dbcon = new MainDbContext();
                 var linesName = dbcon.Lines.Select(e => e.Name).Distinct().ToList();
-                return await Task.FromResult(linesName);
+                return  Task.FromResult(linesName);
 
             }
             catch (Exception ex)
@@ -88,7 +115,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 _logger?.LogError("GetLinesName: {ex.Message}", ex.Message);
             }
 
-            return new List<string>();
+            return Task.FromResult (new List<string>());
         }
     }
 }
