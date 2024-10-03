@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SapirProductionFloorManagment.Shared;
 
 namespace SapirProductionFloorManagment.Server.Controllers
@@ -9,6 +10,8 @@ namespace SapirProductionFloorManagment.Server.Controllers
     {
 
         private readonly ILogger<DailyProgramController> _logger;
+
+
         public DailyProgramController(ILogger<DailyProgramController> logger) : base()
         {
             _logger = logger;
@@ -33,22 +36,42 @@ namespace SapirProductionFloorManagment.Server.Controllers
           
         }
 
-        //[HttpGet]
-        //public async Task<List<LineWorkPlan>> GetWorkPlans()
-        //{
-        //    try
-        //    {
-        //        using var dbcon = new MainDbContext();
-        //        var schedule = dbcon.ActiveWorkPlans.Where(e => e.IsCalculted == false).ToList(); // bugged
-        //        return await Task.FromResult(schedule);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger?.LogError("GetWorkPlans: {ex.Message}", ex.Message);
+  
+        [HttpGet]
+        public Task<DateTime> GetLastWorkPlanCalculation()
+        {
+            DateTime lastCalc = DateTime.Now;
+            try
+            {
+                using var dbcon = new MainDbContext();
 
-        //    }
-        //    return new List<LineWorkPlan> { }; //check if null can be returned
+                 lastCalc = dbcon.AppGeneralData
+                                               .Select(a => a.LastWorkPlanCalculation)
+                                               .FirstOrDefault();
+                if (lastCalc == null)
+                {
+                    return Task.FromResult(DateTime.Now);
+                }
+
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError("GetLastWorkPlanCalculation: {ex.Message}", ex.Message);
+            }
+          
+
+            return Task.FromResult(lastCalc);     
+        }
+
+
+        //[HttpPost]
+        //public Task<string> SetLastWorkPlanCalculation(DateTime dateTime)
+        //{
+        //    using var dbcon = new MainDbContext();
+
         //}
+
+
 
         [HttpGet]
         public async Task<List<string>> GetLinesName()

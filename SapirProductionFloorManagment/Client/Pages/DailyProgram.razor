@@ -72,7 +72,7 @@
 
 @code 
 {
-    private string lastUpdatedAt = string.Empty;
+    private DateTime lastUpdatedAt = DateTime.Now;
     private List<WorkOrder> workOrders = new();
     private List<LineWorkPlan> linesWorkPlan = new();
     private List<LineWorkPlan> filteredWorkPlan = new();
@@ -85,11 +85,13 @@
     protected override async Task OnInitializedAsync()
     {
         await AskForLineNames();
-        await RefreshDailyProgram();
+        await AskForLinesWorkPlan();
+        // await ChekcWhenWorkPlanLastUpdated();
 
         unfilteredWorkPlan = linesWorkPlan.OrderBy(e => e.StartWork).ToList();
         StateHasChanged();
     }
+
 
     private void FilterLinesTable(object e)
     {
@@ -107,7 +109,8 @@
         StateHasChanged();
     }
 
-    private async Task AskForLinesScedule()
+
+    private async Task AskForLinesWorkPlan()
     {
         try
         {
@@ -120,7 +123,7 @@
                 return;
             }
             linesWorkPlan = linesWorkPlan.Where(e => e.StartWork != null && e.RelatedToLine == selectedLineName).ToList();
-            
+
 
         }
         catch (Exception ex)
@@ -129,6 +132,7 @@
         }
 
     }
+
 
     private async Task AskForLineNames()
     {
@@ -143,15 +147,50 @@
 
             toastService.ShowError(ex.Message);
         }
-        
+
     }
+
 
     private async Task RefreshDailyProgram()
     {
-        lastUpdatedAt = DateTime.Now.ToString();
-        await AskForLinesScedule();
+        lastUpdatedAt = DateTime.Now;
+        // await PostLastUpdatedWorkPlansCalculation();
+        await AskForLinesWorkPlan();
         StateHasChanged();
     }
+
+
+    // private async Task ChekcWhenWorkPlanLastUpdated()
+    // {
+    //     try
+    //     {
+    //         lastUpdatedAt = await Http.GetFromJsonAsync<DateTime>("dailyprogram/getlastworkplancalculation");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         toastService.ShowError(ex.Message);
+    //     }
+    // }
+
+
+    // private async Task PostLastUpdatedWorkPlansCalculation()
+    // {
+    //     try
+    //     {
+    //         var newUpdateTime = DateTime.Now;
+    //         var response = await Http.PostAsJsonAsync("dailyprogram/setlastWorkplancalculation", newUpdateTime);
+
+    //         if (response.IsSuccessStatusCode)
+    //         {
+    //             lastUpdatedAt = newUpdateTime;
+    //         }
+
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         toastService.ShowError(ex.Message);
+    //     }
+    // }
 
 
     private SchedulerComponent? schedulerComponent;

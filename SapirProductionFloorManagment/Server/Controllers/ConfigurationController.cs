@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SapirProductionFloorManagment.Server.BackgroundTasks;
 using SapirProductionFloorManagment.Shared;
 
@@ -14,6 +15,24 @@ namespace SapirProductionFloorManagment.Server.Controllers
         public ConfigurationController(ILogger<ConfigurationController> logger) : base()
         {
             _logger = logger;
+        }
+
+        [HttpGet]
+        public List<Line> GetLinesData()
+        {
+            using var dbcon = new MainDbContext();
+            try
+            {
+                var lines = dbcon.Lines.ToList();
+                return lines;
+
+            }catch (Exception ex)
+            {
+                _logger.LogError("GetLinesData: {ex.Message}", ex.Message);
+               
+
+            }
+            return new List<Line>();
         }
 
         [HttpPost]
