@@ -134,7 +134,6 @@
 @code 
 {
 
-
     [Parameter]
     public List<WorkOrder>? Data { get; set; }
 
@@ -142,7 +141,7 @@
     public bool FullMode { get; set; } = true;
 
     [Parameter]
-    public bool ShowProgressBar { get; set; } = false;
+    public bool ShowProgressBar { get; set; }
 
     private DataGridEditMode editMode = DataGridEditMode.Single;
     private RadzenDataGrid<WorkOrder>? ordersGrid;

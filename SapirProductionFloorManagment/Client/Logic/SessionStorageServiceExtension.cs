@@ -18,11 +18,10 @@ namespace SapirProductionFloorManagment.Client.Logic
         }
         
        
-        //Reading token and encypt then 
+        //Reading the token from seassion storage 
         public static async Task<UserSession?> ReadEncryptedItemAsync(this ISessionStorageService sessionServiceStorage, string key)
         {
       
-
             var base64Json = await sessionServiceStorage.GetItemAsync<string>(key);
 
             if (!String.IsNullOrEmpty(base64Json))

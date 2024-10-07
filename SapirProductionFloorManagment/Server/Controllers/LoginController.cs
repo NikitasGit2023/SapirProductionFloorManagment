@@ -27,11 +27,11 @@ namespace SapirProductionFloorManagment.Server.Controllers
             try
             {
                 using var dbCon = new MainDbContext();
-                var userFromDb = dbCon.Users.Where(u => u.FullName  == user.FullName && u.Password == user.Password).First();
+                var userFromDb = dbCon.Users.Where(u => u.UserName  == user.UserName && u.Password == user.Password).First();
                 if (userFromDb != null)
                 {
                     var jwtAuthenticationManager = new JwtAuthenticationManager(userFromDb);
-                    var userSession = jwtAuthenticationManager.GenerateJwtToken(user.FullName, user.Password);
+                    var userSession = jwtAuthenticationManager.GenerateJwtToken(user.UserName, user.Password);
                     if (userSession == null)
                         Unauthorized();
                     else
@@ -56,7 +56,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
         public UserSession StayLoggedIn(UserSession session)
         {
             using var dbcon = new MainDbContext();
-            var user = dbcon.Users.Where(e => e.FullName == session.UserName).FirstOrDefault(); 
+            var user = dbcon.Users.Where(e => e.UserName == session.UserName).FirstOrDefault(); 
 
             if(user != null)
             {

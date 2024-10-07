@@ -20,7 +20,7 @@
                             <small class="card-subtitle">Please fill your details to enter the system</small>
                             <label for="username">Worker ID</label>
                             <div class="card-input-container username">
-                                <input @bind="Userdata.FullName" type="text" placeholder="@PlaceHolder" id="id">
+                                <input @bind="Userdata.UserName" type="text" placeholder="@PlaceHolder" id="id">
                             </div>
                             <label for="password">Password</label>
                             <div class="card-input-container password">
@@ -80,7 +80,7 @@
 
     private string Message = string.Empty;
 
-
+    //What happens when page is initialized
     protected override async Task OnInitializedAsync()
     {
 
@@ -88,7 +88,6 @@
         await AskForDefaultUser();
 
     }
-
 
 
     private async Task LoginUser()

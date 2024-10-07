@@ -12,7 +12,7 @@ namespace SapirProductionFloorManagment.Shared.Authentication___Autherization
         public string Token { get; set; }   
         public string Role { get; set; } 
         public int ExpiresIn { get; set; }    
-        public DateTime ExpityTimeStamp { get; set; } //??  
+        public DateTime ExpityTimeStamp { get; set; } // not used
 
 
 

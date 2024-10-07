@@ -136,7 +136,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
             {
                 using var dbcon = new MainDbContext();
 
-                var existingUser = dbcon.Users.FirstOrDefault(u => u.FullName == user.FullName || u.Password == user.Password);
+                var existingUser = dbcon.Users.FirstOrDefault(u => u.UserName == user.UserName || u.Password == user.Password);
 
                 if (existingUser != null)
                 {          
@@ -164,7 +164,7 @@ namespace SapirProductionFloorManagment.Server.Controllers
                 using var dbcon = new MainDbContext();
 
 
-                var existingUser = dbcon.Users.FirstOrDefault(u => (u.FullName == user.FullName || u.Password == user.Password) && u.UserId != user.UserId);
+                var existingUser = dbcon.Users.FirstOrDefault(u => (u.UserName == user.UserName || u.Password == user.Password) && u.UserId != user.UserId);
 
                 if (existingUser != null)
                 {

@@ -36,9 +36,10 @@ namespace SapirProductionFloorManagment.Server.Authentication
 
                 var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_VALIDITY_TIME_IN_MINS);
                 var tokeKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
+
                 var claimsIdentity = new ClaimsIdentity(new List<Claim>
             {
-                new Claim(ClaimTypes.Name, _user.FullName),
+                new Claim(ClaimTypes.Name, _user.UserName),
                 new Claim(ClaimTypes.Role,_user.Role)
 
             });
@@ -65,7 +66,7 @@ namespace SapirProductionFloorManagment.Server.Authentication
 
                 userSession = new UserSession
                 {
-                    UserName = _user.FullName,
+                    UserName = _user.UserName,
                     Role = _user.Role,
                     Token = token,
                     ExpiresIn = (int)tokenExpiryTimeStamp.Subtract(DateTime.Now).TotalSeconds

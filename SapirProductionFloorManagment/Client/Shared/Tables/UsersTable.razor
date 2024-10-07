@@ -30,9 +30,9 @@
                 SelectionMode="DataGridSelectionMode.Single">
     <Columns>
     
-        <RadzenDataGridColumn TItem="User" Property="FullName" Title="Full Name">
+        <RadzenDataGridColumn TItem="User" Property="UserName" Title="Full Name">
             <EditTemplate Context="user">
-                <RadzenTextBox @bind-Value="user.FullName" Style="width:200px; display: block" Name="Full Name" />
+                <RadzenTextBox @bind-Value="user.UserName" Style="width:200px; display: block" Name="Full Name" />
             </EditTemplate>
         </RadzenDataGridColumn>
 

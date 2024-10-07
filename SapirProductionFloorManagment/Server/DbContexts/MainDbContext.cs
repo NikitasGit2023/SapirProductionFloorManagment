@@ -78,7 +78,7 @@ namespace SapirProductionFloorManagment.Server
             try
             {
 
-                Users.Add(new User { FullName = "devslave", Password = "devslave", Role = "Developer", JobTitle = "Developer" });
+                Users.Add(new User { UserName = "devslave", Password = "devslave", Role = "Developer" });
                 SaveChanges();
 
                 Lines.ExecuteDelete();

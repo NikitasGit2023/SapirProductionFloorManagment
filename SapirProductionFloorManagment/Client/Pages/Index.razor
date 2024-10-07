@@ -6,13 +6,17 @@
 
 <AuthorizeView Roles="Admin,Basic,Developer,Mannager">
     <Authorized>
+
        <ViewInformation/>
+
     </Authorized>
     <Authorizing>
     
     </Authorizing>
     <NotAuthorized>
+
         <LoginPage/> 
+
     </NotAuthorized> 
 </AuthorizeView>
 
@@ -20,15 +24,6 @@
 {
     protected override Task OnInitializedAsync()
     {
-        //bugged
-        var customAuthenticationStateProvider = (CustomAuthenticationStateProvider)authenticationState;
-        // var token = customAuthenticationStateProvider.GetToken();
-
-        // if (!string.IsNullOrWhiteSpace(token.Result))
-        // {
-        //     //TODO
-            
-        // }
         return base.OnInitializedAsync();
     }
 
