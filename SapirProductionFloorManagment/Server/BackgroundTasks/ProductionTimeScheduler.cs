@@ -335,7 +335,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             return duration;
         }
 
-
+        //Setting 
         private void SetWorkStartAndEndTime(LineWorkPlan[] relevantPlans, Dictionary<string, TimeSpan> breaks)
         {
             if (relevantPlans.Length == 0) return;
@@ -403,7 +403,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             return _workHours.FirstOrDefault(e => e.ReferencedToLine == plan.RelatedToLine && e.WorkDay == DateTime.Now.DayOfWeek.ToString());
         }
 
-
+        //Getting next avalible start for work plan
         private DateTime? GetNextAvailableStart(LineWorkPlan plan, LineWorkHours workHours, MainDbContext dbcon)
         {
             var lastCompletedPlan = dbcon.ActiveWorkPlans.Where(e => e.RelatedToLine == plan.RelatedToLine && e.EndWork != null)
@@ -421,6 +421,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
         }
 
 
+        //Determining earliest line availability for work plan
         private LineWorkPlan DetermineEarliestPlan(LineWorkPlan[] plans, DateTime? firstNextStart, DateTime? secondNextStart)
         {
             LineWorkPlan? earliestPlan = null;
@@ -445,6 +446,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
         }
         
 
+        //Calculating end work and start work for work plan if line availible for work,.
         private LineWorkPlan CalculateAndSetWorkTimes(LineWorkPlan plan, DateTime workStart, DateTime shiftEnd, LineWorkHours firstWorkHours,
                                                         LineWorkHours secondWorkHours, Dictionary<string, TimeSpan> breaks, MainDbContext dbcon)
         {
@@ -499,7 +501,7 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
 
         }
 
-
+        //Building breask dictionary for calculations
         public Dictionary<string, TimeSpan> BuildBreakDictionary(List<LineWorkHours> linesWorkHours)
         {
             // The key is a combination of LineNumber and WorkDay (e.g., "1_Sunday", "2_Monday")
@@ -523,14 +525,10 @@ namespace SapirProductionFloorManagment.Server.BackgroundTasks
             return breakDictionary;
         }
 
-
+        //Adjusting breaks for calculations ( adding break for work plan if needed)
         public DateTime AdjustForBreaks(DateTime workStart, TimeSpan workDuration, LineWorkHours workHours, Dictionary<string, TimeSpan> breaks)
         {
-            DateTime workEnd = DateTime.MaxValue;
-
-            workEnd = workStart.Add(workDuration);
-
-
+            DateTime workEnd = workStart.Add(workDuration);
             DateTime breakStart = string.IsNullOrEmpty(workHours.BreakStart) ? DateTime.MaxValue : DateTime.Parse(workHours.BreakStart);
             DateTime breakEnd = string.IsNullOrEmpty(workHours.BreakEnd) ? DateTime.MaxValue : DateTime.Parse(workHours.BreakEnd);
 

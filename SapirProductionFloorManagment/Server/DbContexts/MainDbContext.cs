@@ -24,7 +24,7 @@ namespace SapirProductionFloorManagment.Server
         public MainDbContext()
         {
 
-            var ConnectionString = @"Server=tcp:firstdbonazure.database.windows.net,1433;Initial Catalog=SapirProductionManagment;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=""Active Directory Default"";";
+            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagment;User ID=account;Password=3194murkin;Encrypt=False;Connection Timeout=60;";
 
 
             _ConnectionString = ConnectionString; 
@@ -46,7 +46,8 @@ namespace SapirProductionFloorManagment.Server
             
             
         }
-
+        
+        //Set datetime about last workplan calculation
         public async Task SetInfoAboutLastWorkPlanCalculation(DateTime datetime)
         {
             using var dbcon = new MainDbContext();
@@ -64,6 +65,7 @@ namespace SapirProductionFloorManagment.Server
             }
         }
 
+        //Get datetime about last workplan calculation
         public Task<DateTime?> GetInfoAboutLastWorkPlanCalculation()
         {
 
@@ -73,7 +75,7 @@ namespace SapirProductionFloorManagment.Server
             return Task.FromResult(lastCalc?.LastWorkPlanCalculation);
         }
 
-
+        //if data base changed , setting data for application functionaliity ( default user, lines, line work hours...)
         public void CreateDefaultDataForAppFunctionallity()
         {
             try
@@ -161,7 +163,7 @@ namespace SapirProductionFloorManagment.Server
             }  
         }
 
-
+        //Inject new work orders
         public Task InjectWorkOrdersAsync(List<WorkOrder> workOrders)
         {
             try
@@ -184,13 +186,14 @@ namespace SapirProductionFloorManagment.Server
             }
             catch (Exception ex)
             {
-                Logger.LogError("InjectWorkOrdersAsync: {ex.Message}", ex.Message);
+                Logger?.LogError("InjectWorkOrdersAsync: {ex.Message}", ex.Message);
             }
             return Task.CompletedTask;
     
         }
 
 
+        //Update work order status after work plan status updated
         public Task UpdateWorkOrderStatus(LineWorkPlan workPaln)
         {
             try
@@ -208,7 +211,7 @@ namespace SapirProductionFloorManagment.Server
 
         }
 
-
+        //Inject products relared to work orders
         public Task InjectProducts()
         {
             try 
@@ -237,7 +240,7 @@ namespace SapirProductionFloorManagment.Server
             return Task.CompletedTask;
         }
 
-
+        //Inject customres data related to work orders
         public Task InjectcCustomers()
         {
             try
@@ -266,7 +269,7 @@ namespace SapirProductionFloorManagment.Server
             return Task.CompletedTask;
         }
 
-
+        //Inject new work plans after XL file is uploaded
         public void InjectNewWorkPlans(List<WorkOrder> uploadedWO, List<string> existdLines)
         {
             try
@@ -290,7 +293,7 @@ namespace SapirProductionFloorManagment.Server
                         if ((workOrder.OptionalLine1 == lineName && !string.IsNullOrEmpty(workOrder.OptionalLine1) && workOrder.OptionalLine1 != "")
                             || (workOrder.OptionalLine2 == lineName && !string.IsNullOrEmpty(workOrder.OptionalLine2) && workOrder.OptionalLine2 != ""))
                         {
-                            //relevant
+                            
                             if (workOrdersDictionary[workOrder] == false)
                             {
                         
