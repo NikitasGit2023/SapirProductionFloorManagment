@@ -24,7 +24,8 @@ namespace SapirProductionFloorManagment.Server
         public MainDbContext()
         {
 
-            var ConnectionString = @"Data Source=DESKTOP-10CMOF7\SQLEXPRESS;Initial Catalog=SapirProductionManagment;User ID=account;Password=3194murkin;Encrypt=False;Connection Timeout=60;";
+            var ConnectionString = @"Server=tcp:firstdbonazure.database.windows.net,1433;Initial Catalog=SapirProductionManagment;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=""Active Directory Default"";";
+
 
             _ConnectionString = ConnectionString; 
 
